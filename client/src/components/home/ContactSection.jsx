@@ -26,10 +26,16 @@ export default function ContactSection() {
     setErrorMsg('');
 
     try {
-      const res = await contactService.submitContact(formData);
+      const res = await contactService.submitContact({
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject || 'Cohort Expression of Interest',
+        programOfInterest: formData.programOfInterest,
+        message: formData.message || `Expressed interest in ${formData.programOfInterest}`,
+      });
       if (res.success) {
         setSuccessMsg(
-          'Thank you for reaching out! Your message has been saved in our system. Our incubation team will contact you shortly.'
+          'Thank you for reaching out! Your expression of interest has been saved. Our admissions team will contact you shortly.'
         );
         setFormData({
           name: '',
@@ -41,7 +47,7 @@ export default function ContactSection() {
       }
     } catch (err) {
       setErrorMsg(
-        err.response?.data?.message || 'Failed to submit message. Please try again or email us directly.'
+        err.response?.data?.message || 'Failed to submit expression. Please try again or email us directly.'
       );
     } finally {
       setLoading(false);
@@ -49,70 +55,71 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-[#faf8ff] relative">
+    <section id="contact" className="py-20 bg-gradient-to-b from-white via-[#faf8ff] to-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight">
             Connect with TRACE Innovation Academy
           </h2>
-          <p className="text-sm text-[#44474c] mt-2">
+          <p className="text-xs sm:text-sm text-slate-500 mt-2">
             Have innovation aspirations, corporate cohorts, or mentorship? Reach out to our program team.
           </p>
         </div>
 
-        {/* 3 Contact Info Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
+        {/* 3 Contact Info Cards matching Google Stitch Design */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto mb-12">
+          {/* Card 1: Email */}
           <a
             href="mailto:projects@trace.lk"
-            className="p-5 rounded-2xl bg-white border border-[#e2e8f0] shadow-sm hover:shadow-md hover:border-[#006398] transition-all flex flex-col items-center text-center group"
+            className="p-6 rounded-2xl bg-[#faf8ff] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-[#006398] transition-all flex flex-col items-center text-center group"
           >
-            <div className="w-12 h-12 rounded-full bg-[#006398] text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-[#006398] text-white flex items-center justify-center mb-3 shadow-xs group-hover:scale-105 transition-transform">
               <Mail className="w-5 h-5" />
             </div>
-            <span className="text-[11px] uppercase font-bold tracking-widest text-[#75777d]">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
               EMAIL
             </span>
-            <span className="font-bold text-sm text-[#0B192C] mt-0.5">projects@trace.lk</span>
+            <span className="font-bold text-sm text-[#0B192C] mt-1">projects@trace.lk</span>
           </a>
 
+          {/* Card 2: Website */}
           <a
-            href="https://tracesrilanka.org"
+            href="https://tracesrilanka.lk"
             target="_blank"
             rel="noreferrer"
-            className="p-5 rounded-2xl bg-white border border-[#e2e8f0] shadow-sm hover:shadow-md hover:border-[#006398] transition-all flex flex-col items-center text-center group"
+            className="p-6 rounded-2xl bg-[#faf8ff] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-[#006398] transition-all flex flex-col items-center text-center group"
           >
-            <div className="w-12 h-12 rounded-full bg-[#006398] text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-[#006398] text-white flex items-center justify-center mb-3 shadow-xs group-hover:scale-105 transition-transform">
               <Globe className="w-5 h-5" />
             </div>
-            <span className="text-[11px] uppercase font-bold tracking-widest text-[#75777d]">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
               WEBSITE
             </span>
-            <span className="font-bold text-sm text-[#0B192C] mt-0.5">www.tracesrilanka.org</span>
+            <span className="font-bold text-sm text-[#0B192C] mt-1">www.tracesrilanka.lk</span>
           </a>
 
+          {/* Card 3: Phone */}
           <a
             href="tel:+94701510444"
-            className="p-5 rounded-2xl bg-white border border-[#e2e8f0] shadow-sm hover:shadow-md hover:border-[#006398] transition-all flex flex-col items-center text-center group"
+            className="p-6 rounded-2xl bg-[#faf8ff] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-[#006398] transition-all flex flex-col items-center text-center group"
           >
-            <div className="w-12 h-12 rounded-full bg-[#006398] text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-[#006398] text-white flex items-center justify-center mb-3 shadow-xs group-hover:scale-105 transition-transform">
               <Phone className="w-5 h-5" />
             </div>
-            <span className="text-[11px] uppercase font-bold tracking-widest text-[#75777d]">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
               CONTACT NUMBER
             </span>
-            <span className="font-bold text-sm text-[#0B192C] mt-0.5">070 151 0444</span>
+            <span className="font-bold text-sm text-[#0B192C] mt-1">070 151 0444</span>
           </a>
         </div>
 
-        {/* Contact Form Card */}
-        <div className="max-w-2xl mx-auto rounded-2xl bg-white border border-[#e2e8f0] p-7 sm:p-9 shadow-md">
+        {/* Contact Form Card matching Google Stitch Design */}
+        <div className="max-w-2xl mx-auto rounded-2xl bg-white border border-slate-200/80 p-7 sm:p-9 shadow-md">
           <div className="text-center mb-6">
-            <h3 className="text-lg font-bold text-[#0B192C]">
+            <h3 className="text-base sm:text-lg font-bold text-[#0B192C]">
               Express Interest in Upcoming Cohorts
             </h3>
-            <p className="text-xs text-[#44474c] mt-1">
-              Submit your inquiry and our Secretariat will assist you with enrollment.
-            </p>
           </div>
 
           {successMsg && (
@@ -132,86 +139,78 @@ export default function ContactSection() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#131b2e] mb-1.5">
-                  Full Name <span className="text-red-500">*</span>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                  FIRST NAME
                 </label>
                 <input
                   type="text"
                   name="name"
                   required
-                  placeholder="e.g. Kavindu Senanayake"
+                  placeholder="Your Name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full h-11 px-3.5 rounded-lg border border-[#cbd5e1] focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/10 text-sm outline-none transition-all placeholder:text-[#94a3b8]"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-xs text-[#0B192C] placeholder:text-slate-400 focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#131b2e] mb-1.5">
-                  Email Address <span className="text-red-500">*</span>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                  EMAIL ADDRESS
                 </label>
                 <input
                   type="email"
                   name="email"
                   required
-                  placeholder="kavindu@domain.lk"
+                  placeholder="training@yourdomain.lk"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full h-11 px-3.5 rounded-lg border border-[#cbd5e1] focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/10 text-sm outline-none transition-all placeholder:text-[#94a3b8]"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-xs text-[#0B192C] placeholder:text-slate-400 focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#131b2e] mb-1.5">
-                Select Program of Interest
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                SELECT PROGRAM OF INTEREST
               </label>
               <select
                 name="programOfInterest"
                 value={formData.programOfInterest}
                 onChange={handleChange}
-                className="w-full h-11 px-3.5 rounded-lg border border-[#cbd5e1] focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/10 text-sm outline-none transition-all bg-white"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-xs text-[#0B192C] focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none transition-all"
               >
                 <option value="Innovation & Design Thinking Masterclass (Cohort 12)">
-                  Program 01: Innovation &amp; Design Thinking Masterclass (Cohort 12)
+                  Month: Innovation & Design Thinking Masterclass (Cohort 12)
                 </option>
                 <option value="Pre-Incubation Program on Startup Innovation (Cohort 08)">
-                  Program 02: Pre-Incubation Program on Startup Innovation (Cohort 08)
+                  Pre-Incubation Program on Startup Innovation (Cohort 08)
                 </option>
-                <option value="General Campus Visit / Partnership Inquiry">
-                  General Campus Visit / Industry Partnership
+                <option value="Custom Corporate Innovation Sprint / Partner Workshop">
+                  Custom Corporate Innovation Sprint / Partner Workshop
                 </option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#131b2e] mb-1.5">
-                Message / Details <span className="text-red-500">*</span>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                MESSAGE (OPTIONAL)
               </label>
               <textarea
                 name="message"
-                required
-                rows={4}
-                placeholder="Share your innovation background, university/company, or questions about Bay 05 facilities..."
+                rows="3"
+                placeholder="Share your goals or organization background..."
                 value={formData.message}
                 onChange={handleChange}
-                className="w-full p-3.5 rounded-lg border border-[#cbd5e1] focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/10 text-sm outline-none transition-all placeholder:text-[#94a3b8]"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-xs text-[#0B192C] placeholder:text-slate-400 focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none transition-all resize-none"
               ></textarea>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md shadow-[#006398]/20 transition-all disabled:opacity-50"
+              className="w-full py-3 px-6 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md cursor-pointer disabled:opacity-50"
             >
-              {loading ? (
-                <span>Submitting to TRACE...</span>
-              ) : (
-                <>
-                  <Send className="w-4 h-4" />
-                  <span>Submit Expression of Interest</span>
-                </>
-              )}
+              {loading ? 'Submitting Expression...' : 'Submit Expression of Interest'}
             </button>
           </form>
         </div>
@@ -219,4 +218,3 @@ export default function ContactSection() {
     </section>
   );
 }
-

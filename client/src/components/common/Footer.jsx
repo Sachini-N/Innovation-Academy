@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Globe, ArrowUpRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Lightbulb } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -10,59 +10,59 @@ export default function Footer() {
           {/* Brand Info (5 cols) */}
           <div className="lg:col-span-5 flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#006398] flex items-center justify-center text-white font-bold text-xl shadow-md">
-                T
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0B192C] to-[#00476e] flex items-center justify-center text-sky-400 shadow-sm border border-white/10">
+                <Lightbulb className="w-5 h-5 text-sky-300" />
               </div>
               <div className="flex flex-col">
                 <span className="font-extrabold text-2xl tracking-tight text-white leading-tight">
                   TRACE
                 </span>
-                <span className="text-[11px] uppercase tracking-wider font-semibold text-[#5bb8fe]">
-                  INNOVATION ACADEMY | POWERED BY TRACE
+                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                  INNOVATION ACADEMY <span className="text-slate-500">| POWERED BY T2T</span>
                 </span>
               </div>
             </div>
 
-            <p className="text-sm text-[#bac7e1] leading-relaxed max-w-md mt-2">
-              Catalyzing innovation across Sri Lanka. Empowering next generation tech innovators,
-              engineers, and researchers to build sustainable ventures through deep-tech education,
-              hands-on maker laboratories, and seed incubation.
+            <p className="text-xs sm:text-sm text-[#bac7e1] leading-relaxed max-w-md mt-1">
+              Inspiring innovation across Sri Lanka. Empowering next-generation innovators to build
+              sustainable ventures through deep-tech, venture kitchens, and hands-on industrial entrepreneurship.
             </p>
 
+            {/* Social Icons matching Stitch design */}
             <div className="flex items-center gap-3 pt-2">
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-9 h-9 rounded-lg bg-white/5 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
                 aria-label="Facebook"
               >
-                <span className="text-xs font-bold">fb</span>
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-9 h-9 rounded-lg bg-white/5 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
-                aria-label="LinkedIn"
-              >
-                <span className="text-xs font-bold">in</span>
+                <span className="text-xs font-bold">f</span>
               </a>
               <a
                 href="https://twitter.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-9 h-9 rounded-lg bg-white/5 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
                 aria-label="Twitter"
               >
                 <span className="text-xs font-bold">𝕏</span>
               </a>
               <a
-                href="https://trace.lk"
+                href="https://linkedin.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-9 h-9 rounded-lg bg-white/5 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
-                aria-label="Web"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
+                aria-label="LinkedIn"
+              >
+                <span className="text-xs font-bold">in</span>
+              </a>
+              <a
+                href="https://tracesrilanka.lk"
+                target="_blank"
+                rel="noreferrer"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
+                aria-label="Website"
               >
                 <Globe className="w-4 h-4" />
               </a>
@@ -72,40 +72,32 @@ export default function Footer() {
           {/* Quick Links & Programs (4 cols) */}
           <div className="lg:col-span-4 flex flex-col gap-3">
             <h4 className="text-xs uppercase tracking-widest font-bold text-[#5bb8fe]">
-              Academy Programs
+              ACADEMY PROGRAMS
             </h4>
-            <ul className="space-y-2.5 text-sm text-[#bac7e1] mt-1">
+            <ul className="space-y-2 text-xs text-[#bac7e1] mt-1">
               <li>
-                <Link
-                  to="/programs/program-01"
-                  className="hover:text-white flex items-center gap-1.5 transition-colors group"
-                >
-                  <span>Innovation & Design Thinking Masterclass</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Link to="/programs/program-01" className="hover:text-white transition-colors">
+                  Innovation &amp; Design Thinking Masterclass
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/programs/program-02"
-                  className="hover:text-white flex items-center gap-1.5 transition-colors group"
-                >
-                  <span>Pre-Incubation Program on Startup Innovation</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Link to="/programs/program-02" className="hover:text-white transition-colors">
+                  Pre-Incubation Program on Startup Innovation
                 </Link>
               </li>
               <li>
-                <Link to="/industry-visits" className="hover:text-white transition-colors">
-                  TRACE Campus Industry Visits & Tours
+                <Link to="/programs/program-01" className="hover:text-white transition-colors">
+                  Rapid Prototyping &amp; Maker Space
                 </Link>
               </li>
               <li>
-                <a href="#workshops" className="hover:text-white transition-colors">
-                  Maker Space & Sensor Lab Schedules
-                </a>
+                <Link to="/programs/program-02" className="hover:text-white transition-colors">
+                  Pitch Readiness &amp; Seed Access
+                </Link>
               </li>
               <li>
-                <Link to="/login" className="hover:text-white transition-colors">
-                  Participant & Founder Dashboard
+                <Link to="/programs" className="hover:text-white transition-colors">
+                  Industry Mentorship
                 </Link>
               </li>
             </ul>
@@ -114,21 +106,29 @@ export default function Footer() {
           {/* Campus Location (3 cols) */}
           <div className="lg:col-span-3 flex flex-col gap-3">
             <h4 className="text-xs uppercase tracking-widest font-bold text-[#5bb8fe]">
-              Campus Location
+              CAMPUS LOCATION
             </h4>
-            <div className="space-y-3 text-sm text-[#bac7e1] mt-1">
+            <div className="space-y-2.5 text-xs text-[#bac7e1] mt-1">
               <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-[#5bb8fe] mt-0.5 shrink-0" />
-                <span className="leading-snug">
-                  TRACE Expert City, Bay 05, FoodMarket Complex, Maradana, Colombo 10, Sri Lanka.
+                <MapPin className="w-4 h-4 text-[#5bb8fe] shrink-0 mt-0.5" />
+                <span>
+                  <strong>TRACE Expert City</strong>
+                  <br />
+                  Bay 05, FoodMarket Complex,
+                  <br />
+                  Maradana, Colombo 10,
+                  <br />
+                  Sri Lanka.
                 </span>
               </div>
-              <div className="flex items-center gap-2.5">
+
+              <div className="flex items-center gap-2.5 pt-1">
                 <Phone className="w-4 h-4 text-[#5bb8fe] shrink-0" />
                 <a href="tel:+94701510444" className="hover:text-white transition-colors">
-                  +94 70 151 0444
+                  070 151 0444
                 </a>
               </div>
+
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#5bb8fe] shrink-0" />
                 <a href="mailto:projects@trace.lk" className="hover:text-white transition-colors">
@@ -140,20 +140,19 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#77849c]">
-          <p>
-            © {new Date().getFullYear()} TRACE Sri Lanka (TRACE Foundation). Academic Programs by
-            TRACE Expert City. All Rights Reserved.
-          </p>
-          <div className="flex items-center gap-6">
-            <span className="text-[#5bb8fe]/80">Org: Innovation | Project: InnovationA</span>
-            <Link to="/login" className="hover:text-white transition-colors">
-              Staff Portal
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+          <p>© 2026 TRACE Sri Lanka (TRACE Innovation Academy). Powered by T2T. All Rights Reserved.</p>
+          <div className="flex items-center gap-5">
+            <Link to="/industry-visits" className="hover:text-white transition-colors">
+              Host Industry Visits
             </Link>
+            <span>•</span>
+            <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
+            <span>•</span>
+            <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
           </div>
         </div>
       </div>
     </footer>
   );
 }
-

@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Brain, Rocket, Check, ArrowRight, Award, Zap } from 'lucide-react';
+import { Brain, Rocket, Check, ArrowRight, Award, ShieldCheck, Sparkles } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { registrationService } from '../../services/api';
 
 export default function ProgramsSection({ programs = [] }) {
-  // Fallback program data matching Stitch design if API is loading
+  const { isAuthenticated } = useAuth();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    organization: '',
+    additionalInformation: '',
+  });
+  const [regLoading, setRegLoading] = useState(false);
+  const [regSuccess, setRegSuccess] = useState('');
+  const [regError, setRegError] = useState('');
+
   const prog1 = programs.find((p) => p.slug === 'program-01') || {
     slug: 'program-01',
     badge: 'PROGRAM 01',
@@ -16,8 +31,6 @@ export default function ProgramsSection({ programs = [] }) {
       'Design Sprints and Rapid Prototyping',
       'Idea Pitching and Presentation',
     ],
-    coverImage:
-      'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80',
     duration: '1 Month Intensive',
   };
 
@@ -37,104 +50,120 @@ export default function ProgramsSection({ programs = [] }) {
       'Final Showcase & Pitch Fest',
       'Pre-Incubation Endorsement & TRACE Affiliation Ceremony',
     ],
-    coverImage:
-      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=800&q=80',
     duration: '3 Months Cohort Track',
   };
 
+  const handleEnrollClick = (prog) => {
+    setSelectedProgram(prog);
+    setRegSuccess('');
+    setRegError('');
+    setModalOpen(true);
+  };
+
+  const handleSubmitEnrollment = async (e) => {
+    e.preventDefault();
+    setRegLoading(true);
+    setRegSuccess('');
+    setRegError('');
+
+    try {
+      const res = await registrationService.registerProgram({
+        programSlug: selectedProgram.slug,
+        ...formData,
+      });
+      if (res.success) {
+        setRegSuccess(
+          `Enrollment confirmed! Reference No: ${res.referenceNumber}. You now have automatic access to all workshops in this program.`
+        );
+      }
+    } catch (err) {
+      setRegError(
+        err.response?.data?.message || 'Failed to complete registration. Please log in or try again.'
+      );
+    } finally {
+      setRegLoading(false);
+    }
+  };
+
   return (
-    <section id="programs" className="py-20 bg-[#faf8ff]">
+    <section id="programs" className="py-20 bg-[#faf8ff] border-b border-[#e2e8f0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <span className="inline-block px-3 py-1 rounded-full bg-[#eaedff] text-xs font-bold uppercase tracking-wider text-[#006398] mb-3">
+          <span className="inline-block px-3.5 py-1 rounded-full bg-[#e8f1fd] text-xs font-extrabold uppercase tracking-wider text-[#006398] mb-3">
             STRUCTURED LEARNING PATHS
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight">
             Flagship Innovation Programs
           </h2>
-          <p className="text-base text-[#44474c] mt-2">
+          <p className="text-sm sm:text-base text-slate-600 mt-2">
             Directly aligned with Sri Lanka's growing deep-tech and startup ecosystems.
           </p>
         </div>
 
-        {/* Exactly TWO Program Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        {/* Exactly TWO Program Cards matching Google Stitch screenshot */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto items-stretch">
           {/* Program 01 Card */}
           <div className="rounded-2xl bg-white border border-[#e2e8f0] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group">
-            {/* Top Navy Gradient Banner with Icon */}
-            <div className="relative bg-gradient-to-r from-[#006398] to-[#00476e] p-6 text-white overflow-hidden">
-              <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded bg-white/20 text-xs font-extrabold uppercase tracking-widest text-[#cce5ff]">
+            {/* Top Navy/Blue Gradient Header with Glowing Brain Icon */}
+            <div className="relative bg-gradient-to-br from-[#006398] via-[#004e78] to-[#003857] p-8 text-white overflow-hidden text-center flex flex-col items-center">
+              <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-44 h-44 bg-white/10 rounded-full blur-2xl"></div>
+
+              <div className="w-full flex items-center justify-between text-xs mb-4">
+                <span className="px-2.5 py-0.5 rounded bg-white/20 text-[10px] font-black uppercase tracking-widest text-[#cce5ff]">
                   PROGRAM 01
                 </span>
-                <span className="text-xs text-[#cce5ff] font-medium">{prog1.duration}</span>
+                <span className="text-[11px] text-[#cce5ff] font-medium">{prog1.duration}</span>
               </div>
 
-              <div className="relative z-10 mt-6 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-inner">
-                  <Brain className="w-7 h-7 text-[#5bb8fe]" />
-                </div>
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-tight">
-                    {prog1.title}
-                  </h3>
-                  <span className="text-xs text-[#cce5ff] block mt-1">
-                    Design Thinking • Rapid Prototyping • Masterclass
-                  </span>
-                </div>
+              {/* Glowing Icon in Center */}
+              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-inner my-2">
+                <Brain className="w-8 h-8 text-[#5bb8fe]" />
               </div>
+
+              <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-snug mt-3 max-w-sm">
+                {prog1.title}
+              </h3>
             </div>
 
             {/* Content Body */}
-            <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between gap-6">
+            <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between gap-6">
               <div>
-                <p className="text-sm text-[#44474c] leading-relaxed mb-5">
-                  {prog1.shortDescription || prog1.description}
-                </p>
-
-                <div className="space-y-1">
-                  <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398] block mb-3">
-                    Curriculum Highlights
-                  </span>
-                  <ul className="space-y-2.5 text-xs sm:text-sm text-[#131b2e]">
-                    {prog1.highlights?.map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5">
-                        <div className="w-4 h-4 rounded-full bg-[#eaedff] flex items-center justify-center text-[#006398] shrink-0 mt-0.5">
-                          <Check className="w-2.5 h-2.5 stroke-[3]" />
-                        </div>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398] block mb-4">
+                  CURRICULUM HIGHLIGHTS
+                </span>
+                <ul className="space-y-3 text-xs sm:text-sm text-[#1e293b]">
+                  {prog1.highlights?.map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <div className="w-4 h-4 rounded-full bg-[#e8f1fd] flex items-center justify-center text-[#006398] shrink-0 mt-0.5">
+                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      </div>
+                      <span className="leading-snug">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              <div className="pt-4 border-t border-[#e2e8f0] flex flex-col gap-4">
-                <div className="flex items-center justify-between text-xs text-[#44474c]">
-                  <span className="flex items-center gap-1.5 font-semibold text-[#006398]">
-                    <Award className="w-4 h-4 text-[#006398]" />
-                    TRACE Certificate Awarded
-                  </span>
-                  <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                    Admissions Open
-                  </span>
+              {/* Bottom Footer Bar */}
+              <div className="pt-5 border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
+                  <Sparkles className="w-4 h-4 text-[#006398]" />
+                  <span>TRACE Certificate Awarded</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                   <Link
                     to={`/programs/${prog1.slug}`}
-                    className="py-2.5 px-4 rounded-lg border border-[#cbd5e1] hover:border-[#006398] hover:bg-[#f2f3ff] text-[#0B192C] font-bold text-xs uppercase tracking-wide text-center transition-colors"
+                    className="py-2.5 px-3.5 rounded-lg border border-slate-300 hover:border-[#006398] text-slate-700 hover:text-[#006398] text-xs font-bold uppercase tracking-wider text-center transition-colors"
                   >
-                    Explore Program
+                    Explore
                   </Link>
-                  <Link
-                    to={`/programs/${prog1.slug}#register`}
-                    className="py-2.5 px-4 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wide text-center transition-colors shadow-sm flex items-center justify-center gap-1"
+                  <button
+                    onClick={() => handleEnrollClick(prog1)}
+                    className="flex-1 sm:flex-none py-2.5 px-6 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md cursor-pointer"
                   >
-                    <span>Enroll in Masterclass</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                    Enroll in Masterclass
+                  </button>
                 </div>
               </div>
             </div>
@@ -142,90 +171,181 @@ export default function ProgramsSection({ programs = [] }) {
 
           {/* Program 02 Card */}
           <div className="rounded-2xl bg-white border border-[#e2e8f0] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group">
-            {/* Top Navy Gradient Banner with Icon */}
-            <div className="relative bg-gradient-to-r from-[#0B192C] to-[#0e1c2f] p-6 text-white overflow-hidden">
-              <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-40 h-40 bg-[#5bb8fe]/15 rounded-full blur-xl"></div>
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded bg-[#006398] text-xs font-extrabold uppercase tracking-widest text-white">
+            {/* Top Navy/Blue Gradient Header with Glowing Rocket Icon */}
+            <div className="relative bg-gradient-to-br from-[#006398] via-[#004e78] to-[#003857] p-8 text-white overflow-hidden text-center flex flex-col items-center">
+              <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-44 h-44 bg-white/10 rounded-full blur-2xl"></div>
+
+              <div className="w-full flex items-center justify-between text-xs mb-4">
+                <span className="px-2.5 py-0.5 rounded bg-white/20 text-[10px] font-black uppercase tracking-widest text-[#cce5ff]">
                   PROGRAM 02
                 </span>
-                <span className="text-xs text-[#bac7e1] font-medium">{prog2.duration}</span>
+                <span className="text-[11px] text-[#cce5ff] font-medium">{prog2.duration}</span>
               </div>
 
-              <div className="relative z-10 mt-6 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-inner">
-                  <Rocket className="w-7 h-7 text-[#5bb8fe]" />
-                </div>
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-tight">
-                    {prog2.title}
-                  </h3>
-                  <span className="text-xs text-[#bac7e1] block mt-1">
-                    Seed Pipeline • Venture Formation • Bay 05 Labs
-                  </span>
-                </div>
+              {/* Glowing Icon in Center */}
+              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-inner my-2">
+                <Rocket className="w-8 h-8 text-[#5bb8fe]" />
               </div>
+
+              <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-snug mt-3 max-w-sm">
+                {prog2.title}
+              </h3>
             </div>
 
             {/* Content Body */}
-            <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between gap-6">
+            <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between gap-6">
               <div>
-                <p className="text-sm text-[#44474c] leading-relaxed mb-5">
-                  {prog2.shortDescription || prog2.description}
-                </p>
-
-                <div className="space-y-1">
-                  <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398] block mb-3">
-                    Curriculum Highlights
-                  </span>
-                  <ul className="space-y-2 text-xs sm:text-sm text-[#131b2e]">
-                    {prog2.highlights?.slice(0, 5).map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5">
-                        <div className="w-4 h-4 rounded-full bg-[#eaedff] flex items-center justify-center text-[#006398] shrink-0 mt-0.5">
-                          <Check className="w-2.5 h-2.5 stroke-[3]" />
-                        </div>
-                        <span className="truncate">{item}</span>
-                      </li>
-                    ))}
-                    <li className="text-xs font-semibold text-[#006398] pl-6 pt-0.5">
-                      + 4 more venture readiness modules
+                <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398] block mb-4">
+                  CURRICULUM HIGHLIGHTS
+                </span>
+                <ul className="space-y-3 text-xs sm:text-sm text-[#1e293b]">
+                  {prog2.highlights?.map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <div className="w-4 h-4 rounded-full bg-[#e8f1fd] flex items-center justify-center text-[#006398] shrink-0 mt-0.5">
+                        <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      </div>
+                      <span className="leading-snug">{item}</span>
                     </li>
-                  </ul>
-                </div>
+                  ))}
+                </ul>
               </div>
 
-              <div className="pt-4 border-t border-[#e2e8f0] flex flex-col gap-4">
-                <div className="flex items-center justify-between text-xs text-[#44474c]">
-                  <span className="flex items-center gap-1.5 font-semibold text-[#006398]">
-                    <Zap className="w-4 h-4 text-[#006398]" />
-                    TRACE Pre-Seed Direct Shortlist
-                  </span>
-                  <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                    Bay 05 Incubation
-                  </span>
+              {/* Bottom Footer Bar */}
+              <div className="pt-5 border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
+                  <ShieldCheck className="w-4 h-4 text-[#006398]" />
+                  <span>VC Investor Demo Day Included</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                   <Link
                     to={`/programs/${prog2.slug}`}
-                    className="py-2.5 px-4 rounded-lg border border-[#cbd5e1] hover:border-[#006398] hover:bg-[#f2f3ff] text-[#0B192C] font-bold text-xs uppercase tracking-wide text-center transition-colors"
+                    className="py-2.5 px-3.5 rounded-lg border border-slate-300 hover:border-[#006398] text-slate-700 hover:text-[#006398] text-xs font-bold uppercase tracking-wider text-center transition-colors"
                   >
-                    Explore Program
+                    Explore
                   </Link>
-                  <Link
-                    to={`/programs/${prog2.slug}#register`}
-                    className="py-2.5 px-4 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wide text-center transition-colors shadow-sm flex items-center justify-center gap-1"
+                  <button
+                    onClick={() => handleEnrollClick(prog2)}
+                    className="flex-1 sm:flex-none py-2.5 px-6 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md cursor-pointer"
                   >
-                    <span>Enroll in Pre-Incubation</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                    Enroll in Pre-Incubation
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Program Registration Modal */}
+      {modalOpen && selectedProgram && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1 rounded-lg"
+            >
+              ✕
+            </button>
+
+            <div className="mb-6">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#006398] bg-[#e8f1fd] px-2.5 py-0.5 rounded-full">
+                {selectedProgram.badge || 'TRACE PROGRAM'}
+              </span>
+              <h3 className="text-xl font-bold text-[#0B192C] mt-2">
+                Join {selectedProgram.title}
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Enrolling grants you automatic access to all workshops in this program.
+              </p>
+            </div>
+
+            {regSuccess ? (
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm space-y-4">
+                <p className="font-semibold">{regSuccess}</p>
+                <Link
+                  to="/participant/workshops"
+                  className="block w-full py-2.5 rounded-lg bg-[#006398] text-white text-xs font-bold text-center uppercase tracking-wider"
+                >
+                  Go to My Workshops
+                </Link>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitEnrollment} className="space-y-4">
+                {regError && (
+                  <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs">
+                    {regError}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Kavindu Senanayake"
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs focus:ring-1 focus:ring-[#006398] outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="kavindu@eng.mrt.ac.lk"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs focus:ring-1 focus:ring-[#006398] outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                      Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+94 77 123 4567"
+                      value={formData.phoneNumber}
+                      onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs focus:ring-1 focus:ring-[#006398] outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    University / Organization
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. University of Moratuwa / Tech Startup"
+                    value={formData.organization}
+                    onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs focus:ring-1 focus:ring-[#006398] outline-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={regLoading}
+                  className="w-full py-3 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider transition-colors disabled:opacity-50"
+                >
+                  {regLoading ? 'Confirming Enrollment...' : 'Submit Program Enrollment'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
-
