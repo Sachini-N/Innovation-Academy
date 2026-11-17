@@ -8,12 +8,12 @@ export default function HeroSection() {
     <div className="relative bg-white overflow-hidden">
       {/* Hero Visual Container */}
       <section className="relative min-h-[560px] lg:min-h-[640px] flex items-center bg-white">
-        {/* Right Side: High-Tech Lab Photo with Engineers & Robotic Arm */}
+        {/* Right Side: Clean AI-Generated High-Tech Lab Photo */}
         <div className="absolute top-0 right-0 w-full lg:w-[68%] h-full overflow-hidden z-0">
           <img
-            src="/hero-stitch.jpg"
+            src="/trace-hero-bg.jpg"
             alt="TRACE Sri Lanka Engineering & Robotics Hub"
-            className="w-full h-full object-cover object-right select-none"
+            className="w-full h-full object-cover object-center select-none"
           />
           {/* Subtle bottom gradient on the image */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent pointer-events-none lg:block hidden"></div>
