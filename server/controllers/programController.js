@@ -113,18 +113,69 @@ export const getProgramBySlug = async (req, res, next) => {
   }
 };
 
+// Helper to normalize program payload
+const prepareProgramData = (body) => {
+  const data = { ...body };
+
+  if (data.title && !data.slug) {
+    data.slug = data.title
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+  }
+
+  if (!data.programId) {
+    data.programId = data.slug || `prog-${Date.now()}`;
+  }
+
+  if (!data.shortDescription && data.description) {
+    data.shortDescription = data.description.slice(0, 140) + '...';
+  }
+
+  const arrayFields = [
+    'objectives',
+    'targetAudience',
+    'benefits',
+    'activities',
+    'learningOutcomes',
+    'highlights',
+  ];
+  arrayFields.forEach((field) => {
+    if (typeof data[field] === 'string') {
+      data[field] = data[field]
+        .split(/[\n,]+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+    }
+  });
+
+  if (data.coordinatorName || data.coordinatorEmail) {
+    data.coordinator = {
+      name: data.coordinatorName || data.coordinator?.name || 'Dilshan Perera',
+      email: data.coordinatorEmail || data.coordinator?.email || 'projects@trace.lk',
+      title: data.coordinatorTitle || data.coordinator?.title || 'Head of Programs & Incubation',
+      phone: data.coordinatorPhone || data.coordinator?.phone || '+94 70 181 0494',
+    };
+  }
+
+  return data;
+};
+
 // @desc    Create new program (admin)
 export const createProgram = async (req, res, next) => {
   try {
+    const programData = prepareProgramData(req.body);
+
     if (isDbConnected()) {
-      const program = await Program.create(req.body);
+      const program = await Program.create(programData);
       return res.status(201).json({ success: true, data: program, message: 'Program created successfully' });
     }
 
     const newProgram = {
       _id: `mock_prog_${Date.now()}`,
       id: `mock_prog_${Date.now()}`,
-      ...req.body,
+      ...programData,
       createdAt: new Date(),
     };
     mockStore.programs.push(newProgram);
@@ -138,9 +189,10 @@ export const createProgram = async (req, res, next) => {
 export const updateProgram = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const updateData = prepareProgramData(req.body);
 
     if (isDbConnected()) {
-      const program = await Program.findByIdAndUpdate(id, req.body, {
+      const program = await Program.findByIdAndUpdate(id, updateData, {
         new: true,
         runValidators: true,
       });
@@ -158,7 +210,7 @@ export const updateProgram = async (req, res, next) => {
 
     mockStore.programs[idx] = {
       ...mockStore.programs[idx],
-      ...req.body,
+      ...updateData,
     };
 
     res.json({ success: true, data: mockStore.programs[idx], message: 'Program updated successfully' });

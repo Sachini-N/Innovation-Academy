@@ -1,28 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { userService } from '../../services/api';
-import { Users, Search, Mail, Phone, Building, CheckCircle2, Award } from 'lucide-react';
+import { Users, Search, Mail, Phone, Building, CheckCircle2, Award, Trash2, X, AlertCircle } from 'lucide-react';
 
 export default function AdminParticipants() {
   const [participants, setParticipants] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [actionMsg, setActionMsg] = useState('');
 
   useEffect(() => {
-    const fetchParticipants = async () => {
-      setLoading(true);
-      try {
-        const res = await userService.getParticipants();
-        if (res.success) {
-          setParticipants(res.data);
-        }
-      } catch (err) {
-        console.warn('Failed to load participants:', err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchParticipants();
   }, []);
+
+  const fetchParticipants = async () => {
+    setLoading(true);
+    try {
+      const res = await userService.getParticipants();
+      if (res.success) {
+        setParticipants(res.data);
+      }
+    } catch (err) {
+      console.warn('Failed to load participants:', err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteParticipant = async (id) => {
+    try {
+      const res = await userService.deleteParticipant(id);
+      if (res.success) {
+        setActionMsg('Participant removed successfully');
+        setParticipants((prev) =>
+          prev.filter((p) => p._id !== id && p.id !== id && p.email !== id)
+        );
+        setDeleteConfirmId(null);
+        setTimeout(() => setActionMsg(''), 3000);
+      } else {
+        alert(res.message || 'Failed to delete participant');
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to delete participant');
+    }
+  };
 
   const filtered = participants.filter((p) => {
     if (!searchTerm) return true;
@@ -53,6 +74,18 @@ export default function AdminParticipants() {
         </div>
       </div>
 
+      {actionMsg && (
+        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span>{actionMsg}</span>
+          </div>
+          <button onClick={() => setActionMsg('')} className="text-emerald-700">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Search */}
       <div className="p-4 bg-white rounded-2xl border border-[#e2e8f0] shadow-sm flex items-center justify-between">
         <div className="relative w-full sm:w-80">
@@ -74,8 +107,8 @@ export default function AdminParticipants() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((p) => (
           <div
-            key={p._id}
-            className="bg-white rounded-2xl border border-[#e2e8f0] p-5 shadow-sm flex flex-col justify-between"
+            key={p._id || p.id}
+            className="bg-white rounded-2xl border border-[#e2e8f0] p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow"
           >
             <div className="space-y-3">
               <div className="flex items-center gap-3">
@@ -128,7 +161,34 @@ export default function AdminParticipants() {
 
             <div className="mt-4 pt-3 border-t border-[#e2e8f0] flex items-center justify-between text-[11px] text-[#75777d]">
               <span>Joined: {new Date(p.createdAt).toLocaleDateString()}</span>
-              <span className="font-semibold text-emerald-700">Active</span>
+              
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-emerald-700">Active</span>
+                {deleteConfirmId === (p._id || p.id) ? (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleDeleteParticipant(p._id || p.id)}
+                      className="px-2 py-0.5 rounded bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] transition-colors cursor-pointer"
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmId(null)}
+                      className="px-2 py-0.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-[10px] transition-colors cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setDeleteConfirmId(p._id || p.id)}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                    title="Delete Participant"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ))}
@@ -136,4 +196,3 @@ export default function AdminParticipants() {
     </div>
   );
 }
-

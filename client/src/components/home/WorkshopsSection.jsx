@@ -1,116 +1,42 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, ArrowRight, Video, MapPin, Sparkles } from 'lucide-react';
-
-const ALL_FALLBACK_WORKSHOPS = [
-  {
-    _id: 'w1',
-    title: 'Design Thinking & Grand Challenges',
-    slug: 'design-thinking-and-grand-challenges',
-    programSlug: 'program-01',
-    programTitle: 'PROGRAM 01',
-    badgeExtra: '3 WEEKS',
-    description:
-      'Learn the full user interview framework to identify underserved engagement trends in emerging market and deep-tech sectors.',
-    date: 'Sat, May 24, 10:00 AM',
-    status: 'Upcoming',
-    isOnline: false,
-    venue: 'TRACE Auditorium A, Bay 05, Maradana',
-  },
-  {
-    _id: 'w2',
-    title: 'User Empathy & Problem Validation Sprint',
-    slug: 'user-empathy-and-problem-validation',
-    programSlug: 'program-01',
-    programTitle: 'PROGRAM 01',
-    badgeExtra: 'Sprint 2',
-    description:
-      'Hands-on field synthesis workshop. Translate live feedback from industry partners into structured customer journey maps.',
-    date: 'Sat, May 31, 10:00 AM',
-    status: 'Upcoming',
-    isOnline: false,
-    venue: 'Maker Space Studio 2, Bay 05',
-  },
-  {
-    _id: 'w3',
-    title: 'Idea Pitching & Storytelling Masterclass',
-    slug: 'idea-pitching-and-storytelling',
-    programSlug: 'program-01',
-    programTitle: 'PROGRAM 01',
-    badgeExtra: 'Online',
-    description:
-      'Interactive pitching clinic. Master narrative arcs, concise 3-minute executive summaries, and slide composition.',
-    date: 'Sat, June 07, 02:00 PM',
-    status: 'Upcoming',
-    isOnline: true,
-    venue: 'Online Virtual Studio',
-  },
-  {
-    _id: 'w4',
-    title: 'Rapid Prototyping & Proof of Concept (PoC)',
-    slug: 'rapid-prototyping-and-proof-of-concept',
-    programSlug: 'program-02',
-    programTitle: 'PROGRAM 02',
-    badgeExtra: 'Ongoing',
-    description:
-      'Move from wireframe/PCB to physical functional prototype with early debugging tools and operational testing in TRACE Hardware Labs.',
-    date: 'Wed, May 28, 09:30 AM',
-    status: 'Ongoing',
-    isOnline: false,
-    venue: 'Robotics & Sensor Lab, Bay 05',
-  },
-  {
-    _id: 'w5',
-    title: 'Go-To-Market (GTM) & Unit Economics',
-    slug: 'go-to-market-gtm-strategy-unit-economics',
-    programSlug: 'program-02',
-    programTitle: 'PROGRAM 02',
-    badgeExtra: 'Online/Hybrid',
-    description:
-      'Solve the customer profitability equation for early-stage B2B ventures and formulate initial sales manipulation strategies.',
-    date: 'Mon, June 02, 05:30 PM',
-    status: 'Upcoming',
-    isOnline: false,
-    venue: 'Executive Boardroom, Bay 05',
-  },
-  {
-    _id: 'w6',
-    title: 'Pitch Deck Architecture & Investment Readiness',
-    slug: 'pitch-deck-architecture-investment-readiness',
-    programSlug: 'program-02',
-    programTitle: 'PROGRAM 02',
-    badgeExtra: 'Cap Track',
-    description:
-      'Deconstruct institutional seed decks. Formulate defensible valuation caps, cap tables, and executive demo day pitch delivery.',
-    date: 'Fri, June 13, 04:00 PM',
-    status: 'Upcoming',
-    isOnline: false,
-    venue: 'TRACE Auditorium B, Bay 05',
-  },
-];
+import { Calendar, ArrowRight, Video, MapPin } from 'lucide-react';
 
 export default function WorkshopsSection({ workshops = [] }) {
   const [selectedFilter, setSelectedFilter] = useState('all');
 
-  const sourceWorkshops =
-    workshops && workshops.length > 0 ? workshops : ALL_FALLBACK_WORKSHOPS;
+  // Strictly enforce: ONLY display if workshops exist in database. If empty, do not display in frontend.
+  if (!workshops || !Array.isArray(workshops) || workshops.length === 0) {
+    return null;
+  }
 
-  const filteredWorkshops = sourceWorkshops.filter((w) => {
-    if (selectedFilter === 'program-01') {
-      return (
-        w.programSlug === 'program-01' ||
-        w.programTitle?.includes('Design Thinking') ||
-        w.programTitle === 'PROGRAM 01'
-      );
+  // Dynamically extract program filter tabs from the database workshops
+  const programTabs = [];
+  const seenSlugs = new Set();
+
+  workshops.forEach((w) => {
+    const slug =
+      w.programSlug ||
+      w.programId?.slug ||
+      (w.programTitle
+        ? w.programTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        : null);
+    const title =
+      w.programTitle ||
+      w.programId?.title ||
+      w.programId?.badge ||
+      'Program Track';
+
+    if (slug && !seenSlugs.has(slug)) {
+      seenSlugs.add(slug);
+      programTabs.push({ slug, title });
     }
-    if (selectedFilter === 'program-02') {
-      return (
-        w.programSlug === 'program-02' ||
-        w.programTitle?.includes('Pre-Incubation') ||
-        w.programTitle === 'PROGRAM 02'
-      );
-    }
-    return true;
+  });
+
+  const filteredWorkshops = workshops.filter((w) => {
+    if (selectedFilter === 'all') return true;
+    const pSlug = w.programSlug || w.programId?.slug;
+    return pSlug === selectedFilter;
   });
 
   return (
@@ -135,7 +61,7 @@ export default function WorkshopsSection({ workshops = [] }) {
               to="/workshops"
               className="text-xs font-bold text-[#006398] hover:text-[#0284c7] inline-flex items-center gap-1 transition-colors group"
             >
-              <span>Explore All {sourceWorkshops.length} Workshops Catalog</span>
+              <span>Explore All {workshops.length} Workshops Catalog</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
@@ -151,55 +77,41 @@ export default function WorkshopsSection({ workshops = [] }) {
                 : 'bg-[#faf8ff] text-slate-600 border border-slate-200 hover:border-[#006398]'
             }`}
           >
-            All Workshops ({sourceWorkshops.length})
+            All Workshops ({workshops.length})
           </button>
-          <button
-            onClick={() => setSelectedFilter('program-01')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              selectedFilter === 'program-01'
-                ? 'bg-[#006398] text-white shadow-sm'
-                : 'bg-[#faf8ff] text-slate-600 border border-slate-200 hover:border-[#006398]'
-            }`}
-          >
-            Program 01: Design Thinking (
-            {
-              sourceWorkshops.filter(
-                (w) =>
-                  w.programSlug === 'program-01' ||
-                  w.programTitle?.includes('Design Thinking') ||
-                  w.programTitle === 'PROGRAM 01'
-              ).length
-            }
-            )
-          </button>
-          <button
-            onClick={() => setSelectedFilter('program-02')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              selectedFilter === 'program-02'
-                ? 'bg-[#006398] text-white shadow-sm'
-                : 'bg-[#faf8ff] text-slate-600 border border-slate-200 hover:border-[#006398]'
-            }`}
-          >
-            Program 02: Pre-Incubation (
-            {
-              sourceWorkshops.filter(
-                (w) =>
-                  w.programSlug === 'program-02' ||
-                  w.programTitle?.includes('Pre-Incubation') ||
-                  w.programTitle === 'PROGRAM 02'
-              ).length
-            }
-            )
-          </button>
+
+          {programTabs.map((tab) => {
+            const count = workshops.filter((w) => {
+              const pSlug = w.programSlug || w.programId?.slug;
+              return pSlug === tab.slug;
+            }).length;
+
+            return (
+              <button
+                key={tab.slug}
+                onClick={() => setSelectedFilter(tab.slug)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  selectedFilter === tab.slug
+                    ? 'bg-[#006398] text-white shadow-sm'
+                    : 'bg-[#faf8ff] text-slate-600 border border-slate-200 hover:border-[#006398]'
+                }`}
+              >
+                {tab.title} ({count})
+              </button>
+            );
+          })}
         </div>
 
         {/* Workshop Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredWorkshops.map((w, idx) => {
-            const isProg1 =
-              w.programSlug === 'program-01' ||
-              w.programTitle?.includes('Design Thinking') ||
-              w.programTitle === 'PROGRAM 01';
+            const pSlug = w.programSlug || w.programId?.slug || 'program-01';
+            const pTitle =
+              w.programTitle ||
+              w.programId?.badge ||
+              w.programId?.title ||
+              'PROGRAM SESSION';
+
             return (
               <div
                 key={w._id || idx}
@@ -208,14 +120,8 @@ export default function WorkshopsSection({ workshops = [] }) {
                 <div>
                   {/* Header: Parent Program Badge & Status */}
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span
-                      className={`px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
-                        isProg1
-                          ? 'bg-[#dbeafe] text-[#00476e]'
-                          : 'bg-[#e2e8f0] text-[#0B192C]'
-                      }`}
-                    >
-                      {isProg1 ? 'PROGRAM 01' : 'PROGRAM 02'}
+                    <span className="px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#dbeafe] text-[#00476e]">
+                      {pTitle}
                     </span>
 
                     <div className="flex items-center gap-1.5">
@@ -227,18 +133,18 @@ export default function WorkshopsSection({ workshops = [] }) {
                       ) : (
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
                           <MapPin className="w-3 h-3" />
-                          Bay 05
+                          {w.venue ? w.venue.split(',')[0] : 'Bay 05'}
                         </span>
                       )}
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white border border-slate-200 text-slate-600">
-                        {w.badgeExtra || w.status}
+                        {w.badgeExtra || w.status || 'Upcoming'}
                       </span>
                     </div>
                   </div>
 
                   {/* Workshop Title */}
                   <Link
-                    to={`/programs/${w.programSlug || (isProg1 ? 'program-01' : 'program-02')}/workshops/${w.slug}`}
+                    to={`/programs/${pSlug}/workshops/${w.slug || w._id}`}
                     className="block"
                   >
                     <h3 className="text-base sm:text-lg font-bold text-[#0B192C] group-hover:text-[#006398] transition-colors leading-snug line-clamp-2 mt-2">
@@ -256,11 +162,14 @@ export default function WorkshopsSection({ workshops = [] }) {
                 <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium truncate max-w-[65%]">
                     <Calendar className="w-3.5 h-3.5 text-[#006398] shrink-0" />
-                    <span className="truncate">{w.date}</span>
+                    <span className="truncate">
+                      {w.date}
+                      {w.startTime ? ` • ${w.startTime}` : ''}
+                    </span>
                   </div>
 
                   <Link
-                    to={`/programs/${w.programSlug || (isProg1 ? 'program-01' : 'program-02')}/workshops/${w.slug}`}
+                    to={`/programs/${pSlug}/workshops/${w.slug || w._id}`}
                     className="text-xs font-bold text-[#006398] hover:text-[#0284c7] transition-colors flex items-center gap-1 shrink-0"
                   >
                     <span>Details</span>

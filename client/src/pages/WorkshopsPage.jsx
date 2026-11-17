@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
-import { workshopService } from '../services/api';
+import { workshopService, programService } from '../services/api';
 import {
   Calendar,
   Clock,
@@ -18,173 +18,40 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-const FALLBACK_WORKSHOPS = [
-  {
-    _id: 'w1',
-    title: 'Design Thinking & Grand Challenges',
-    slug: 'design-thinking-and-grand-challenges',
-    programSlug: 'program-01',
-    programTitle: 'Innovation & Design Thinking Masterclass',
-    description:
-      'Learn the full user interview framework to identify underserved engagement trends in emerging market and deep-tech sectors. Real-world case studies from Sri Lankan healthcare and agricultural automation.',
-    date: 'Saturday, May 24, 2025',
-    startTime: '09:30 AM',
-    endTime: '12:30 PM',
-    venue: 'TRACE Auditorium A, Bay 05, Maradana',
-    isOnline: false,
-    speakerName: 'Eng. Dimuthu Perera',
-    speakerDescription: 'Senior Innovation Architect at TRACE Studio',
-    status: 'Upcoming',
-    badgeExtra: '3 WEEKS',
-    topicsCovered: [
-      'User Empathy Field Techniques',
-      'Root Cause Discovery & 5 Whys',
-      'Stakeholder Ecosystem Mapping',
-      'Human-Centered Problem Definition',
-    ],
-  },
-  {
-    _id: 'w2',
-    title: 'User Empathy & Problem Validation Sprint',
-    slug: 'user-empathy-and-problem-validation',
-    programSlug: 'program-01',
-    programTitle: 'Innovation & Design Thinking Masterclass',
-    description:
-      'Hands-on field synthesis workshop. Translate live feedback from industry partners into structured customer journey maps and validation matrices.',
-    date: 'Saturday, May 31, 2025',
-    startTime: '10:00 AM',
-    endTime: '01:00 PM',
-    venue: 'Maker Space Studio 2, TRACE Expert City',
-    isOnline: false,
-    speakerName: 'Tharushi Perera',
-    speakerDescription: 'Lead UX Researcher & Product Strategist',
-    status: 'Upcoming',
-    badgeExtra: 'Sprint 2',
-    topicsCovered: [
-      'Customer Journey Architecture',
-      'Quantitative vs Qualitative Synthesis',
-      'Value Proposition Testing Matrices',
-    ],
-  },
-  {
-    _id: 'w3',
-    title: 'Idea Pitching & Storytelling Masterclass',
-    slug: 'idea-pitching-and-storytelling',
-    programSlug: 'program-01',
-    programTitle: 'Innovation & Design Thinking Masterclass',
-    description:
-      'Interactive pitching clinic. Master narrative arcs, concise 3-minute executive summaries, and slide composition for national innovation showcases.',
-    date: 'Saturday, June 07, 2025',
-    startTime: '02:00 PM',
-    endTime: '05:00 PM',
-    venue: 'Online Virtual Studio (Google Meet)',
-    isOnline: true,
-    speakerName: 'Dilshan Perera',
-    speakerDescription: 'Head of Programs & Incubation at TRACE',
-    status: 'Upcoming',
-    badgeExtra: 'Online',
-    topicsCovered: [
-      'The 3-Minute Elevator Pitch Formula',
-      'Hook, Problem, Solution, Traction Sequence',
-      'Handling tough Q&A from executive judges',
-    ],
-  },
-  {
-    _id: 'w4',
-    title: 'Rapid Prototyping & Proof of Concept (PoC)',
-    slug: 'rapid-prototyping-and-proof-of-concept',
-    programSlug: 'program-02',
-    programTitle: 'Pre-Incubation Program on Startup Innovation',
-    description:
-      'Move from wireframe or schematic to physical functional prototype with early debugging tools, SLA 3D printing, and bench testing in TRACE Hardware Labs.',
-    date: 'Wednesday, May 28, 2025',
-    startTime: '10:00 AM',
-    endTime: '01:30 PM',
-    venue: 'Robotics & Sensor Lab, Bay 05, Maradana',
-    isOnline: false,
-    speakerName: 'Dr. Anura Fernando',
-    speakerDescription: 'Director of Hardware Engineering at TRACE Labs',
-    status: 'Ongoing',
-    badgeExtra: 'Ongoing',
-    topicsCovered: [
-      'Microcontroller & Sensor Integration',
-      'Rapid SLA 3D Printing & Enclosure Design',
-      'Bench Voltage & Debugging',
-    ],
-  },
-  {
-    _id: 'w5',
-    title: 'Go-To-Market (GTM) Strategy & Unit Economics',
-    slug: 'go-to-market-gtm-strategy-unit-economics',
-    programSlug: 'program-02',
-    programTitle: 'Pre-Incubation Program on Startup Innovation',
-    description:
-      'Solve the customer profitability equation for early-stage B2B ventures and formulate initial sales manipulation strategies for local and international markets.',
-    date: 'Monday, June 02, 2025',
-    startTime: '05:30 PM',
-    endTime: '08:00 PM',
-    venue: 'Executive Boardroom, TRACE Expert City',
-    isOnline: false,
-    speakerName: 'Kasthula Jayasuriya',
-    speakerDescription: 'Principal Partner at Colombo Venture Partners',
-    status: 'Upcoming',
-    badgeExtra: 'Online/Hybrid',
-    topicsCovered: [
-      'Customer Acquisition Cost (CAC) vs LTV',
-      'B2B Enterprise Pilot Pricing & SLAs',
-      'Early Sales Funnels & Outreach',
-    ],
-  },
-  {
-    _id: 'w6',
-    title: 'Pitch Deck Architecture & Investment Readiness',
-    slug: 'pitch-deck-architecture-investment-readiness',
-    programSlug: 'program-02',
-    programTitle: 'Pre-Incubation Program on Startup Innovation',
-    description:
-      'Deconstruct institutional seed decks. Formulate defensible valuation caps, cap tables, founder equity distributions, and demo day delivery mechanics.',
-    date: 'Friday, June 13, 2025',
-    startTime: '04:00 PM',
-    endTime: '07:30 PM',
-    venue: 'TRACE Auditorium B, Bay 05, Maradana',
-    isOnline: false,
-    speakerName: 'Dr. Ramesh Shanmuganathan',
-    speakerDescription: 'Executive Board Member & Tech Veteran',
-    status: 'Upcoming',
-    badgeExtra: 'Cap Track',
-    topicsCovered: [
-      'Venture Capital Valuation Modeling',
-      'Cap Table Dilution Math',
-      'Executive Demo Day Live Pitch Delivery',
-    ],
-  },
-];
-
 export default function WorkshopsPage() {
   const [workshops, setWorkshops] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProgram, setSelectedProgram] = useState('all');
   const [selectedFormat, setSelectedFormat] = useState('all');
 
   useEffect(() => {
-    const fetchWorkshops = async () => {
+    const fetchData = async () => {
       try {
-        const res = await workshopService.getWorkshops();
-        if (res && res.data && Array.isArray(res.data) && res.data.length > 0) {
-          setWorkshops(res.data);
+        const [wRes, pRes] = await Promise.allSettled([
+          workshopService.getWorkshops(),
+          programService.getPrograms(),
+        ]);
+
+        if (wRes.status === 'fulfilled' && wRes.value?.data && Array.isArray(wRes.value.data)) {
+          setWorkshops(wRes.value.data);
         } else {
-          setWorkshops(FALLBACK_WORKSHOPS);
+          setWorkshops([]);
+        }
+
+        if (pRes.status === 'fulfilled' && pRes.value?.data && Array.isArray(pRes.value.data)) {
+          setPrograms(pRes.value.data);
         }
       } catch (err) {
-        console.warn('Using fallback workshop data:', err.message);
-        setWorkshops(FALLBACK_WORKSHOPS);
+        console.warn('Failed to load workshops:', err.message);
+        setWorkshops([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchWorkshops();
+    fetchData();
   }, []);
 
   // Filter logic
@@ -198,10 +65,14 @@ export default function WorkshopsPage() {
     const matchesSearch = !query || titleMatch || descMatch || speakerMatch || topicMatch;
 
     // Program track match
+    const pSlug = w.programSlug || w.programId?.slug;
+    const pId = w.programId?._id || w.programId;
     const matchesProgram =
       selectedProgram === 'all' ||
-      (selectedProgram === 'program-01' && (w.programSlug === 'program-01' || w.programTitle?.includes('Design Thinking'))) ||
-      (selectedProgram === 'program-02' && (w.programSlug === 'program-02' || w.programTitle?.includes('Pre-Incubation')));
+      pSlug === selectedProgram ||
+      pId === selectedProgram ||
+      (selectedProgram === 'program-01' && (pSlug === 'program-01' || w.programTitle?.includes('Design Thinking'))) ||
+      (selectedProgram === 'program-02' && (pSlug === 'program-02' || w.programTitle?.includes('Pre-Incubation')));
 
     // Format match
     const matchesFormat =
@@ -211,13 +82,6 @@ export default function WorkshopsPage() {
 
     return matchesSearch && matchesProgram && matchesFormat;
   });
-
-  const prog1Count = workshops.filter(
-    (w) => w.programSlug === 'program-01' || w.programTitle?.includes('Design Thinking')
-  ).length;
-  const prog2Count = workshops.filter(
-    (w) => w.programSlug === 'program-02' || w.programTitle?.includes('Pre-Incubation')
-  ).length;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#faf8ff]">
@@ -274,26 +138,58 @@ export default function WorkshopsPage() {
                 >
                   All ({workshops.length})
                 </button>
-                <button
-                  onClick={() => setSelectedProgram('program-01')}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    selectedProgram === 'program-01'
-                      ? 'bg-white text-[#006398] shadow-sm'
-                      : 'text-slate-600 hover:text-[#0B192C]'
-                  }`}
-                >
-                  Program 01: Design Thinking ({prog1Count})
-                </button>
-                <button
-                  onClick={() => setSelectedProgram('program-02')}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    selectedProgram === 'program-02'
-                      ? 'bg-white text-[#006398] shadow-sm'
-                      : 'text-slate-600 hover:text-[#0B192C]'
-                  }`}
-                >
-                  Program 02: Pre-Incubation ({prog2Count})
-                </button>
+                {programs.length > 0 ? (
+                  programs.map((p) => {
+                    const count = workshops.filter((w) => {
+                      const pSlug = w.programSlug || w.programId?.slug;
+                      const pId = w.programId?._id || w.programId;
+                      return (
+                        pSlug === p.slug ||
+                        pId === p._id ||
+                        pId === p.id ||
+                        (p.slug === 'program-01' && w.programTitle?.includes('Design Thinking')) ||
+                        (p.slug === 'program-02' && w.programTitle?.includes('Pre-Incubation'))
+                      );
+                    }).length;
+
+                    return (
+                      <button
+                        key={p._id || p.slug}
+                        onClick={() => setSelectedProgram(p.slug)}
+                        className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          selectedProgram === p.slug
+                            ? 'bg-white text-[#006398] shadow-sm'
+                            : 'text-slate-600 hover:text-[#0B192C]'
+                        }`}
+                      >
+                        {p.badge || p.title}: {p.title.length > 20 ? p.title.slice(0, 18) + '...' : p.title} ({count})
+                      </button>
+                    );
+                  })
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setSelectedProgram('program-01')}
+                      className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        selectedProgram === 'program-01'
+                          ? 'bg-white text-[#006398] shadow-sm'
+                          : 'text-slate-600 hover:text-[#0B192C]'
+                      }`}
+                    >
+                      Program 01: Design Thinking (3)
+                    </button>
+                    <button
+                      onClick={() => setSelectedProgram('program-02')}
+                      className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        selectedProgram === 'program-02'
+                          ? 'bg-white text-[#006398] shadow-sm'
+                          : 'text-slate-600 hover:text-[#0B192C]'
+                      }`}
+                    >
+                      Program 02: Pre-Incubation (3)
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Format Filter */}
@@ -316,6 +212,14 @@ export default function WorkshopsPage() {
             <div className="py-20 flex flex-col items-center justify-center gap-3">
               <div className="w-10 h-10 border-4 border-[#006398] border-t-transparent rounded-full animate-spin"></div>
               <span className="text-sm font-semibold text-[#44474c]">Loading TRACE Workshops...</span>
+            </div>
+          ) : workshops.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-lg mx-auto shadow-sm">
+              <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-[#0B192C]">No Workshops Scheduled</h3>
+              <p className="text-xs text-slate-500 mt-1">
+                There are currently no active workshops published. When administrators create and publish upcoming workshop sessions in the database, they will appear here.
+              </p>
             </div>
           ) : filteredWorkshops.length === 0 ? (
             <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-lg mx-auto">
@@ -340,6 +244,13 @@ export default function WorkshopsPage() {
               {filteredWorkshops.map((w, idx) => {
                 const isProg1 =
                   w.programSlug === 'program-01' || w.programTitle?.includes('Design Thinking');
+                const pSlug = w.programSlug || w.programId?.slug || (isProg1 ? 'program-01' : 'program-02');
+                const pBadge =
+                  w.programTitle ||
+                  w.programId?.badge ||
+                  w.programId?.title ||
+                  (isProg1 ? 'PROGRAM 01' : 'PROGRAM 02');
+
                 return (
                   <div
                     key={w._id || idx}
@@ -348,14 +259,8 @@ export default function WorkshopsPage() {
                     <div>
                       {/* Top Header: Parent Program Badge & Status Badge */}
                       <div className="flex items-center justify-between gap-2 mb-3.5">
-                        <span
-                          className={`px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-wider ${
-                            isProg1
-                              ? 'bg-[#dbeafe] text-[#00476e]'
-                              : 'bg-[#e2e8f0] text-[#0B192C]'
-                          }`}
-                        >
-                          {isProg1 ? 'PROGRAM 01' : 'PROGRAM 02'}
+                        <span className="px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-wider bg-[#dbeafe] text-[#00476e]">
+                          {pBadge}
                         </span>
 
                         <div className="flex items-center gap-1.5">
@@ -378,7 +283,7 @@ export default function WorkshopsPage() {
 
                       {/* Workshop Title */}
                       <Link
-                        to={`/programs/${w.programSlug || (isProg1 ? 'program-01' : 'program-02')}/workshops/${w.slug}`}
+                        to={`/programs/${pSlug}/workshops/${w.slug || w._id}`}
                         className="block"
                       >
                         <h3 className="text-lg font-bold text-[#0B192C] group-hover:text-[#006398] transition-colors leading-snug line-clamp-2">
@@ -388,9 +293,7 @@ export default function WorkshopsPage() {
 
                       {/* Parent Program Context */}
                       <p className="text-[11px] font-semibold text-[#006398] mt-1 mb-2.5">
-                        {isProg1
-                          ? 'Track: Innovation & Design Thinking'
-                          : 'Track: Pre-Incubation & Startup Innovation'}
+                        Track: {pBadge}
                       </p>
 
                       {/* Description */}

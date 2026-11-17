@@ -50,7 +50,7 @@ export default function RegisterPage() {
       });
 
       if (res.success) {
-        navigate('/participant');
+        navigate('/');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to register account');

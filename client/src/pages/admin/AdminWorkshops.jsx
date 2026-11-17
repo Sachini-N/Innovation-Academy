@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { workshopService, programService } from '../../services/api';
+import { workshopService, programService, uploadService } from '../../services/api';
 import {
   Plus,
   Edit,
@@ -14,6 +14,8 @@ import {
   X,
   Save,
   Check,
+  Upload,
+  Loader2,
 } from 'lucide-react';
 
 export default function AdminWorkshops() {
@@ -25,6 +27,8 @@ export default function AdminWorkshops() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadError, setUploadError] = useState('');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -43,6 +47,7 @@ export default function AdminWorkshops() {
     additionalInstructions: '',
     status: 'Upcoming',
     capacity: 45,
+    coverImage: '',
   });
 
   const [errorMsg, setErrorMsg] = useState('');
@@ -68,6 +73,41 @@ export default function AdminWorkshops() {
     }
   };
 
+  const handleCoverFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please select a valid image file (PNG, JPG, WEBP, etc.)');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('Image size exceeds 10MB limit.');
+      return;
+    }
+
+    setUploadingCover(true);
+    setUploadError('');
+
+    try {
+      const res = await uploadService.uploadImage(file);
+      if (res.success && res.url) {
+        setFormData((prev) => ({
+          ...prev,
+          coverImage: res.url,
+        }));
+      } else {
+        setUploadError(res.message || 'Image upload failed');
+      }
+    } catch (err) {
+      setUploadError(err.response?.data?.message || 'Failed to upload image from computer');
+    } finally {
+      setUploadingCover(false);
+      e.target.value = '';
+    }
+  };
+
   const openCreateModal = () => {
     setIsEditing(false);
     setFormData({
@@ -87,8 +127,10 @@ export default function AdminWorkshops() {
       additionalInstructions: 'Bring notebook and laptop.',
       status: 'Upcoming',
       capacity: 45,
+      coverImage: '',
     });
     setErrorMsg('');
+    setUploadError('');
     setModalOpen(true);
   };
 
@@ -116,8 +158,10 @@ export default function AdminWorkshops() {
       additionalInstructions: w.additionalInstructions || '',
       status: w.status,
       capacity: w.capacity || 45,
+      coverImage: w.coverImage || '',
     });
     setErrorMsg('');
+    setUploadError('');
     setModalOpen(true);
   };
 
@@ -158,9 +202,11 @@ export default function AdminWorkshops() {
         setSuccessMsg('Workshop deleted successfully');
         setDeleteConfirmId(null);
         fetchData();
+      } else {
+        setErrorMsg(res.message || 'Failed to delete workshop');
       }
     } catch (err) {
-      alert('Failed to delete workshop');
+      setErrorMsg(err.response?.data?.message || 'Failed to delete workshop');
     }
   };
 
@@ -209,6 +255,18 @@ export default function AdminWorkshops() {
             <span>{successMsg}</span>
           </div>
           <button onClick={() => setSuccessMsg('')} className="text-emerald-700">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {errorMsg && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <span>{errorMsg}</span>
+          </div>
+          <button onClick={() => setErrorMsg('')} className="text-red-700 p-1 hover:bg-red-100 rounded">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -286,25 +344,25 @@ export default function AdminWorkshops() {
                         <span>Edit</span>
                       </button>
 
-                      {deleteConfirmId === w._id ? (
+                      {deleteConfirmId === (w._id || w.id || w.slug) ? (
                         <div className="flex items-center gap-1">
                           <button
-                            onClick={() => handleDeleteWorkshop(w._id)}
-                            className="p-1.5 rounded-lg bg-red-600 text-white text-xs font-bold"
+                            onClick={() => handleDeleteWorkshop(w._id || w.id || w.slug)}
+                            className="px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors cursor-pointer"
                           >
                             Confirm
                           </button>
                           <button
                             onClick={() => setDeleteConfirmId(null)}
-                            className="p-1.5 rounded-lg bg-slate-200 text-slate-700 text-xs font-bold"
+                            className="px-2 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
                           >
                             Cancel
                           </button>
                         </div>
                       ) : (
                         <button
-                          onClick={() => setDeleteConfirmId(w._id)}
-                          className="p-2 rounded-lg text-[#75777d] hover:text-red-600 hover:bg-red-50 transition-colors"
+                          onClick={() => setDeleteConfirmId(w._id || w.id || w.slug)}
+                          className="p-2 rounded-lg text-[#75777d] hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                           title="Delete Workshop"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -325,28 +383,33 @@ export default function AdminWorkshops() {
 
       {/* Create / Edit Workshop Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 sm:p-8 space-y-4 my-8">
-            <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-3">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150">
+            {/* Modal Header (Fixed at top of modal, never cut off) */}
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 bg-white shrink-0 z-10">
               <h3 className="text-lg font-bold text-[#0B192C]">
                 {isEditing ? 'Edit Workshop Details' : 'Create New Workshop'}
               </h3>
               <button
+                type="button"
                 onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg text-[#75777d] hover:bg-[#f2f3ff]"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+                aria-label="Close dialog"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {errorMsg && (
-              <div className="p-3 rounded-xl bg-red-50 text-red-800 text-xs font-semibold flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-red-600" />
-                <span>{errorMsg}</span>
-              </div>
-            )}
+            {/* Scrollable Form Body */}
+            <div className="p-6 overflow-y-auto flex-1">
+              {errorMsg && (
+                <div className="p-3 mb-4 rounded-xl bg-red-50 text-red-800 text-xs font-semibold flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
 
-            <form onSubmit={handleSaveWorkshop} className="space-y-4">
+              <form onSubmit={handleSaveWorkshop} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-[#131b2e] mb-1">
                   Workshop Title <span className="text-red-500">*</span>
@@ -540,17 +603,101 @@ export default function AdminWorkshops() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#e2e8f0]">
+              {/* Cover Image Upload from Computer or URL */}
+              <div className="p-4 rounded-xl bg-[#faf8ff] border border-[#e2e8f0] space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-[#131b2e]">
+                    Workshop Cover Image
+                  </label>
+                  <span className="text-[11px] text-slate-500">Upload file or enter URL</span>
+                </div>
+
+                {/* Image Preview if available */}
+                {formData.coverImage && (
+                  <div className="relative w-full h-40 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 group shadow-inner">
+                    <img
+                      src={formData.coverImage}
+                      alt="Workshop Cover Preview"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none"></div>
+                    <span className="absolute bottom-2.5 left-3 text-[11px] font-bold text-white bg-black/50 px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-[80%]">
+                      {formData.coverImage}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFormData((prev) => ({ ...prev, coverImage: '' }))}
+                      className="absolute top-2.5 right-2.5 p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold shadow-md transition-colors"
+                      title="Remove Image"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                    {/* Upload Button */}
+                    <label className={`px-4 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs shrink-0 ${
+                      uploadingCover
+                        ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                        : 'bg-[#006398] hover:bg-[#0284c7] text-white'
+                    }`}>
+                      {uploadingCover ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Uploading from PC...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4" />
+                          <span>Upload from Computer</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleCoverFileUpload}
+                        disabled={uploadingCover}
+                      />
+                    </label>
+
+                    <div className="flex-1 relative">
+                      <input
+                        type="text"
+                        name="coverImage"
+                        value={formData.coverImage}
+                        onChange={handleFormChange}
+                        placeholder="Or paste image URL (e.g. https://...)"
+                        className="w-full h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] outline-none bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  {uploadError && (
+                    <p className="text-red-500 text-xs font-semibold flex items-center gap-1.5 pt-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{uploadError}</span>
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-4 mt-6 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-[#f1f5f9] text-xs font-bold text-[#131b2e]"
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm"
+                  className="px-5 py-2 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
                 >
                   <Save className="w-3.5 h-3.5" />
                   <span>{isEditing ? 'Update Workshop' : 'Create Workshop'}</span>
@@ -559,7 +706,8 @@ export default function AdminWorkshops() {
             </form>
           </div>
         </div>
-      )}
+      </div>
+    )}
     </div>
   );
 }

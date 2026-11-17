@@ -19,7 +19,7 @@ export default function ProgramsSection({ programs = [] }) {
   const [regSuccess, setRegSuccess] = useState('');
   const [regError, setRegError] = useState('');
 
-  const prog1 = programs.find((p) => p.slug === 'program-01') || {
+  const defaultProg1 = {
     slug: 'program-01',
     badge: 'PROGRAM 01',
     title: 'Innovation & Design Thinking Masterclass',
@@ -34,7 +34,7 @@ export default function ProgramsSection({ programs = [] }) {
     duration: '1 Month Intensive',
   };
 
-  const prog2 = programs.find((p) => p.slug === 'program-02') || {
+  const defaultProg2 = {
     slug: 'program-02',
     badge: 'PROGRAM 02',
     title: 'Pre-Incubation Program on Startup Innovation',
@@ -52,6 +52,11 @@ export default function ProgramsSection({ programs = [] }) {
     ],
     duration: '3 Months Cohort Track',
   };
+
+  const displayPrograms =
+    programs && programs.length > 0
+      ? programs
+      : [defaultProg1, defaultProg2];
 
   const handleEnrollClick = (prog) => {
     setSelectedProgram(prog);
@@ -101,139 +106,119 @@ export default function ProgramsSection({ programs = [] }) {
           </p>
         </div>
 
-        {/* Exactly TWO Program Cards matching Google Stitch screenshot */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto items-stretch">
-          {/* Program 01 Card */}
-          <div className="rounded-2xl bg-white border border-[#e2e8f0] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group">
-            {/* Top Navy/Blue Gradient Header with Glowing Brain Icon */}
-            <div className="relative bg-gradient-to-br from-[#006398] via-[#004e78] to-[#003857] p-8 text-white overflow-hidden text-center flex flex-col items-center">
-              <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-44 h-44 bg-white/10 rounded-full blur-2xl"></div>
+        {/* Dynamic Program Cards */}
+        <div
+          className={`grid grid-cols-1 ${
+            displayPrograms.length === 1
+              ? 'max-w-xl mx-auto'
+              : displayPrograms.length === 2
+              ? 'lg:grid-cols-2 max-w-6xl mx-auto'
+              : 'md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto'
+          } gap-8 items-stretch`}
+        >
+          {displayPrograms.map((prog, idx) => {
+            const isSecond = idx === 1;
+            const Icon = idx === 0 ? Brain : idx === 1 ? Rocket : Award;
+            const FooterIcon = isSecond ? ShieldCheck : Sparkles;
+            const footerText = isSecond
+              ? 'VC Investor Demo Day Included'
+              : 'TRACE Certificate Awarded';
 
-              <div className="w-full flex items-center justify-between text-xs mb-4">
-                <span className="px-2.5 py-0.5 rounded bg-white/20 text-[10px] font-black uppercase tracking-widest text-[#cce5ff]">
-                  PROGRAM 01
-                </span>
-                <span className="text-[11px] text-[#cce5ff] font-medium">{prog1.duration}</span>
-              </div>
+            const defaultHighlights =
+              idx === 0
+                ? [
+                    'Design Thinking for Innovation',
+                    '12 Steps from Ideation to Launching Real World Challenges',
+                    'Design Sprints and Rapid Prototyping',
+                    'Idea Pitching and Presentation',
+                  ]
+                : [
+                    'Venture Formation Basics & Pre-Incubation Lifecycle',
+                    'Innovation Mindset & Founder Journey',
+                    'Design Thinking & Business Model Canvas',
+                    'Proof of Concept (PoC) & Rapid Prototyping',
+                    'Go-To-Market (GTM) Strategy & Unit Economics',
+                    'Storytelling, Pitch Deck Architecture & Investment Readiness',
+                    'Final Showcase & Pitch Fest',
+                    'Pre-Incubation Endorsement & TRACE Affiliation Ceremony',
+                  ];
 
-              {/* Glowing Icon in Center */}
-              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-inner my-2">
-                <Brain className="w-8 h-8 text-[#5bb8fe]" />
-              </div>
+            const programHighlights =
+              Array.isArray(prog.highlights) && prog.highlights.length > 0
+                ? prog.highlights
+                : defaultHighlights;
 
-              <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-snug mt-3 max-w-sm">
-                {prog1.title}
-              </h3>
-            </div>
+            return (
+              <div
+                key={prog._id || prog.slug || idx}
+                className="rounded-2xl bg-white border border-[#e2e8f0] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group"
+              >
+                {/* Top Navy/Blue Gradient Header with Glowing Icon */}
+                <div className="relative bg-gradient-to-br from-[#006398] via-[#004e78] to-[#003857] p-8 text-white overflow-hidden text-center flex flex-col items-center">
+                  <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-44 h-44 bg-white/10 rounded-full blur-2xl"></div>
 
-            {/* Content Body */}
-            <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between gap-6">
-              <div>
-                <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398] block mb-4">
-                  CURRICULUM HIGHLIGHTS
-                </span>
-                <ul className="space-y-3 text-xs sm:text-sm text-[#1e293b]">
-                  {prog1.highlights?.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <div className="w-4 h-4 rounded-full bg-[#e8f1fd] flex items-center justify-center text-[#006398] shrink-0 mt-0.5">
-                        <Check className="w-2.5 h-2.5 stroke-[3]" />
-                      </div>
-                      <span className="leading-snug">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  <div className="w-full flex items-center justify-between text-xs mb-4">
+                    <span className="px-2.5 py-0.5 rounded bg-white/20 text-[10px] font-black uppercase tracking-widest text-[#cce5ff]">
+                      {prog.badge || `PROGRAM 0${idx + 1}`}
+                    </span>
+                    <span className="text-[11px] text-[#cce5ff] font-medium">{prog.duration}</span>
+                  </div>
 
-              {/* Bottom Footer Bar */}
-              <div className="pt-5 border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
-                  <Sparkles className="w-4 h-4 text-[#006398]" />
-                  <span>TRACE Certificate Awarded</span>
+                  {/* Glowing Icon in Center */}
+                  <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-inner my-2">
+                    <Icon className="w-8 h-8 text-[#5bb8fe]" />
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-snug mt-3 max-w-sm">
+                    {prog.title}
+                  </h3>
                 </div>
 
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <Link
-                    to={`/programs/${prog1.slug}`}
-                    className="py-2.5 px-3.5 rounded-lg border border-slate-300 hover:border-[#006398] text-slate-700 hover:text-[#006398] text-xs font-bold uppercase tracking-wider text-center transition-colors"
-                  >
-                    Explore
-                  </Link>
-                  <button
-                    onClick={() => handleEnrollClick(prog1)}
-                    className="flex-1 sm:flex-none py-2.5 px-6 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md cursor-pointer"
-                  >
-                    Enroll in Masterclass
-                  </button>
+                {/* Content Body */}
+                <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between gap-6">
+                  <div>
+                    <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398] block mb-4">
+                      CURRICULUM HIGHLIGHTS
+                    </span>
+                    <ul className="space-y-3 text-xs sm:text-sm text-[#1e293b]">
+                      {programHighlights.map((item, hIdx) => (
+                        <li key={hIdx} className="flex items-start gap-3">
+                          <div className="w-4 h-4 rounded-full bg-[#e8f1fd] flex items-center justify-center text-[#006398] shrink-0 mt-0.5">
+                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          </div>
+                          <span className="leading-snug">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Bottom Footer Bar */}
+                  <div className="pt-5 border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
+                      <FooterIcon className="w-4 h-4 text-[#006398]" />
+                      <span>{footerText}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <Link
+                        to={`/programs/${prog.slug}`}
+                        className="py-2.5 px-3.5 rounded-lg border border-slate-300 hover:border-[#006398] text-slate-700 hover:text-[#006398] text-xs font-bold uppercase tracking-wider text-center transition-colors"
+                      >
+                        Explore
+                      </Link>
+                      <Link
+                        to={`/programs/${prog.slug}#register`}
+                        className="flex-1 sm:flex-none py-2.5 px-6 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1.5"
+                      >
+                        <span>Enroll Now</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Program 02 Card */}
-          <div className="rounded-2xl bg-white border border-[#e2e8f0] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group">
-            {/* Top Navy/Blue Gradient Header with Glowing Rocket Icon */}
-            <div className="relative bg-gradient-to-br from-[#006398] via-[#004e78] to-[#003857] p-8 text-white overflow-hidden text-center flex flex-col items-center">
-              <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-44 h-44 bg-white/10 rounded-full blur-2xl"></div>
-
-              <div className="w-full flex items-center justify-between text-xs mb-4">
-                <span className="px-2.5 py-0.5 rounded bg-white/20 text-[10px] font-black uppercase tracking-widest text-[#cce5ff]">
-                  PROGRAM 02
-                </span>
-                <span className="text-[11px] text-[#cce5ff] font-medium">{prog2.duration}</span>
-              </div>
-
-              {/* Glowing Icon in Center */}
-              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-inner my-2">
-                <Rocket className="w-8 h-8 text-[#5bb8fe]" />
-              </div>
-
-              <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-snug mt-3 max-w-sm">
-                {prog2.title}
-              </h3>
-            </div>
-
-            {/* Content Body */}
-            <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between gap-6">
-              <div>
-                <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398] block mb-4">
-                  CURRICULUM HIGHLIGHTS
-                </span>
-                <ul className="space-y-3 text-xs sm:text-sm text-[#1e293b]">
-                  {prog2.highlights?.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <div className="w-4 h-4 rounded-full bg-[#e8f1fd] flex items-center justify-center text-[#006398] shrink-0 mt-0.5">
-                        <Check className="w-2.5 h-2.5 stroke-[3]" />
-                      </div>
-                      <span className="leading-snug">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Bottom Footer Bar */}
-              <div className="pt-5 border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
-                  <ShieldCheck className="w-4 h-4 text-[#006398]" />
-                  <span>VC Investor Demo Day Included</span>
-                </div>
-
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <Link
-                    to={`/programs/${prog2.slug}`}
-                    className="py-2.5 px-3.5 rounded-lg border border-slate-300 hover:border-[#006398] text-slate-700 hover:text-[#006398] text-xs font-bold uppercase tracking-wider text-center transition-colors"
-                  >
-                    Explore
-                  </Link>
-                  <button
-                    onClick={() => handleEnrollClick(prog2)}
-                    className="flex-1 sm:flex-none py-2.5 px-6 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md cursor-pointer"
-                  >
-                    Enroll in Pre-Incubation
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
 

@@ -287,3 +287,28 @@ export const checkProgramAccess = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Delete registration (admin)
+export const deleteRegistration = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (isDbConnected()) {
+      let deleted = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        deleted = await ProgramRegistration.findByIdAndDelete(id);
+      }
+      if (!deleted) {
+        deleted = await ProgramRegistration.findOneAndDelete({ referenceNumber: id });
+      }
+      return res.json({ success: true, message: 'Registration deleted successfully' });
+    }
+
+    mockStore.programRegistrations = mockStore.programRegistrations.filter(
+      (r) => r._id !== id && r.id !== id && r.referenceNumber !== id
+    );
+    res.json({ success: true, message: 'Registration deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -124,6 +124,10 @@ export const registrationService = {
     const res = await api.put(`/registrations/${id}/status`, { status });
     return res.data;
   },
+  deleteRegistration: async (id) => {
+    const res = await api.delete(`/registrations/${id}`);
+    return res.data;
+  },
 };
 
 export const visitService = {
@@ -158,6 +162,10 @@ export const contactService = {
     const res = await api.put(`/contact/${id}`, data);
     return res.data;
   },
+  deleteMessage: async (id) => {
+    const res = await api.delete(`/contact/${id}`);
+    return res.data;
+  },
 };
 
 export const userService = {
@@ -167,6 +175,10 @@ export const userService = {
   },
   getParticipants: async () => {
     const res = await api.get('/users/participants');
+    return res.data;
+  },
+  deleteParticipant: async (id) => {
+    const res = await api.delete(`/users/participants/${id}`);
     return res.data;
   },
   getParticipantOverview: async () => {

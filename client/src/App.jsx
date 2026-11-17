@@ -32,11 +32,13 @@ import AdminParticipants from './pages/admin/AdminParticipants';
 import AdminVisitRequests from './pages/admin/AdminVisitRequests';
 import AdminContactMessages from './pages/admin/AdminContactMessages';
 import AdminSettings from './pages/admin/AdminSettings';
+import AuthModal from './components/auth/AuthModal';
 
 export default function App() {
   return (
     <AuthProvider>
       <Router>
+        <AuthModal />
         <Routes>
           {/* Public Website Routes */}
           <Route path="/" element={<HomePage />} />
@@ -81,7 +83,7 @@ export default function App() {
             <Route path="workshops" element={<AdminWorkshops />} />
             <Route path="registrations" element={<AdminRegistrations />} />
             <Route path="participants" element={<AdminParticipants />} />
-            <Route path="visits" element={<AdminVisitRequests />} />
+            <Route path="visits" element={<Navigate to="/admin" replace />} />
             <Route path="contact-messages" element={<AdminContactMessages />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>

@@ -11,21 +11,34 @@ import {
   ChevronDown,
   BookOpen,
   Calendar,
+  GraduationCap,
+  Sparkles,
 } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, logout, openLoginModal, openRegisterModal } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [programsDropdownOpen, setProgramsDropdownOpen] = useState(false);
+  const [workshopsDropdownOpen, setWorkshopsDropdownOpen] = useState(false);
+
   const profileRef = useRef(null);
+  const programsRef = useRef(null);
+  const workshopsRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Close profile dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setProfileMenuOpen(false);
+      }
+      if (programsRef.current && !programsRef.current.contains(event.target)) {
+        setProgramsDropdownOpen(false);
+      }
+      if (workshopsRef.current && !workshopsRef.current.contains(event.target)) {
+        setWorkshopsDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -82,22 +95,147 @@ export default function Navbar() {
             >
               About TRACE
             </button>
-            <Link
-              to="/programs"
-              className={`text-[14px] font-semibold transition-colors ${
-                location.pathname.startsWith('/programs') ? 'text-[#006398]' : 'text-[#44474c] hover:text-[#006398]'
-              }`}
-            >
-              Programs
-            </Link>
-            <Link
-              to="/workshops"
-              className={`text-[14px] font-semibold transition-colors ${
-                location.pathname === '/workshops' ? 'text-[#006398]' : 'text-[#44474c] hover:text-[#006398]'
-              }`}
-            >
-              Workshops
-            </Link>
+            {/* Programs Nav Item (Dropdown when registered/authenticated) */}
+            {!isAuthenticated ? (
+              <Link
+                to="/programs"
+                className={`text-[14px] font-semibold transition-colors ${
+                  location.pathname.startsWith('/programs')
+                    ? 'text-[#006398]'
+                    : 'text-[#44474c] hover:text-[#006398]'
+                }`}
+              >
+                Programs
+              </Link>
+            ) : (
+              <div
+                className="relative"
+                ref={programsRef}
+                onMouseEnter={() => setProgramsDropdownOpen(true)}
+                onMouseLeave={() => setProgramsDropdownOpen(false)}
+              >
+                <button
+                  onClick={() => setProgramsDropdownOpen(!programsDropdownOpen)}
+                  className={`flex items-center gap-1.5 text-[14px] font-semibold transition-colors py-2 cursor-pointer ${
+                    location.pathname.startsWith('/programs') ||
+                    location.pathname === '/participant/programs'
+                      ? 'text-[#006398]'
+                      : 'text-[#44474c] hover:text-[#006398]'
+                  }`}
+                  aria-expanded={programsDropdownOpen}
+                >
+                  <span>Programs</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 text-slate-400 group-hover:text-[#006398] transition-transform duration-200 ${
+                      programsDropdownOpen ? 'rotate-180 text-[#006398]' : ''
+                    }`}
+                  />
+                </button>
+
+                {programsDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-60 rounded-2xl bg-white border border-[#e2e8f0] shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <Link
+                      to="/programs"
+                      onClick={() => setProgramsDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-[#eaedff] text-[#006398] flex items-center justify-center shrink-0">
+                        <BookOpen className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-[#0B192C]">All Programs</div>
+                        <div className="text-[10px] text-slate-500 font-normal">Explore Flagship Tracks</div>
+                      </div>
+                    </Link>
+
+                    <Link
+                      to="/participant/programs"
+                      onClick={() => setProgramsDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors border-t border-slate-100"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                        <GraduationCap className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-[#0B192C]">My Programs</div>
+                        <div className="text-[10px] text-emerald-700 font-medium">Registered Programs Only</div>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Workshops Nav Item (Dropdown when registered/authenticated) */}
+            {!isAuthenticated ? (
+              <Link
+                to="/workshops"
+                className={`text-[14px] font-semibold transition-colors ${
+                  location.pathname === '/workshops'
+                    ? 'text-[#006398]'
+                    : 'text-[#44474c] hover:text-[#006398]'
+                }`}
+              >
+                Workshops
+              </Link>
+            ) : (
+              <div
+                className="relative"
+                ref={workshopsRef}
+                onMouseEnter={() => setWorkshopsDropdownOpen(true)}
+                onMouseLeave={() => setWorkshopsDropdownOpen(false)}
+              >
+                <button
+                  onClick={() => setWorkshopsDropdownOpen(!workshopsDropdownOpen)}
+                  className={`flex items-center gap-1.5 text-[14px] font-semibold transition-colors py-2 cursor-pointer ${
+                    location.pathname === '/workshops' ||
+                    location.pathname === '/participant/workshops'
+                      ? 'text-[#006398]'
+                      : 'text-[#44474c] hover:text-[#006398]'
+                  }`}
+                  aria-expanded={workshopsDropdownOpen}
+                >
+                  <span>Workshops</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 text-slate-400 group-hover:text-[#006398] transition-transform duration-200 ${
+                      workshopsDropdownOpen ? 'rotate-180 text-[#006398]' : ''
+                    }`}
+                  />
+                </button>
+
+                {workshopsDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-64 rounded-2xl bg-white border border-[#e2e8f0] shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <Link
+                      to="/workshops"
+                      onClick={() => setWorkshopsDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-[#eaedff] text-[#006398] flex items-center justify-center shrink-0">
+                        <Calendar className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-[#0B192C]">All Workshops</div>
+                        <div className="text-[10px] text-slate-500 font-normal">Full Workshop Catalog</div>
+                      </div>
+                    </Link>
+
+                    <Link
+                      to="/participant/workshops"
+                      onClick={() => setWorkshopsDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors border-t border-slate-100"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-[#0B192C]">My Workshops</div>
+                        <div className="text-[10px] text-emerald-700 font-medium">Registered Program Workshops</div>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
             <button
               onClick={() => handleNavClick('#contact')}
               className="text-[14px] font-semibold text-[#44474c] hover:text-[#006398] transition-colors"
@@ -229,18 +367,20 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <Link
-                  to="/login"
-                  className="px-4 py-2 text-sm font-semibold text-[#0B192C] hover:text-[#006398] transition-colors"
+                <button
+                  type="button"
+                  onClick={openLoginModal}
+                  className="px-4 py-2 text-sm font-semibold text-[#0B192C] hover:text-[#006398] transition-colors cursor-pointer"
                 >
                   Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="px-5 py-2 rounded-lg bg-[#ba1a1a] hover:bg-[#93000a] text-white text-sm font-bold tracking-wide transition-all shadow-sm shadow-[#ba1a1a]/20"
+                </button>
+                <button
+                  type="button"
+                  onClick={openRegisterModal}
+                  className="px-5 py-2 rounded-lg bg-[#ba1a1a] hover:bg-[#93000a] text-white text-sm font-bold tracking-wide transition-all shadow-sm shadow-[#ba1a1a]/20 cursor-pointer"
                 >
                   Register
-                </Link>
+                </button>
               </div>
             )}
           </div>
@@ -274,20 +414,71 @@ export default function Navbar() {
           >
             About TRACE
           </button>
-          <Link
-            to="/programs"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 rounded-md text-base font-semibold text-[#44474c] hover:bg-[#eaedff]"
-          >
-            Programs
-          </Link>
-          <Link
-            to="/workshops"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 rounded-md text-base font-semibold text-[#44474c] hover:bg-[#eaedff]"
-          >
-            Workshops
-          </Link>
+          {/* Mobile Programs Section */}
+          {!isAuthenticated ? (
+            <Link
+              to="/programs"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-semibold text-[#44474c] hover:bg-[#eaedff]"
+            >
+              Programs
+            </Link>
+          ) : (
+            <div className="px-3 py-1 bg-[#f8fafc] rounded-xl space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block px-1 pt-1">
+                Programs
+              </span>
+              <Link
+                to="/programs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:bg-[#eaedff]"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-[#006398]" />
+                <span>All Programs</span>
+              </Link>
+              <Link
+                to="/participant/programs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-bold text-emerald-700 hover:bg-emerald-50"
+              >
+                <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
+                <span>My Programs (Enrolled)</span>
+              </Link>
+            </div>
+          )}
+
+          {/* Mobile Workshops Section */}
+          {!isAuthenticated ? (
+            <Link
+              to="/workshops"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-semibold text-[#44474c] hover:bg-[#eaedff]"
+            >
+              Workshops
+            </Link>
+          ) : (
+            <div className="px-3 py-1 bg-[#f8fafc] rounded-xl space-y-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block px-1 pt-1">
+                Workshops
+              </span>
+              <Link
+                to="/workshops"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:bg-[#eaedff]"
+              >
+                <Calendar className="w-3.5 h-3.5 text-[#006398]" />
+                <span>All Workshops</span>
+              </Link>
+              <Link
+                to="/participant/workshops"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-bold text-emerald-700 hover:bg-emerald-50"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                <span>My Workshops (Enrolled)</span>
+              </Link>
+            </div>
+          )}
           <button
             onClick={() => handleNavClick('#contact')}
             className="block w-full text-left px-3 py-2 rounded-md text-base font-semibold text-[#44474c] hover:bg-[#eaedff]"
@@ -376,20 +567,26 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3 pt-2">
-                <Link
-                  to="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="py-2.5 text-center font-semibold text-[#0B192C] bg-[#eaedff] rounded-lg"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openLoginModal();
+                  }}
+                  className="py-2.5 text-center font-semibold text-[#0B192C] bg-[#eaedff] hover:bg-[#dae2fd] rounded-lg cursor-pointer transition-colors"
                 >
                   Login
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="py-2.5 text-center font-bold text-white bg-[#ba1a1a] rounded-lg shadow-sm"
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openRegisterModal();
+                  }}
+                  className="py-2.5 text-center font-bold text-white bg-[#ba1a1a] hover:bg-[#93000a] rounded-lg shadow-sm cursor-pointer transition-colors"
                 >
                   Register
-                </Link>
+                </button>
               </div>
             )}
           </div>

@@ -44,7 +44,15 @@ export default function ProgramsPage() {
           </div>
 
           {/* Programs Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
+          <div
+            className={`grid grid-cols-1 ${
+              programs.length === 1
+                ? 'max-w-xl mx-auto'
+                : programs.length === 2
+                ? 'lg:grid-cols-2 max-w-6xl mx-auto'
+                : 'md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto'
+            } gap-10`}
+          >
             {programs.map((prog, idx) => {
               const isProg1 = prog.slug === 'program-01';
               return (

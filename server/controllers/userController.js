@@ -114,12 +114,11 @@ export const getParticipantOverview = async (req, res, next) => {
     if (isDbConnected()) {
       const registrations = await ProgramRegistration.find({ userId }).populate('programId');
 
-      const approvedProgramSlugs = registrations
-        .filter((r) => r.status === 'Approved' || r.status === 'Active')
-        .map((r) => r.programSlug);
+      // Unlocked workshops for all programs the user is registered for
+      const userProgramSlugs = registrations.map((r) => r.programSlug);
 
       const availableWorkshops = await Workshop.find({
-        programSlug: { $in: approvedProgramSlugs },
+        programSlug: { $in: userProgramSlugs },
       }).sort({ date: 1 });
 
       const upcomingWorkshops = availableWorkshops.filter(
@@ -155,12 +154,10 @@ export const getParticipantOverview = async (req, res, next) => {
       (r) => r.userId === userId || r.email.toLowerCase() === req.user.email?.toLowerCase()
     );
 
-    const approvedProgramSlugs = registrations
-      .filter((r) => r.status === 'Approved' || r.status === 'Active')
-      .map((r) => r.programSlug);
+    const userProgramSlugs = registrations.map((r) => r.programSlug);
 
     const availableWorkshops = mockStore.workshops.filter((w) =>
-      approvedProgramSlugs.includes(w.programSlug)
+      userProgramSlugs.includes(w.programSlug)
     );
 
     const upcomingWorkshops = availableWorkshops.filter(
@@ -267,6 +264,40 @@ export const getAllParticipants = async (req, res, next) => {
     });
 
     res.json({ success: true, count: enriched.length, data: enriched });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete participant (admin)
+export const deleteParticipant = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (isDbConnected()) {
+      let user = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        user = await User.findById(id);
+      }
+      if (!user) {
+        user = await User.findOne({ email: id });
+      }
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'Participant not found' });
+      }
+
+      await ProgramRegistration.deleteMany({
+        $or: [{ userId: user._id }, { email: user.email }],
+      });
+      await user.deleteOne();
+      return res.json({ success: true, message: 'Participant deleted successfully' });
+    }
+
+    mockStore.users = mockStore.users.filter((u) => u._id !== id && u.id !== id && u.email !== id);
+    mockStore.programRegistrations = mockStore.programRegistrations.filter(
+      (r) => r.userId !== id && r.email !== id
+    );
+    res.json({ success: true, message: 'Participant deleted successfully' });
   } catch (error) {
     next(error);
   }

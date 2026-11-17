@@ -104,3 +104,20 @@ export const updateContactMessageStatus = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Delete contact message (admin)
+export const deleteContactMessage = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (isDbConnected()) {
+      await ContactMessage.findByIdAndDelete(id);
+      return res.json({ success: true, message: 'Contact message deleted successfully' });
+    }
+
+    mockStore.contactMessages = mockStore.contactMessages.filter((m) => m._id !== id && m.id !== id);
+    res.json({ success: true, message: 'Contact message deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};

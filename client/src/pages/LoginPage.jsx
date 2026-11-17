@@ -30,7 +30,7 @@ export default function LoginPage() {
         } else if (res.user?.role === 'admin') {
           navigate('/admin');
         } else {
-          navigate('/participant');
+          navigate('/');
         }
       }
     } catch (err) {

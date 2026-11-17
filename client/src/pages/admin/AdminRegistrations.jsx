@@ -10,6 +10,7 @@ import {
   Check,
   AlertCircle,
   FileSpreadsheet,
+  Trash2,
 } from 'lucide-react';
 
 export default function AdminRegistrations() {
@@ -20,6 +21,7 @@ export default function AdminRegistrations() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [actionMsg, setActionMsg] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   useEffect(() => {
     fetchRegistrations();
@@ -59,6 +61,24 @@ export default function AdminRegistrations() {
       }
     } catch (err) {
       alert('Failed to update registration status');
+    }
+  };
+
+  const handleDeleteRegistration = async (id) => {
+    try {
+      const res = await registrationService.deleteRegistration(id);
+      if (res.success) {
+        setActionMsg('Registration record deleted successfully');
+        setRegistrations((prev) =>
+          prev.filter((r) => r._id !== id && r.id !== id && r.referenceNumber !== id)
+        );
+        setDeleteConfirmId(null);
+        setTimeout(() => setActionMsg(''), 3000);
+      } else {
+        alert(res.message || 'Failed to delete registration');
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to delete registration');
     }
   };
 
@@ -269,6 +289,31 @@ export default function AdminRegistrations() {
                         >
                           Reject
                         </button>
+
+                        {deleteConfirmId === (r._id || r.id || r.referenceNumber) ? (
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleDeleteRegistration(r._id || r.id || r.referenceNumber)}
+                              className="px-2 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] transition-colors cursor-pointer"
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              onClick={() => setDeleteConfirmId(null)}
+                              className="px-2 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-[11px] transition-colors cursor-pointer"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setDeleteConfirmId(r._id || r.id || r.referenceNumber)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer ml-1"
+                            title="Delete Registration"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

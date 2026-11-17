@@ -278,13 +278,25 @@ export const createWorkshop = async (req, res, next) => {
 // @desc    Update workshop (admin)
 export const updateWorkshop = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id || req.params.slug;
 
     if (isDbConnected()) {
-      const updated = await Workshop.findByIdAndUpdate(id, req.body, {
-        new: true,
-        runValidators: true,
-      });
+      let updated = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        updated = await Workshop.findByIdAndUpdate(id, req.body, {
+          new: true,
+          runValidators: true,
+        });
+      }
+      if (!updated) {
+        updated = await Workshop.findOneAndUpdate({ slug: id }, req.body, {
+          new: true,
+          runValidators: true,
+        });
+      }
+      if (!updated) {
+        return res.status(404).json({ success: false, message: 'Workshop not found' });
+      }
       return res.json({ success: true, data: updated, message: 'Workshop updated successfully' });
     }
 
@@ -308,14 +320,20 @@ export const updateWorkshop = async (req, res, next) => {
 // @desc    Delete workshop (admin)
 export const deleteWorkshop = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id || req.params.slug;
 
     if (isDbConnected()) {
-      await Workshop.findByIdAndDelete(id);
+      let deleted = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        deleted = await Workshop.findByIdAndDelete(id);
+      }
+      if (!deleted) {
+        deleted = await Workshop.findOneAndDelete({ slug: id });
+      }
       return res.json({ success: true, message: 'Workshop deleted successfully' });
     }
 
-    mockStore.workshops = mockStore.workshops.filter((w) => w._id !== id && w.id !== id);
+    mockStore.workshops = mockStore.workshops.filter((w) => w._id !== id && w.id !== id && w.slug !== id);
     res.json({ success: true, message: 'Workshop deleted successfully' });
   } catch (error) {
     next(error);

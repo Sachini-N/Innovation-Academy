@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { Play, Sparkles, X } from 'lucide-react';
+import React from 'react';
+import { Sparkles } from 'lucide-react';
 
 export default function HeroSection() {
-  const [videoModalOpen, setVideoModalOpen] = useState(false);
-
   return (
     <div className="relative bg-white overflow-hidden">
       {/* Hero Visual Container */}
@@ -78,24 +76,14 @@ export default function HeroSection() {
               through hands-on prototyping, human-centered design, and high-growth incubation.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-5 pt-3">
+            {/* CTA Button */}
+            <div className="pt-3">
               <a
                 href="#programs"
-                className="px-6 py-3 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
+                className="inline-block px-7 py-3 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
               >
                 EXPLORE INNOVATION
               </a>
-
-              <button
-                onClick={() => setVideoModalOpen(true)}
-                className="flex items-center gap-2.5 text-xs font-extrabold uppercase tracking-wider text-[#0B192C] hover:text-[#006398] transition-colors group cursor-pointer"
-              >
-                <div className="w-8 h-8 rounded-full border-2 border-[#e11d48] flex items-center justify-center text-[#e11d48] group-hover:scale-110 transition-transform shadow-xs">
-                  <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
-                </div>
-                <span>HOW WE WORK?</span>
-              </button>
             </div>
           </div>
         </div>
@@ -147,43 +135,6 @@ export default function HeroSection() {
           </div>
         </div>
       </section>
-
-      {/* Video / Intro Modal */}
-      {videoModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative">
-            <button
-              onClick={() => setVideoModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-800 p-1 rounded-lg"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="mb-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#006398]">
-                TRACE EXPERT CITY • MARADANA
-              </span>
-              <h3 className="text-xl font-bold text-[#0B192C] mt-1">
-                How TRACE Innovation Academy Works
-              </h3>
-            </div>
-
-            <div className="aspect-video rounded-xl bg-slate-900 overflow-hidden relative flex items-center justify-center text-white">
-              <iframe
-                className="w-full h-full"
-                src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=0"
-                title="TRACE Sri Lanka Academy Intro"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-
-            <p className="text-xs text-slate-500 mt-4 leading-relaxed">
-              Experience the maker spaces, venture studios, and prototype test benches at Bay 05, TRACE Expert City, Maradana.
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

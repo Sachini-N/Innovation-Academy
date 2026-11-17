@@ -116,120 +116,22 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Top Command Ribbon / Overview Bar from Stitch */}
-      <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-sm">
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="text-2xl font-bold text-[#0B192C] tracking-tight">
-                Operations Intelligence
-              </h2>
-              <span className="px-3 py-1 rounded-full bg-[#cce5ff]/60 text-[#006398] text-xs font-bold flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#006398] animate-pulse"></span>
-                All Systems Operational • Admissions Open
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-[#44474c] max-w-3xl leading-relaxed">
-              Monitoring admissions, workshop capacities, and startup incubation metrics across TRACE
-              Expert City, Bay 05 Maradana.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 bg-[#f2f3ff] px-3.5 py-2 rounded-lg text-xs font-semibold text-[#131b2e]">
-              <Calendar className="w-4 h-4 text-[#006398]" />
-              <span>Current Cycle (2025/Cohort Alpha)</span>
-            </div>
-
-            <div className="relative">
-              <button
-                onClick={() => setExportOpen(!exportOpen)}
-                className="flex items-center gap-1.5 px-3.5 py-2 bg-[#f2f3ff] hover:bg-[#eaedff] text-[#131b2e] rounded-lg text-xs font-bold tracking-wider uppercase transition-colors"
-              >
-                <Download className="w-4 h-4" />
-                <span>Export Data</span>
-              </button>
-
-              {exportOpen && (
-                <div className="absolute right-0 top-12 w-48 bg-white rounded-xl shadow-xl border border-[#e2e8f0] py-1.5 z-20 text-xs">
-                  <button
-                    onClick={handleExportCSV}
-                    className="w-full text-left px-4 py-2 hover:bg-[#faf8ff] text-[#131b2e] font-semibold flex items-center gap-2"
-                  >
-                    <FileSpreadsheet className="w-4 h-4 text-[#006398]" />
-                    <span>Admissions (CSV)</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      alert('Generating Cohort Summary Sheet PDF...');
-                      setExportOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 hover:bg-[#faf8ff] text-[#131b2e] font-semibold flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4 text-[#006398]" />
-                    <span>Cohort Roster (PDF)</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <button
-              onClick={() =>
-                openReviewModal(
-                  'Kavindu Senanayake',
-                  'Innovation & Design Thinking Masterclass',
-                  'University of Moratuwa - Electronic Eng'
-                )
-              }
-              className="flex items-center gap-1.5 px-4 py-2 bg-[#0e1c2f] text-white rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-[#1f2d42] transition-colors shadow-sm"
-            >
-              <UserPlus className="w-4 h-4 text-[#5bb8fe]" />
-              <span>Fast-Track Review</span>
-            </button>
-          </div>
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-[#0B192C]">Dashboard Overview</h2>
+          <p className="text-xs sm:text-sm text-[#44474c] mt-1">
+            Real-time admissions, workshop capacities, and academy operations.
+          </p>
         </div>
-      </div>
 
-      {/* Visual Impact Banner with Campus Architecture Context */}
-      <div className="relative overflow-hidden rounded-2xl bg-[#0e1c2f] text-white p-6 sm:p-7 shadow-md">
-        <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-[#006398]/20 blur-3xl pointer-events-none"></div>
-        <div className="absolute -left-12 -bottom-12 w-72 h-72 rounded-full bg-[#00174b]/40 blur-2xl pointer-events-none"></div>
-
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center shrink-0">
-              <Building className="w-7 h-7 text-[#5bb8fe]" />
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#5bb8fe]">
-                  Maradana Campus Hub
-                </span>
-                <span className="inline-block w-1 h-1 rounded-full bg-[#5bb8fe]"></span>
-                <span className="text-[11px] text-[#bac7e1]">Bay 05 Tech Precinct</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white">
-                Academic Term 2025/Cohort Alpha in Active Execution
-              </h3>
-              <p className="text-xs sm:text-sm text-[#bac7e1] max-w-2xl leading-relaxed">
-                Currently presiding over 2 flagship academy programs and 1 deep-tech accelerator sprint.
-                High throughput across maker spaces with 98.4% lab utility.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 bg-white/5 p-4 rounded-xl backdrop-blur-sm self-start lg:self-auto">
-            <div className="text-right">
-              <span className="text-[11px] uppercase font-bold text-[#5bb8fe] block">
-                Capacity Utilization
-              </span>
-              <span className="text-2xl font-extrabold text-white">90.6%</span>
-            </div>
-            <div className="w-12 h-12 rounded-full border-4 border-[#006398] border-t-[#5bb8fe] flex items-center justify-center font-bold text-xs text-white">
-              91%
-            </div>
-          </div>
-        </div>
+        <button
+          onClick={handleExportCSV}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#cbd5e1] hover:bg-[#f8fafc] text-xs font-bold text-slate-700 shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
+        >
+          <Download className="w-3.5 h-3.5 text-[#006398]" />
+          <span>Export Data</span>
+        </button>
       </div>
 
       {/* 4 KPI Metric Cards */}
@@ -525,22 +427,28 @@ export default function AdminDashboard() {
             </div>
 
             <div className="space-y-3">
-              {statsData.upcomingWorkshopList?.map((w, idx) => (
-                <div
-                  key={w._id || idx}
-                  className="p-3 rounded-xl bg-[#faf8ff] border border-[#e2e8f0] space-y-1.5"
-                >
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-bold text-[#006398]">{w.date}</span>
-                    <span className="text-[#75777d]">{w.startTime}</span>
+              {statsData.upcomingWorkshopList && statsData.upcomingWorkshopList.length > 0 ? (
+                statsData.upcomingWorkshopList.map((w, idx) => (
+                  <div
+                    key={w._id || idx}
+                    className="p-3 rounded-xl bg-[#faf8ff] border border-[#e2e8f0] space-y-1.5"
+                  >
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="font-bold text-[#006398]">{w.date}</span>
+                      <span className="text-[#75777d]">{w.startTime}</span>
+                    </div>
+                    <h4 className="text-xs font-bold text-[#0B192C] leading-snug">{w.title}</h4>
+                    <div className="flex items-center justify-between text-[11px] text-[#75777d] pt-1">
+                      <span>{w.speakerName}</span>
+                      <span className="font-semibold text-emerald-700">{w.status}</span>
+                    </div>
                   </div>
-                  <h4 className="text-xs font-bold text-[#0B192C] leading-snug">{w.title}</h4>
-                  <div className="flex items-center justify-between text-[11px] text-[#75777d] pt-1">
-                    <span>{w.speakerName}</span>
-                    <span className="font-semibold text-emerald-700">{w.status}</span>
-                  </div>
+                ))
+              ) : (
+                <div className="p-4 rounded-xl bg-[#faf8ff] border border-dashed border-[#cbd5e1] text-center text-xs text-slate-500">
+                  No upcoming workshops scheduled in database.
                 </div>
-              ))}
+              )}
             </div>
 
             <Link
@@ -549,57 +457,6 @@ export default function AdminDashboard() {
             >
               <span>+ Schedule Workshop Session</span>
             </Link>
-          </div>
-
-          {/* Secretariat Fast-Actions */}
-          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm">
-            <h3 className="text-base font-bold text-[#0B192C] mb-1">Secretariat Fast-Actions</h3>
-            <p className="text-xs text-[#75777d] mb-4">Administrative routines for TRACE Bay 05 teams</p>
-
-            <div className="space-y-2">
-              <button
-                onClick={() =>
-                  alert('Initiating Cohort Broadcast Dispatch via projects@trace.lk...')
-                }
-                className="w-full p-3 rounded-xl bg-[#f2f3ff] hover:bg-[#eaedff] text-left transition-colors flex items-center justify-between group"
-              >
-                <div>
-                  <span className="text-xs font-bold text-[#0B192C] block">Batch Email Cohort</span>
-                  <span className="text-[10px] text-[#75777d]">
-                    Notify active candidates via projects@trace.lk
-                  </span>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#75777d] group-hover:text-[#006398]" />
-              </button>
-
-              <button
-                onClick={handleExportCSV}
-                className="w-full p-3 rounded-xl bg-[#f2f3ff] hover:bg-[#eaedff] text-left transition-colors flex items-center justify-between group"
-              >
-                <div>
-                  <span className="text-xs font-bold text-[#0B192C] block">
-                    Investor Demo Day Sheet
-                  </span>
-                  <span className="text-[10px] text-[#75777d]">
-                    Compile high-value founder summaries (CSV)
-                  </span>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#75777d] group-hover:text-[#006398]" />
-              </button>
-
-              <Link
-                to="/admin/contact-messages"
-                className="w-full p-3 rounded-xl bg-[#f2f3ff] hover:bg-[#eaedff] text-left transition-colors flex items-center justify-between group"
-              >
-                <div>
-                  <span className="text-xs font-bold text-[#0B192C] block">Review Contact Forms</span>
-                  <span className="text-[10px] text-[#75777d]">
-                    {stats.unreadInquiries || 48} inquiries awaiting triage
-                  </span>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#75777d] group-hover:text-[#006398]" />
-              </Link>
-            </div>
           </div>
         </div>
       </div>

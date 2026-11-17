@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { Mail, Globe, Phone, Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mail, Globe, Phone, MapPin, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { contactService } from '../../services/api';
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: 'General Inquiry',
-    programOfInterest: 'Innovation & Design Thinking Masterclass (Cohort 12)',
+    programTrack: 'Innovation & Design Thinking Masterclass (1 Month)',
     message: '',
   });
 
@@ -29,25 +28,25 @@ export default function ContactSection() {
       const res = await contactService.submitContact({
         name: formData.name,
         email: formData.email,
-        subject: formData.subject || 'Cohort Expression of Interest',
-        programOfInterest: formData.programOfInterest,
-        message: formData.message || `Expressed interest in ${formData.programOfInterest}`,
+        subject: formData.programTrack,
+        programOfInterest: formData.programTrack,
+        message: formData.message || `Inquiry regarding ${formData.programTrack}`,
       });
+
       if (res.success) {
         setSuccessMsg(
-          'Thank you for reaching out! Your expression of interest has been saved. Our admissions team will contact you shortly.'
+          'Thank you for reaching out! Your inquiry has been sent to TRACE innovation secretariat. We will get in touch with you shortly.'
         );
         setFormData({
           name: '',
           email: '',
-          subject: 'General Inquiry',
-          programOfInterest: 'Innovation & Design Thinking Masterclass (Cohort 12)',
+          programTrack: 'Innovation & Design Thinking Masterclass (1 Month)',
           message: '',
         });
       }
     } catch (err) {
       setErrorMsg(
-        err.response?.data?.message || 'Failed to submit expression. Please try again or email us directly.'
+        err.response?.data?.message || 'Failed to send message. Please try again or email us directly at projects@trace.lk'
       );
     } finally {
       setLoading(false);
@@ -55,164 +54,270 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-b from-white via-[#faf8ff] to-white relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight">
-            Connect with TRACE Innovation Academy
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-2">
-            Have innovation aspirations, corporate cohorts, or mentorship? Reach out to our program team.
-          </p>
-        </div>
+    <section id="contact" className="py-20 bg-[#f4f8fc] relative overflow-hidden">
+      {/* Subtle Dot Grid Background Patterns */}
+      <div
+        className="absolute top-0 left-0 w-64 h-64 opacity-30 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(#006398 1px, transparent 1px)',
+          backgroundSize: '16px 16px',
+        }}
+      ></div>
+      <div
+        className="absolute bottom-0 right-0 w-72 h-72 opacity-30 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(#006398 1px, transparent 1px)',
+          backgroundSize: '16px 16px',
+        }}
+      ></div>
 
-        {/* 3 Contact Info Cards matching Google Stitch Design */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto mb-12">
-          {/* Card 1: Email */}
-          <a
-            href="mailto:projects@trace.lk"
-            className="p-6 rounded-2xl bg-[#faf8ff] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-[#006398] transition-all flex flex-col items-center text-center group"
-          >
-            <div className="w-12 h-12 rounded-full bg-[#006398] text-white flex items-center justify-center mb-3 shadow-xs group-hover:scale-105 transition-transform">
-              <Mail className="w-5 h-5" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* Left Column: Let's Connect & 4 Info Cards (5 Cols) */}
+          <div className="lg:col-span-5 flex flex-col justify-between">
+            <div>
+              {/* Pill Badge */}
+              <span className="inline-block px-3.5 py-1 rounded-full bg-[#e0f2fe] text-[#006398] text-[11px] font-extrabold uppercase tracking-wider mb-3.5">
+                GET IN TOUCH
+              </span>
+
+              {/* Title */}
+              <h2 className="text-4xl sm:text-5xl font-extrabold text-[#0B192C] tracking-tight mb-3.5">
+                Let's Connect
+              </h2>
+
+              {/* Description */}
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-8 max-w-md">
+                Have inquiries about admissions, curriculum tracks, or corporate sponsorship? Our
+                innovation secretariat is here to help.
+              </p>
+
+              {/* 4 Contact Cards Stack */}
+              <div className="space-y-3.5">
+                {/* 1. Email */}
+                <a
+                  href="mailto:projects@trace.lk"
+                  className="bg-white rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-slate-300 p-4 flex items-center gap-4 transition-all group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-[#004e85] text-white flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                    <Mail className="w-5 h-5 text-[#8ed0ff]" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                      EMAIL
+                    </span>
+                    <span className="text-sm font-bold text-[#0B192C] truncate mt-0.5 group-hover:text-[#006398] transition-colors">
+                      projects@trace.lk
+                    </span>
+                  </div>
+                </a>
+
+                {/* 2. Website */}
+                <a
+                  href="https://tracesrilanka.lk"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-white rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-slate-300 p-4 flex items-center gap-4 transition-all group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-[#004e85] text-white flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                    <Globe className="w-5 h-5 text-[#8ed0ff]" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                      WEBSITE
+                    </span>
+                    <span className="text-sm font-bold text-[#0B192C] truncate mt-0.5 group-hover:text-[#006398] transition-colors">
+                      www.tracesrilanka.lk
+                    </span>
+                  </div>
+                </a>
+
+                {/* 3. Contact Number */}
+                <a
+                  href="tel:+94701510444"
+                  className="bg-white rounded-2xl border border-slate-100 shadow-xs hover:shadow-md hover:border-slate-300 p-4 flex items-center gap-4 transition-all group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-[#004e85] text-white flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                    <Phone className="w-5 h-5 text-[#8ed0ff]" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                      CONTACT NUMBER
+                    </span>
+                    <span className="text-sm font-bold text-[#0B192C] truncate mt-0.5 group-hover:text-[#006398] transition-colors">
+                      070 151 0494
+                    </span>
+                  </div>
+                </a>
+
+                {/* 4. Location */}
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-xs p-4 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[#004e85] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <MapPin className="w-5 h-5 text-[#8ed0ff]" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                      LOCATION
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-[#0B192C] truncate mt-0.5">
+                      TRACE Expert City, Maradana, Colombo 00100
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-              EMAIL
-            </span>
-            <span className="font-bold text-sm text-[#0B192C] mt-1">projects@trace.lk</span>
-          </a>
 
-          {/* Card 2: Website */}
-          <a
-            href="https://tracesrilanka.lk"
-            target="_blank"
-            rel="noreferrer"
-            className="p-6 rounded-2xl bg-[#faf8ff] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-[#006398] transition-all flex flex-col items-center text-center group"
-          >
-            <div className="w-12 h-12 rounded-full bg-[#006398] text-white flex items-center justify-center mb-3 shadow-xs group-hover:scale-105 transition-transform">
-              <Globe className="w-5 h-5" />
+            {/* Follow TRACE Ecosystem */}
+            <div className="pt-8">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block mb-3">
+                FOLLOW TRACE ECOSYSTEM
+              </span>
+              <div className="flex items-center gap-2.5">
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-9 h-9 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center text-xs font-bold text-slate-700 hover:text-[#006398] hover:border-[#006398] transition-all"
+                  aria-label="LinkedIn"
+                >
+                  in
+                </a>
+                <a
+                  href="https://twitter.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-9 h-9 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center text-xs font-bold text-slate-700 hover:text-[#006398] hover:border-[#006398] transition-all"
+                  aria-label="X Twitter"
+                >
+                  𝕏
+                </a>
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-9 h-9 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center text-xs font-bold text-slate-700 hover:text-[#006398] hover:border-[#006398] transition-all"
+                  aria-label="Facebook"
+                >
+                  fb
+                </a>
+                <a
+                  href="https://youtube.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-9 h-9 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center text-xs font-bold text-slate-700 hover:text-[#006398] hover:border-[#006398] transition-all"
+                  aria-label="YouTube"
+                >
+                  yt
+                </a>
+              </div>
             </div>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-              WEBSITE
-            </span>
-            <span className="font-bold text-sm text-[#0B192C] mt-1">www.tracesrilanka.lk</span>
-          </a>
-
-          {/* Card 3: Phone */}
-          <a
-            href="tel:+94701510444"
-            className="p-6 rounded-2xl bg-[#faf8ff] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-[#006398] transition-all flex flex-col items-center text-center group"
-          >
-            <div className="w-12 h-12 rounded-full bg-[#006398] text-white flex items-center justify-center mb-3 shadow-xs group-hover:scale-105 transition-transform">
-              <Phone className="w-5 h-5" />
-            </div>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-              CONTACT NUMBER
-            </span>
-            <span className="font-bold text-sm text-[#0B192C] mt-1">070 151 0444</span>
-          </a>
-        </div>
-
-        {/* Contact Form Card matching Google Stitch Design */}
-        <div className="max-w-2xl mx-auto rounded-2xl bg-white border border-slate-200/80 p-7 sm:p-9 shadow-md">
-          <div className="text-center mb-6">
-            <h3 className="text-base sm:text-lg font-bold text-[#0B192C]">
-              Express Interest in Upcoming Cohorts
-            </h3>
           </div>
 
-          {successMsg && (
-            <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              <span>{successMsg}</span>
+          {/* Right Column: Clean White Form Card (7 Cols) */}
+          <div className="lg:col-span-7">
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl p-8 sm:p-10">
+              {successMsg && (
+                <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>{successMsg}</span>
+                </div>
+              )}
+
+              {errorMsg && (
+                <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Row 1: Full Name & Email Address */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-2">
+                      FULL NAME
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      placeholder="e.g. Kasun Fernando"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#f8fafc]/50 text-sm text-[#0B192C] placeholder:text-slate-400 focus:bg-white focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-2">
+                      EMAIL ADDRESS
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      placeholder="name@domain.lk"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#f8fafc]/50 text-sm text-[#0B192C] placeholder:text-slate-400 focus:bg-white focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 2: Program Track / Engagement */}
+                <div>
+                  <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-2">
+                    PROGRAM TRACK / ENGAGEMENT
+                  </label>
+                  <select
+                    name="programTrack"
+                    value={formData.programTrack}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#f8fafc]/50 text-sm text-[#0B192C] focus:bg-white focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none transition-all cursor-pointer"
+                  >
+                    <option value="Innovation & Design Thinking Masterclass (1 Month)">
+                      Innovation &amp; Design Thinking Masterclass (1 Month)
+                    </option>
+                    <option value="Pre-Incubation Program on Startup Innovation (3 Months)">
+                      Pre-Incubation Program on Startup Innovation (3 Months)
+                    </option>
+                    <option value="Corporate R&D Sponsorship & Industry Visit">
+                      Corporate R&amp;D Sponsorship &amp; Industry Visit
+                    </option>
+                    <option value="General Inquiry & Admissions Secretariat">
+                      General Inquiry &amp; Admissions Secretariat
+                    </option>
+                  </select>
+                </div>
+
+                {/* Row 3: Message */}
+                <div>
+                  <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-2">
+                    MESSAGE
+                  </label>
+                  <textarea
+                    name="message"
+                    rows="4"
+                    required
+                    placeholder="Provide details regarding your background and program goals..."
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#f8fafc]/50 text-sm text-[#0B192C] placeholder:text-slate-400 focus:bg-white focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none transition-all resize-none"
+                  ></textarea>
+                </div>
+
+                {/* Row 4: Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3.5 px-6 rounded-xl bg-[#005fa3] hover:bg-[#004e85] text-white font-bold text-sm tracking-wide transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 group"
+                >
+                  <span>{loading ? 'Sending Message...' : 'Send Message'}</span>
+                  <Send className="w-4 h-4 fill-white text-white group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              </form>
             </div>
-          )}
-
-          {errorMsg && (
-            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                  FIRST NAME
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-xs text-[#0B192C] placeholder:text-slate-400 focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                  EMAIL ADDRESS
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  placeholder="training@yourdomain.lk"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-xs text-[#0B192C] placeholder:text-slate-400 focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none transition-all"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                SELECT PROGRAM OF INTEREST
-              </label>
-              <select
-                name="programOfInterest"
-                value={formData.programOfInterest}
-                onChange={handleChange}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-xs text-[#0B192C] focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none transition-all"
-              >
-                <option value="Innovation & Design Thinking Masterclass (Cohort 12)">
-                  Month: Innovation & Design Thinking Masterclass (Cohort 12)
-                </option>
-                <option value="Pre-Incubation Program on Startup Innovation (Cohort 08)">
-                  Pre-Incubation Program on Startup Innovation (Cohort 08)
-                </option>
-                <option value="Custom Corporate Innovation Sprint / Partner Workshop">
-                  Custom Corporate Innovation Sprint / Partner Workshop
-                </option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                MESSAGE (OPTIONAL)
-              </label>
-              <textarea
-                name="message"
-                rows="3"
-                placeholder="Share your goals or organization background..."
-                value={formData.message}
-                onChange={handleChange}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-xs text-[#0B192C] placeholder:text-slate-400 focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none transition-all resize-none"
-              ></textarea>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 px-6 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md cursor-pointer disabled:opacity-50"
-            >
-              {loading ? 'Submitting Expression...' : 'Submit Expression of Interest'}
-            </button>
-          </form>
+          </div>
         </div>
       </div>
     </section>

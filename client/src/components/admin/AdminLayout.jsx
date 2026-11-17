@@ -36,7 +36,6 @@ export default function AdminLayout() {
     { to: '/admin/workshops', label: 'Workshops', icon: 'biotech' },
     { to: '/admin/registrations', label: 'Program Registrations', icon: 'how_to_reg' },
     { to: '/admin/participants', label: 'Participants', icon: 'group' },
-    { to: '/admin/visits', label: 'Industry Visit Requests', icon: 'domain' },
     { to: '/admin/contact-messages', label: 'Contact Messages', icon: 'contact_support' },
     { to: '/admin/settings', label: 'Settings', icon: 'settings' },
   ];
@@ -174,20 +173,7 @@ export default function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#cce5ff]/50 text-xs font-semibold text-[#00476e]">
-              <span className="w-2 h-2 rounded-full bg-[#006398] animate-pulse"></span>
-              <span>Cohort 2025/Q2 Active</span>
-            </div>
-
-            <Link
-              to="/admin/workshops"
-              className="px-3.5 py-2 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">New Workshop</span>
-            </Link>
-
-            <div className="flex items-center gap-2.5 pl-2 sm:pl-3 border-l border-[#cbd5e1]">
+            <div className="flex items-center gap-2.5">
               <div className="text-right hidden md:block">
                 <span className="text-xs font-bold text-[#0B192C] block leading-tight">
                   {user?.name || 'Dilshan Perera'}

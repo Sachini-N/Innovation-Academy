@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../context/AuthContext';
@@ -26,12 +26,26 @@ import {
 
 export default function ProgramDetailPage() {
   const { slug } = useParams();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, openLoginModal, openRegisterModal } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Smooth scroll to target hash anchor (e.g. #register)
+  useEffect(() => {
+    if (location.hash && !loading) {
+      const targetId = location.hash.replace('#', '');
+      const el = document.getElementById(targetId);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      }
+    }
+  }, [location.hash, loading]);
 
   // Registration form state
   const [regForm, setRegForm] = useState({
@@ -545,19 +559,20 @@ export default function ProgramDetailPage() {
                     </div>
                     <span>Please log in or register your account to enroll in this program.</span>
                     <div className="grid grid-cols-2 gap-2 mt-2.5">
-                      <Link
-                        to="/login"
-                        state={{ returnUrl: `/programs/${slug}#register` }}
-                        className="py-1.5 text-center bg-[#0B192C] text-white font-bold rounded text-xs"
+                      <button
+                        type="button"
+                        onClick={openLoginModal}
+                        className="py-1.5 text-center bg-[#0B192C] hover:bg-[#1e293b] text-white font-bold rounded text-xs transition-colors cursor-pointer"
                       >
                         Login
-                      </Link>
-                      <Link
-                        to="/register"
-                        className="py-1.5 text-center bg-[#ba1a1a] text-white font-bold rounded text-xs"
+                      </button>
+                      <button
+                        type="button"
+                        onClick={openRegisterModal}
+                        className="py-1.5 text-center bg-[#ba1a1a] hover:bg-[#93000a] text-white font-bold rounded text-xs transition-colors cursor-pointer"
                       >
                         Register
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 )}
