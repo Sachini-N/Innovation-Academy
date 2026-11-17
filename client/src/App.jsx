@@ -60,12 +60,11 @@ export default function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<DashboardOverview />} />
+            <Route index element={<Navigate to="profile" replace />} />
+            <Route path="profile" element={<ProfilePage />} />
             <Route path="programs" element={<MyPrograms />} />
             <Route path="workshops" element={<MyWorkshops />} />
-            <Route path="visits" element={<MyVisitRequests />} />
-            <Route path="notifications" element={<NotificationsPage />} />
-            <Route path="profile" element={<ProfilePage />} />
+            <Route path="*" element={<Navigate to="profile" replace />} />
           </Route>
 
           {/* Admin Operations Intelligence Portal (Protected, Admin Only) */}

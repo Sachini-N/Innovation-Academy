@@ -26,12 +26,9 @@ export default function ParticipantLayout() {
   };
 
   const navItems = [
-    { to: '/participant', label: 'Dashboard', icon: 'space_dashboard', end: true },
+    { to: '/participant/profile', label: 'My Profile & Account', icon: 'person' },
     { to: '/participant/programs', label: 'My Programs', icon: 'school' },
     { to: '/participant/workshops', label: 'My Workshops', icon: 'biotech' },
-    { to: '/participant/visits', label: 'My Visit Requests', icon: 'domain' },
-    { to: '/participant/notifications', label: 'Notifications', icon: 'notifications' },
-    { to: '/participant/profile', label: 'My Profile', icon: 'person' },
   ];
 
   return (
@@ -157,15 +154,8 @@ export default function ParticipantLayout() {
 
           <div className="flex items-center gap-3">
             <Link
-              to="/participant/notifications"
-              className="relative p-2 rounded-lg text-[#44474c] hover:bg-[#eaedff] transition-colors"
-              title="Notifications"
-            >
-              <span className="material-symbols-outlined text-[22px]">notifications</span>
-            </Link>
-            <Link
               to="/participant/profile"
-              className="flex items-center gap-2 pl-3 border-l border-[#cbd5e1]"
+              className="flex items-center gap-2 pl-3"
             >
               <div className="w-8 h-8 rounded-full bg-[#006398] text-white flex items-center justify-center font-bold text-xs">
                 {user?.name?.charAt(0) || 'U'}

@@ -169,18 +169,16 @@ export default function Navbar() {
 
                     {/* Navigation Items */}
                     <div className="py-1">
-                      <Link
-                        to={isAdmin ? '/admin' : '/participant'}
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors"
-                      >
-                        {isAdmin ? (
+                      {isAdmin && (
+                        <Link
+                          to="/admin"
+                          onClick={() => setProfileMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors"
+                        >
                           <Shield className="w-4 h-4 text-[#006398]" />
-                        ) : (
-                          <LayoutDashboard className="w-4 h-4 text-[#006398]" />
-                        )}
-                        <span>{isAdmin ? 'Admin Portal' : 'My Dashboard'}</span>
-                      </Link>
+                          <span>Admin Operations Portal</span>
+                        </Link>
+                      )}
 
                       <Link
                         to={isAdmin ? '/admin/settings' : '/participant/profile'}
@@ -323,18 +321,16 @@ export default function Navbar() {
 
                 {/* Profile Links */}
                 <div className="space-y-1">
-                  <Link
-                    to={isAdmin ? '/admin' : '/participant'}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#eaedff] rounded-lg"
-                  >
-                    {isAdmin ? (
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#eaedff] rounded-lg"
+                    >
                       <Shield className="w-4 h-4 text-[#006398]" />
-                    ) : (
-                      <LayoutDashboard className="w-4 h-4 text-[#006398]" />
-                    )}
-                    <span>{isAdmin ? 'Admin Portal' : 'My Dashboard'}</span>
-                  </Link>
+                      <span>Admin Operations Portal</span>
+                    </Link>
+                  )}
 
                   <Link
                     to={isAdmin ? '/admin/settings' : '/participant/profile'}
