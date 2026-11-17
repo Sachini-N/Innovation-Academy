@@ -7,6 +7,7 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import ProgramsPage from './pages/ProgramsPage';
 import ProgramDetailPage from './pages/ProgramDetailPage';
+import WorkshopsPage from './pages/WorkshopsPage';
 import WorkshopDetailPage from './pages/WorkshopDetailPage';
 import IndustryVisitsPage from './pages/IndustryVisitsPage';
 import LoginPage from './pages/LoginPage';
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/programs" element={<ProgramsPage />} />
           <Route path="/programs/:slug" element={<ProgramDetailPage />} />
+          <Route path="/workshops" element={<WorkshopsPage />} />
           <Route
             path="/programs/:programSlug/workshops/:workshopSlug"
             element={<WorkshopDetailPage />}

@@ -1,13 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Menu, X, User, LogOut, LayoutDashboard, Shield } from 'lucide-react';
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  LayoutDashboard,
+  Shield,
+  ChevronDown,
+  BookOpen,
+  Calendar,
+} from 'lucide-react';
 
 export default function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleNavClick = (hash) => {
     setMobileMenuOpen(false);
@@ -47,7 +70,9 @@ export default function Navbar() {
           <nav className="hidden lg:flex items-center gap-8">
             <Link
               to="/"
-              className="text-[14px] font-semibold text-[#131b2e] hover:text-[#006398] transition-colors"
+              className={`text-[14px] font-semibold transition-colors ${
+                location.pathname === '/' ? 'text-[#006398]' : 'text-[#131b2e] hover:text-[#006398]'
+              }`}
             >
               Home
             </Link>
@@ -59,16 +84,20 @@ export default function Navbar() {
             </button>
             <Link
               to="/programs"
-              className="text-[14px] font-semibold text-[#44474c] hover:text-[#006398] transition-colors"
+              className={`text-[14px] font-semibold transition-colors ${
+                location.pathname.startsWith('/programs') ? 'text-[#006398]' : 'text-[#44474c] hover:text-[#006398]'
+              }`}
             >
               Programs
             </Link>
-            <button
-              onClick={() => handleNavClick('#workshops')}
-              className="text-[14px] font-semibold text-[#44474c] hover:text-[#006398] transition-colors"
+            <Link
+              to="/workshops"
+              className={`text-[14px] font-semibold transition-colors ${
+                location.pathname === '/workshops' ? 'text-[#006398]' : 'text-[#44474c] hover:text-[#006398]'
+              }`}
             >
               Workshops
-            </button>
+            </Link>
             <button
               onClick={() => handleNavClick('#contact')}
               className="text-[14px] font-semibold text-[#44474c] hover:text-[#006398] transition-colors"
@@ -77,29 +106,128 @@ export default function Navbar() {
             </button>
           </nav>
 
-          {/* Right Action Buttons */}
+          {/* Right Action Buttons / User Profile */}
           <div className="hidden lg:flex items-center gap-4">
             {isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                <Link
-                  to={isAdmin ? '/admin' : '/participant'}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0e1c2f] text-white hover:bg-[#1f2d42] transition-colors text-sm font-semibold shadow-sm"
+              <div className="relative" ref={profileRef}>
+                {/* Profile Pill Trigger Button */}
+                <button
+                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                  className="flex items-center gap-2.5 p-1.5 pl-2 pr-3 rounded-full border border-slate-200 hover:border-[#006398] bg-white hover:bg-slate-50 transition-all shadow-sm group cursor-pointer"
+                  aria-expanded={profileMenuOpen}
                 >
-                  {isAdmin ? <Shield className="w-4 h-4 text-[#5bb8fe]" /> : <LayoutDashboard className="w-4 h-4 text-[#5bb8fe]" />}
-                  <span>{isAdmin ? 'Admin Portal' : 'My Dashboard'}</span>
-                </Link>
-                <div className="flex items-center gap-2 pl-2 border-l border-[#cbd5e1]">
-                  <span className="text-xs font-medium text-[#44474c] max-w-[120px] truncate">
-                    {user?.name}
-                  </span>
-                  <button
-                    onClick={logout}
-                    title="Sign Out"
-                    className="p-1.5 rounded-lg text-[#75777d] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/40 transition-colors"
-                  >
-                    <LogOut className="w-4 h-4" />
-                  </button>
-                </div>
+                  {/* Avatar Circle */}
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#006398] to-[#0284c7] text-white flex items-center justify-center font-bold text-xs shadow-inner">
+                    {user?.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <span>
+                        {user?.name
+                          ? user.name
+                              .split(' ')
+                              .map((n) => n[0])
+                              .join('')
+                              .slice(0, 2)
+                              .toUpperCase()
+                          : 'U'}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Name & Role Text */}
+                  <div className="flex flex-col text-left">
+                    <span className="text-xs font-bold text-[#0B192C] group-hover:text-[#006398] transition-colors max-w-[140px] truncate leading-tight">
+                      {user?.name || 'My Profile'}
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-medium leading-none">
+                      {isAdmin ? 'Administrator' : 'Participant'}
+                    </span>
+                  </div>
+
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 text-slate-400 group-hover:text-[#006398] transition-transform duration-200 ${
+                      profileMenuOpen ? 'rotate-180 text-[#006398]' : ''
+                    }`}
+                  />
+                </button>
+
+                {/* Profile Dropdown Menu */}
+                {profileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-[#e2e8f0] shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    {/* User Info Header */}
+                    <div className="px-4 py-3 border-b border-slate-100 bg-[#faf8ff] rounded-t-2xl">
+                      <p className="text-xs font-bold text-[#0B192C] truncate">{user?.name}</p>
+                      <p className="text-[11px] text-slate-500 truncate mt-0.5">{user?.email}</p>
+                      <span className="inline-block mt-2 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#dbeafe] text-[#00476e]">
+                        {isAdmin ? 'TRACE Admin' : 'TRACE Participant'}
+                      </span>
+                    </div>
+
+                    {/* Navigation Items */}
+                    <div className="py-1">
+                      <Link
+                        to={isAdmin ? '/admin' : '/participant'}
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors"
+                      >
+                        {isAdmin ? (
+                          <Shield className="w-4 h-4 text-[#006398]" />
+                        ) : (
+                          <LayoutDashboard className="w-4 h-4 text-[#006398]" />
+                        )}
+                        <span>{isAdmin ? 'Admin Portal' : 'My Dashboard'}</span>
+                      </Link>
+
+                      <Link
+                        to={isAdmin ? '/admin/settings' : '/participant/profile'}
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors"
+                      >
+                        <User className="w-4 h-4 text-[#006398]" />
+                        <span>My Profile &amp; Account</span>
+                      </Link>
+
+                      {!isAdmin && (
+                        <>
+                          <Link
+                            to="/participant/programs"
+                            onClick={() => setProfileMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors"
+                          >
+                            <BookOpen className="w-4 h-4 text-[#006398]" />
+                            <span>My Enrolled Programs</span>
+                          </Link>
+                          <Link
+                            to="/participant/workshops"
+                            onClick={() => setProfileMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-[#eaedff] hover:text-[#006398] transition-colors"
+                          >
+                            <Calendar className="w-4 h-4 text-[#006398]" />
+                            <span>My Workshops</span>
+                          </Link>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Sign Out Action */}
+                    <div className="pt-1 border-t border-slate-100">
+                      <button
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#ba1a1a] hover:bg-red-50 transition-colors text-left cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4 text-[#ba1a1a]" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center gap-3">
@@ -155,12 +283,13 @@ export default function Navbar() {
           >
             Programs
           </Link>
-          <button
-            onClick={() => handleNavClick('#workshops')}
-            className="block w-full text-left px-3 py-2 rounded-md text-base font-semibold text-[#44474c] hover:bg-[#eaedff]"
+          <Link
+            to="/workshops"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-semibold text-[#44474c] hover:bg-[#eaedff]"
           >
             Workshops
-          </button>
+          </Link>
           <button
             onClick={() => handleNavClick('#contact')}
             className="block w-full text-left px-3 py-2 rounded-md text-base font-semibold text-[#44474c] hover:bg-[#eaedff]"
@@ -170,24 +299,85 @@ export default function Navbar() {
 
           <div className="pt-4 border-t border-[#e2e8f0] flex flex-col gap-2">
             {isAuthenticated ? (
-              <>
-                <Link
-                  to={isAdmin ? '/admin' : '/participant'}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2.5 text-center font-bold rounded-lg bg-[#0e1c2f] text-white"
-                >
-                  {isAdmin ? 'Admin Portal' : 'My Dashboard'} ({user?.name})
-                </Link>
+              <div className="space-y-3">
+                {/* Profile Identity Card */}
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-[#faf8ff] border border-slate-200">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#006398] to-[#0284c7] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                    {user?.name
+                      ? user.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')
+                          .slice(0, 2)
+                          .toUpperCase()
+                      : 'U'}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-bold text-[#0B192C] truncate">{user?.name}</span>
+                    <span className="text-xs text-slate-500 truncate">{user?.email}</span>
+                    <span className="text-[10px] font-bold text-[#006398] uppercase tracking-wider">
+                      {isAdmin ? 'Admin' : 'Participant'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Profile Links */}
+                <div className="space-y-1">
+                  <Link
+                    to={isAdmin ? '/admin' : '/participant'}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#eaedff] rounded-lg"
+                  >
+                    {isAdmin ? (
+                      <Shield className="w-4 h-4 text-[#006398]" />
+                    ) : (
+                      <LayoutDashboard className="w-4 h-4 text-[#006398]" />
+                    )}
+                    <span>{isAdmin ? 'Admin Portal' : 'My Dashboard'}</span>
+                  </Link>
+
+                  <Link
+                    to={isAdmin ? '/admin/settings' : '/participant/profile'}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#eaedff] rounded-lg"
+                  >
+                    <User className="w-4 h-4 text-[#006398]" />
+                    <span>My Profile &amp; Settings</span>
+                  </Link>
+
+                  {!isAdmin && (
+                    <>
+                      <Link
+                        to="/participant/programs"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#eaedff] rounded-lg"
+                      >
+                        <BookOpen className="w-4 h-4 text-[#006398]" />
+                        <span>My Enrolled Programs</span>
+                      </Link>
+                      <Link
+                        to="/participant/workshops"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#eaedff] rounded-lg"
+                      >
+                        <Calendar className="w-4 h-4 text-[#006398]" />
+                        <span>My Workshops</span>
+                      </Link>
+                    </>
+                  )}
+                </div>
+
                 <button
                   onClick={() => {
                     logout();
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full py-2 text-center text-sm font-semibold text-[#ba1a1a] hover:bg-[#ffdad6]/30 rounded-lg"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm font-semibold text-[#ba1a1a] hover:bg-red-50 rounded-lg text-left"
                 >
-                  Sign Out
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
                 </button>
-              </>
+              </div>
             ) : (
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <Link

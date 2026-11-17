@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import HeroSection from '../components/home/HeroSection';
@@ -12,6 +13,7 @@ export default function HomePage() {
   const [programs, setPrograms] = useState([]);
   const [workshops, setWorkshops] = useState([]);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,8 +22,12 @@ export default function HomePage() {
           programService.getPrograms().catch(() => ({ data: [] })),
           workshopService.getWorkshops().catch(() => ({ data: [] })),
         ]);
-        if (progRes.data) setPrograms(progRes.data);
-        if (workRes.data) setWorkshops(workRes.data);
+        if (progRes.data) {
+          setPrograms(Array.isArray(progRes.data) ? progRes.data : progRes.data.data || []);
+        }
+        if (workRes.data) {
+          setWorkshops(Array.isArray(workRes.data) ? workRes.data : workRes.data.data || []);
+        }
       } catch (err) {
         console.warn('Could not fetch homepage data:', err.message);
       } finally {
@@ -31,6 +37,19 @@ export default function HomePage() {
 
     fetchData();
   }, []);
+
+  // Handle smooth scroll when navigating to an anchor hash (e.g. #workshops, #about, #contact)
+  useEffect(() => {
+    if (location.hash) {
+      const targetId = location.hash.replace('#', '');
+      const el = document.getElementById(targetId);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      }
+    }
+  }, [location.hash]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#faf8ff]">

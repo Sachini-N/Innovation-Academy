@@ -96,6 +96,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/workshops" className="hover:text-white transition-colors">
+                  Workshops &amp; Masterclasses
+                </Link>
+              </li>
+              <li>
                 <Link to="/programs" className="hover:text-white transition-colors">
                   Industry Mentorship
                 </Link>

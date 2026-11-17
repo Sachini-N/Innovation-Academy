@@ -1,124 +1,102 @@
 import React from 'react';
-import { Target, Compass, CheckCircle2, Cpu, MapPin } from 'lucide-react';
+import { Eye, Flag, MapPin, ArrowRight } from 'lucide-react';
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-20 bg-white border-b border-[#e2e8f0]">
+    <section id="about" className="py-20 lg:py-28 bg-white border-b border-[#e2e8f0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Details (7 cols) */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e8f1fd] text-xs font-extrabold uppercase tracking-wider text-[#006398] w-fit">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+          {/* Left Column: Visual Campus Photo with Est. 2014 Card (5.5 cols) */}
+          <div className="lg:col-span-5 relative pr-0 sm:pr-4 pb-6 sm:pb-8">
+            {/* Main Rounded Image Container */}
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-100 group">
+              <img
+                src="/trace-about-team.jpg"
+                alt="TRACE Expert City Collaborative Innovation Lab"
+                className="w-full h-[380px] sm:h-[440px] lg:h-[480px] object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              {/* Bottom Dark Gradient Overlay for Text Readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none"></div>
+
+              {/* Bottom-Left Overlay Text */}
+              <div className="absolute bottom-6 left-6 z-10 text-white max-w-[280px]">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-sky-400">
+                  <MapPin className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                  <span>TRACE Expert City, Maradana</span>
+                </div>
+                <h4 className="text-base sm:text-lg font-extrabold text-white mt-1 leading-snug">
+                  Sri Lanka's Flagship Technology Precinct
+                </h4>
+              </div>
+            </div>
+
+            {/* Overlapping Floating "Est. 2014" Dark Navy Card (Bottom-Right) */}
+            <div className="absolute bottom-0 right-0 sm:-bottom-2 sm:-right-2 z-20 bg-[#0e1c2f] text-white p-5 sm:p-6 rounded-2xl shadow-2xl border border-white/10 max-w-[220px]">
+              <span className="text-2xl sm:text-3xl font-black text-[#5bb8fe] block tracking-tight">
+                Est. 2014
+              </span>
+              <p className="text-[11px] text-slate-300 leading-relaxed mt-1.5 font-medium">
+                Chartered to stimulate cross-sector industrial &amp; digital excellence.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Column: About Details, Vision & Mission (6.5 cols) */}
+          <div className="lg:col-span-7 flex flex-col gap-6 lg:pl-4">
+            {/* Pill Tag Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e8f1fd] text-xs font-extrabold uppercase tracking-wider text-[#006398] w-fit shadow-2xs">
               ABOUT TRACE SRI LANKA
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight leading-tight">
+            {/* Main Section Heading */}
+            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#0B192C] tracking-tight leading-[1.15]">
               Building Connections. <br />
               <span className="text-[#006398]">Empowering Innovation.</span>
             </h2>
 
-            <p className="text-base text-[#475569] leading-relaxed">
-              TRACE (<strong>Technologically Re-Awakening Culture of Excellence</strong>) was founded
-              to position Sri Lanka on high-value technology and innovative products. Located in
-              Maradana's historic TRACE Expert City, we foster deep collaboration between academia,
-              research sectors, ambitious technologists, and venture capital.
+            {/* Description Paragraph */}
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              TRACE (Technologically Re-Awakening Culture of Excellence) serves as Sri Lanka's
+              foremost national innovation catalyst. By bridging higher education, multinational
+              technology enterprises, venture capital institutions, and high-impact startups, we
+              orchestrate the intellectual and infrastructural conditions essential for sovereign
+              digital competitiveness.
             </p>
 
-            {/* Key Concept Callout Box */}
-            <div className="p-4 rounded-xl bg-[#f2f5fc] border border-[#dce6f8] flex items-start gap-3.5 shadow-2xs">
-              <div className="w-9 h-9 rounded-lg bg-[#006398] text-white flex items-center justify-center shrink-0 shadow-xs">
-                <Cpu className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398]">
-                  KEY CONCEPT: SRI LANKA'S FLAGSHIP TECHNOLOGY PRECINCT
-                </span>
-                <p className="text-xs sm:text-sm text-[#131b2e] font-medium mt-0.5">
-                  Cultivating ecosystem for enduring innovation, talent retainment, and high-growth ventures.
-                </p>
-              </div>
-            </div>
-
-            {/* Vision and Mission Cards */}
+            {/* Vision and Mission Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              {/* Vision */}
-              <div className="p-5 rounded-xl bg-[#faf8ff] border border-[#e2e8f0] flex flex-col gap-2.5 shadow-2xs">
-                <div className="w-8 h-8 rounded-lg bg-[#006398]/10 text-[#006398] flex items-center justify-center">
-                  <Compass className="w-4 h-4 text-[#006398]" />
+              {/* Vision Card */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#faf8ff] border border-slate-200/80 shadow-2xs flex flex-col gap-2.5 hover:border-[#006398]/30 transition-all">
+                <div className="w-9 h-9 rounded-xl bg-[#e8f1fd] text-[#006398] flex items-center justify-center shadow-2xs">
+                  <Eye className="w-5 h-5 text-[#006398]" />
                 </div>
-                <h3 className="font-bold text-base text-[#0B192C]">Our Vision</h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                  To transform Sri Lanka into a globally recognized innovation hub through tech ventures
-                  and high-impact invention.
+                <h3 className="font-extrabold text-base text-[#0B192C]">Our Vision</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  To transform Sri Lanka into a globally distinguished technological innovation powerhouse through sustainable knowledge economies.
                 </p>
               </div>
 
-              {/* Mission */}
-              <div className="p-5 rounded-xl bg-[#faf8ff] border border-[#e2e8f0] flex flex-col gap-2.5 shadow-2xs">
-                <div className="w-8 h-8 rounded-lg bg-[#006398]/10 text-[#006398] flex items-center justify-center">
-                  <Target className="w-4 h-4 text-[#006398]" />
+              {/* Mission Card */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#faf8ff] border border-slate-200/80 shadow-2xs flex flex-col gap-2.5 hover:border-[#006398]/30 transition-all">
+                <div className="w-9 h-9 rounded-xl bg-[#e8f1fd] text-[#006398] flex items-center justify-center shadow-2xs">
+                  <Flag className="w-5 h-5 text-[#006398]" />
                 </div>
-                <h3 className="font-bold text-base text-[#0B192C]">Our Mission</h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                  To empower individuals through hands-on deep-tech education, resources, and sustainable
-                  commercial incubation models.
+                <h3 className="font-extrabold text-base text-[#0B192C]">Our Mission</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Empower Sri Lankan human capital, stimulate deep-tech entrepreneurship, and provide frictionless pathways from idea formulation to global markets.
                 </p>
               </div>
             </div>
-          </div>
 
-          {/* Right Column: Expert City Overview Card (5 cols matching Stitch design) */}
-          <div className="lg:col-span-5">
-            <div className="rounded-2xl bg-gradient-to-br from-[#00476e] via-[#003d5f] to-[#0e1c2f] text-white p-7 sm:p-8 shadow-xl relative overflow-hidden border border-white/10">
-              <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-white/10 rounded-full blur-2xl"></div>
-
-              <div className="relative z-10 flex flex-col gap-5">
-                <div className="flex items-center justify-between pb-3 border-b border-white/20">
-                  <span className="text-[11px] uppercase font-extrabold tracking-widest text-[#93ccff]">
-                    CAMPUSES &amp; INFRASTRUCTURE
-                  </span>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/15 font-bold text-white border border-white/10">
-                    Bay 05, Maradana
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className="text-2xl font-extrabold text-white">TRACE Expert City</h3>
-                  <p className="text-xs sm:text-sm text-[#cce5ff] mt-2 leading-relaxed">
-                    Sri Lanka’s premier high-tech business cluster housing 15,000+ engineers,
-                    innovators, venture studios, and high-growth ventures.
-                  </p>
-                </div>
-
-                {/* 3 Dark Blue Pill rows directly matching Stitch visual */}
-                <div className="space-y-2.5 pt-2">
-                  <div className="p-3 rounded-xl bg-black/25 border border-white/10 flex items-center gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-[#5bb8fe] shrink-0" />
-                    <span className="text-xs text-white">
-                      <strong>15-Acre Former Warehouse</strong> to Colombo Tech City
-                    </span>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-black/25 border border-white/10 flex items-center gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-[#5bb8fe] shrink-0" />
-                    <span className="text-xs text-white">
-                      <strong>R&amp;D, Makerspace &amp; Angel Investors</strong> / Venture Capital
-                    </span>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-black/25 border border-white/10 flex items-center gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-[#5bb8fe] shrink-0" />
-                    <span className="text-xs text-white">
-                      <strong>Facilitating Deep-Tech &amp; High-Growth</strong> Startups
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-[#cce5ff] leading-relaxed flex items-center gap-2 mt-1">
-                  <MapPin className="w-3.5 h-3.5 text-[#5bb8fe] shrink-0" />
-                  <span>Bay 05, FoodMarket Complex, Maradana, Colombo 10, Sri Lanka.</span>
-                </div>
-              </div>
+            {/* Bottom Link with Arrow */}
+            <div className="pt-2">
+              <a
+                href="#programs"
+                className="inline-flex items-center gap-2 text-xs font-bold text-[#006398] hover:text-[#0284c7] transition-colors group"
+              >
+                <span>Explore Academic &amp; Industry Tracks</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </a>
             </div>
           </div>
         </div>
