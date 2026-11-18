@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { programService, uploadService } from '../../services/api';
 import { handleImageError } from '../../utils/imageUrl';
+import { toast } from '../../context/ToastContext';
 import {
   School,
   Edit,
@@ -191,25 +192,25 @@ export default function AdminPrograms() {
         const targetId = formData.id || formData._id || formData.slug;
         const res = await programService.updateProgram(targetId, formData);
         if (res.success) {
-          setSaveSuccess(`Program "${formData.title}" updated successfully!`);
+          toast.success(`Program "${formData.title}" updated successfully!`);
           setModalOpen(false);
           await fetchPrograms();
         } else {
-          setSaveError(res.message || 'Failed to update program');
+          toast.error(res.message || 'Failed to update program');
         }
       } else {
         const res = await programService.createProgram(formData);
         if (res.success) {
-          setSaveSuccess(`Program "${formData.title}" created successfully!`);
+          toast.success(`Program "${formData.title}" created successfully!`);
           setModalOpen(false);
           await fetchPrograms();
         } else {
-          setSaveError(res.message || 'Failed to create program');
+          toast.error(res.message || 'Failed to create program');
         }
       }
     } catch (err) {
       console.error('Failed to save program:', err);
-      setSaveError(err.response?.data?.message || err.message || 'Failed to save program changes');
+      toast.error(err.response?.data?.message || err.message || 'Failed to save program changes');
     } finally {
       setIsSaving(false);
     }
@@ -219,12 +220,12 @@ export default function AdminPrograms() {
     try {
       const res = await programService.deleteProgram(id);
       if (res.success) {
-        setSaveSuccess('Program deleted successfully');
+        toast.success('Program deleted successfully');
         setDeleteConfirmId(null);
         fetchPrograms();
       }
     } catch (err) {
-      setSaveError(err.response?.data?.message || 'Failed to delete program');
+      toast.error(err.response?.data?.message || 'Failed to delete program');
     }
   };
 
@@ -255,36 +256,6 @@ export default function AdminPrograms() {
           <span>Create Program</span>
         </button>
       </div>
-
-      {saveSuccess && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between gap-2 animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>{saveSuccess}</span>
-          </div>
-          <button
-            onClick={() => setSaveSuccess('')}
-            className="p-1 rounded-md text-emerald-600 hover:bg-emerald-100"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
-      {saveError && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between gap-2 animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-            <span>{saveError}</span>
-          </div>
-          <button
-            onClick={() => setSaveError('')}
-            className="p-1 rounded-md text-red-600 hover:bg-red-100"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
 
       {/* Programs List */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

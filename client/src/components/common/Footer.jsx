@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Globe, Lightbulb } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Facebook, Instagram, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -22,41 +22,46 @@ export default function Footer() {
               sustainable ventures through deep-tech, venture kitchens, and hands-on industrial entrepreneurship.
             </p>
 
-            {/* Social Icons matching Stitch design */}
+            {/* Social Icons linked to official channels */}
             <div className="flex items-center gap-3 pt-2">
               <a
-                href="https://facebook.com"
+                href="https://web.facebook.com/TRACE.SL.info"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#1877F2] flex items-center justify-center text-white/80 hover:text-white transition-all shadow-sm"
                 aria-label="Facebook"
+                title="TRACE Sri Lanka on Facebook"
               >
-                <span className="text-xs font-bold">f</span>
+                <Facebook className="w-4 h-4" />
               </a>
               <a
-                href="https://twitter.com"
+                href="https://web.facebook.com/TRACE.SL.info"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
-                aria-label="Twitter"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] flex items-center justify-center text-white/80 hover:text-white transition-all shadow-sm"
+                aria-label="Instagram"
+                title="TRACE Sri Lanka on Instagram"
               >
-                <span className="text-xs font-bold">𝕏</span>
+                <Instagram className="w-4 h-4" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.instagram.com/trace_srilanka/"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#0A66C2] flex items-center justify-center text-white/80 hover:text-white transition-all shadow-sm"
                 aria-label="LinkedIn"
+                title="TRACE Sri Lanka on LinkedIn"
               >
-                <span className="text-xs font-bold">in</span>
+                <Linkedin className="w-4 h-4" />
               </a>
+
               <a
-                href="https://tracesrilanka.lk"
+                href="https://tracesrilanka.lk/"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-colors"
-                aria-label="Website"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#006398] flex items-center justify-center text-white/80 hover:text-white transition-all shadow-sm"
+                aria-label="Official Website"
+                title="TRACE Official Website"
               >
                 <Globe className="w-4 h-4" />
               </a>
@@ -102,36 +107,41 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Campus Location (3 cols) */}
+          {/* Contact Details (3 cols) */}
           <div className="lg:col-span-3 flex flex-col gap-3">
             <h4 className="text-xs uppercase tracking-widest font-bold text-[#5bb8fe]">
-              CAMPUS LOCATION
+              CONTACT
             </h4>
-            <div className="space-y-2.5 text-xs text-[#bac7e1] mt-1">
+            <div className="space-y-3 text-xs text-[#bac7e1] mt-1">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#5bb8fe] shrink-0 mt-0.5" />
-                <span>
-                  <strong>TRACE Expert City</strong>
+                <span className="leading-relaxed">
+                  <strong className="text-white block font-bold text-sm mb-0.5">
+                    TRACE Expert City
+                  </strong>
+                  Maradana,
                   <br />
-                  Bay 05, FoodMarket Complex,
-                  <br />
-                  Maradana, Colombo 10,
-                  <br />
-                  Sri Lanka.
+                  Colombo 10.
                 </span>
               </div>
 
               <div className="flex items-center gap-2.5 pt-1">
                 <Phone className="w-4 h-4 text-[#5bb8fe] shrink-0" />
-                <a href="tel:+94701510444" className="hover:text-white transition-colors">
-                  070 151 0444
+                <a
+                  href="tel:+94701800786"
+                  className="hover:text-white transition-colors font-medium text-sm text-[#e2e8f0]"
+                >
+                  +94 70 670 6791
                 </a>
               </div>
 
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#5bb8fe] shrink-0" />
-                <a href="mailto:projects@trace.lk" className="hover:text-white transition-colors">
-                  projects@trace.lk
+                <a
+                  href="mailto:connect@trace.lk"
+                  className="hover:text-white transition-colors font-medium text-[#e2e8f0]"
+                >
+                  connect@trace.lk
                 </a>
               </div>
             </div>
@@ -142,10 +152,6 @@ export default function Footer() {
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
           <p>© 2026 TRACE Sri Lanka (TRACE Innovation Academy). Powered by T2T. All Rights Reserved.</p>
           <div className="flex items-center gap-5">
-            <Link to="/industry-visits" className="hover:text-white transition-colors">
-              Host Industry Visits
-            </Link>
-            <span>•</span>
             <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
             <span>•</span>
             <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>

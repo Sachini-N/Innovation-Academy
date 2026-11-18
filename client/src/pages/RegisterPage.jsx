@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../context/AuthContext';
+import { toast } from '../context/ToastContext';
 import { Lock, Mail, User, Building, Phone, AlertCircle, ArrowRight } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -29,11 +30,13 @@ export default function RegisterPage() {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
 
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters');
+      toast.error('Password must be at least 6 characters');
       return;
     }
 
@@ -50,10 +53,13 @@ export default function RegisterPage() {
       });
 
       if (res.success) {
+        toast.success('Account created successfully! Welcome to TRACE.');
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to register account');
+      const msg = err.response?.data?.message || 'Failed to register account';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

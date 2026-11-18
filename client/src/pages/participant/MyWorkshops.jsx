@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { userService } from '../../services/api';
+import { handleImageError } from '../../utils/imageUrl';
 import {
   Calendar,
   Clock,
@@ -12,6 +13,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Filter,
+  ArrowRight,
+  Info,
 } from 'lucide-react';
 
 export default function MyWorkshops() {
@@ -106,96 +109,162 @@ export default function MyWorkshops() {
             return (
               <div
                 key={w._id}
-                className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
+                className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm hover:shadow-lg hover:border-[#cbd5e1] transition-all duration-200 flex flex-col justify-between group overflow-hidden"
               >
                 <div>
-                  {/* Top Badges */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#dae2fd] text-[#00476e] truncate max-w-[180px]">
+                  {/* Cover Image / Flyer if uploaded - Flush edge-to-edge */}
+                  {w.coverImage && (
+                    <Link
+                      to={`/programs/${w.programSlug}/workshops/${w.slug}`}
+                      className="block -mt-6 -mx-6 mb-4 overflow-hidden rounded-t-2xl border-b border-slate-100 bg-white"
+                    >
+                      <img
+                        src={w.coverImage}
+                        alt={w.title}
+                        className="w-full h-auto block object-contain group-hover:scale-[1.01] transition-transform duration-300"
+                        onError={handleImageError}
+                      />
+                    </Link>
+                  )}
+
+                  {/* Header: Track Pill & Status Badges */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <span
+                      className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-blue-100/70 text-[#00476e] border border-blue-200/60 max-w-[190px] truncate"
+                      title={w.programTitle}
+                    >
                       {w.programTitle}
                     </span>
 
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        isOngoing
-                          ? 'bg-amber-100 text-amber-800'
-                          : isCompleted
-                          ? 'bg-slate-100 text-slate-700'
-                          : 'bg-emerald-100 text-emerald-800'
-                      }`}
-                    >
-                      {w.status}
-                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/70 whitespace-nowrap">
+                        {isOnline ? (
+                          <>
+                            <Video className="w-3 h-3 text-purple-600" /> Online
+                          </>
+                        ) : (
+                          <>
+                            <MapPin className="w-3 h-3 text-emerald-600" />
+                            {w.venue ? w.venue.split(',')[0].trim() : 'Bay 05'}
+                          </>
+                        )}
+                      </span>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${
+                          isOngoing
+                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                            : isCompleted
+                            ? 'bg-slate-100 text-slate-600 border border-slate-200'
+                            : 'bg-emerald-100/70 text-emerald-800 border border-emerald-200'
+                        }`}
+                      >
+                        {w.status || 'Upcoming'}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-base font-bold text-[#0B192C] group-hover:text-[#006398] transition-colors leading-snug line-clamp-2">
-                    {w.title}
-                  </h3>
-
-                  <p className="text-xs text-[#44474c] mt-2 line-clamp-3 leading-relaxed">
-                    {w.description}
-                  </p>
-
-                  {/* Metadata */}
-                  <div className="mt-5 space-y-2 pt-4 border-t border-[#e2e8f0] text-xs text-[#44474c]">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-3.5 h-3.5 text-[#006398] shrink-0" />
-                      <span className="font-semibold text-[#131b2e]">{w.date}</span>
-                      <span className="text-[#75777d]">({w.startTime} – {w.endTime})</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {isOnline ? (
-                        <Video className="w-3.5 h-3.5 text-[#006398] shrink-0" />
-                      ) : (
-                        <MapPin className="w-3.5 h-3.5 text-[#006398] shrink-0" />
-                      )}
-                      <span className="truncate">{isOnline ? 'Online Google Meet' : w.venue}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <User className="w-3.5 h-3.5 text-[#006398] shrink-0" />
-                      <span className="truncate font-medium text-[#131b2e]">{w.speakerName}</span>
-                    </div>
-                  </div>
-
-                  {/* Physical joining notes if available */}
-                  {!isOnline && w.additionalInstructions && (
-                    <div className="mt-3 p-2.5 rounded-lg bg-[#faf8ff] border border-[#e2e8f0] text-[11px] text-[#44474c]">
-                      <strong>Note:</strong> {w.additionalInstructions}
-                    </div>
-                  )}
-                </div>
-
-                {/* Bottom Actions */}
-                <div className="mt-6 pt-4 border-t border-[#e2e8f0] flex items-center gap-2">
                   <Link
                     to={`/programs/${w.programSlug}/workshops/${w.slug}`}
-                    className="flex-1 py-2 rounded-lg border border-[#cbd5e1] hover:border-[#006398] text-[#0B192C] font-bold text-xs uppercase tracking-wider text-center transition-colors"
+                    className="block group-hover:text-[#006398] transition-colors"
                   >
-                    View Details
+                    <h3 className="text-base sm:text-lg font-bold text-[#0B192C] leading-snug line-clamp-2 mt-1">
+                      {w.title}
+                    </h3>
                   </Link>
 
-                  {isCompleted ? (
-                    <span className="px-3 py-2 rounded-lg bg-slate-100 text-slate-500 font-bold text-xs uppercase tracking-wider text-center cursor-default">
-                      Completed
-                    </span>
-                  ) : isOnline && w.meetingLink ? (
-                    <a
-                      href={w.meetingLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="px-4 py-2 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1 shadow-sm transition-colors shrink-0"
-                    >
-                      <Video className="w-3.5 h-3.5" />
-                      <span>Join</span>
-                    </a>
-                  ) : (
-                    <span className="px-3 py-2 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-xs tracking-wider text-center">
-                      Physical
-                    </span>
+                  {/* Description */}
+                  {w.description && (
+                    <p className="text-xs text-slate-500 leading-relaxed mt-2 line-clamp-2 whitespace-pre-line">
+                      {w.description}
+                    </p>
                   )}
+
+                  {/* Structured Details: Date, Time, Venue, Facilitator */}
+                  <div className="mt-4 pt-3.5 border-t border-slate-200/80 space-y-2 text-xs">
+                    {/* Date & Time Row */}
+                    <div className="flex items-center gap-2.5 text-slate-700">
+                      <div className="w-6 h-6 rounded-md bg-blue-50 text-[#006398] flex items-center justify-center shrink-0">
+                        <Calendar className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                        <span className="font-bold text-slate-900">{w.date}</span>
+                        {(w.startTime || w.endTime) && (
+                          <span className="text-slate-500 text-[11px] font-medium flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-[#006398] shrink-0" />
+                            <span>{w.startTime}{w.endTime ? ` – ${w.endTime}` : ''}</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Venue / Location Row */}
+                    <div className="flex items-center gap-2.5 text-slate-600">
+                      <div className="w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                        <MapPin className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="truncate font-medium text-slate-700">
+                        {isOnline ? 'Online Google Meet' : (w.venue || 'TRACE Expert City, Bay 05, Maradana')}
+                      </span>
+                    </div>
+
+                    {/* Facilitator / Speaker Row */}
+                    {w.speakerName && (
+                      <div className="flex items-center gap-2.5 text-slate-600">
+                        <div className="w-6 h-6 rounded-md bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
+                          <User className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="truncate">
+                          <span className="text-slate-400 text-[11px] mr-1">Facilitator:</span>
+                          <span className="font-semibold text-slate-800">{w.speakerName}</span>
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Physical Note / Additional Instructions if present */}
+                    {w.additionalInstructions && (
+                      <div className="mt-2.5 p-2.5 rounded-xl bg-blue-50/70 border border-blue-100 text-[11px] text-slate-700 flex items-start gap-2">
+                        <Info className="w-3.5 h-3.5 text-[#006398] shrink-0 mt-0.5" />
+                        <span className="leading-snug">
+                          <strong className="text-slate-900 font-bold">Note:</strong> {w.additionalInstructions}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Bottom Action Footer */}
+                <div className="mt-5 pt-3.5 border-t border-slate-200/80 flex items-center justify-between gap-3">
+                  <div>
+                    {isCompleted ? (
+                      <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold border border-slate-200">
+                        Session Completed
+                      </span>
+                    ) : isOnline && w.meetingLink ? (
+                      <a
+                        href={w.meetingLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-colors"
+                      >
+                        <Video className="w-3.5 h-3.5" />
+                        <span>Join</span>
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/70">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Attendance Unlocked</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <Link
+                    to={`/programs/${w.programSlug}/workshops/${w.slug}`}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold transition-all shadow-sm hover:shadow shrink-0"
+                  >
+                    <span>View Details</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
               </div>
             );

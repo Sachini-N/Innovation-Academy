@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { userService } from '../../services/api';
+import { handleImageError } from '../../utils/imageUrl';
 import {
   School,
   FlaskConical,
@@ -227,27 +228,41 @@ export default function DashboardOverview() {
                 {upcomingWorkshops.slice(0, 3).map((w) => (
                   <div
                     key={w._id}
-                    className="p-4 rounded-xl bg-[#faf8ff] border border-[#e2e8f0] hover:border-[#cbd5e1] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="p-4 rounded-xl bg-[#faf8ff] border border-[#e2e8f0] hover:border-[#cbd5e1] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                   >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#dae2fd] text-[#00476e]">
-                          {w.programTitle}
-                        </span>
-                        <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                          Unlocked
-                        </span>
-                      </div>
-                      <h4 className="text-sm font-bold text-[#0B192C]">{w.title}</h4>
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-[#75777d]">
-                        <span className="flex items-center gap-1 text-[#131b2e] font-medium">
-                          <Calendar className="w-3.5 h-3.5 text-[#006398]" />
-                          {w.date} ({w.startTime})
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <User className="w-3.5 h-3.5" />
-                          {w.speakerName}
-                        </span>
+                    <div className="flex items-center gap-3.5 flex-1 min-w-0">
+                      {w.coverImage && (
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden bg-white border border-slate-200 shrink-0">
+                          <img
+                            src={w.coverImage}
+                            alt={w.title}
+                            className="w-full h-full object-contain"
+                            onError={handleImageError}
+                          />
+                        </div>
+                      )}
+                      <div className="space-y-1 min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#dae2fd] text-[#00476e] truncate max-w-[160px]">
+                            {w.programTitle}
+                          </span>
+                          <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                            Unlocked
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-[#0B192C] truncate">{w.title}</h4>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-[#75777d]">
+                          <span className="flex items-center gap-1 text-[#131b2e] font-medium">
+                            <Calendar className="w-3.5 h-3.5 text-[#006398]" />
+                            {w.date} {w.startTime ? `(${w.startTime})` : ''}
+                          </span>
+                          {w.speakerName && (
+                            <span className="flex items-center gap-1">
+                              <User className="w-3.5 h-3.5" />
+                              {w.speakerName}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
 

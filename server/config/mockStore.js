@@ -527,33 +527,8 @@ class MockStore {
       },
     ];
 
-    // 7. Notifications
-    this.notifications = [
-      {
-        _id: '664f70000000000000000001',
-        id: '664f70000000000000000001',
-        userId: '664f10000000000000000002',
-        title: 'Program Registration Confirmed',
-        message:
-          'Welcome to TRACE Innovation Academy! You are officially enrolled in the Innovation & Design Thinking Masterclass. All program workshops are now unlocked on your dashboard.',
-        type: 'success',
-        link: '/participant/workshops',
-        read: false,
-        createdAt: new Date(),
-      },
-      {
-        _id: '664f70000000000000000002',
-        id: '664f70000000000000000002',
-        userId: null,
-        title: 'Bay 05 Lab Access Hours Extended',
-        message:
-          'TRACE Maker Space and Sensor Labs in Bay 05 are now open until 09:00 PM on weekdays for all registered cohort members.',
-        type: 'info',
-        link: '/participant/workshops',
-        read: false,
-        createdAt: new Date(),
-      },
-    ];
+    // 7. Notifications (Empty by default - real notifications only)
+    this.notifications = [];
   }
 }
 

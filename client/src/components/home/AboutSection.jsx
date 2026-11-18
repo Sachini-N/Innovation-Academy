@@ -5,34 +5,34 @@ export default function AboutSection() {
   return (
     <section id="about" className="py-20 lg:py-28 bg-white border-b border-[#e2e8f0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
-          {/* Left Column: Visual Campus Photo (5 cols) */}
-          <div className="lg:col-span-5 relative">
-            {/* Main Rounded Image Container */}
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-100 group">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          {/* Left Column: Enlarged Visual Campus Photo (6 cols) */}
+          <div className="lg:col-span-6 relative">
+            {/* Main Rounded Image Container (Enlarged) */}
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-100 group bg-slate-900">
               <img
-                src="/trace-about-team.jpg"
-                alt="TRACE Expert City Collaborative Innovation Lab"
-                className="w-full h-[380px] sm:h-[440px] lg:h-[480px] object-cover group-hover:scale-105 transition-transform duration-500"
+                src="/trace-expert-city.webp"
+                alt="TRACE Expert City Maradana Innovation Precinct"
+                className="w-full h-[420px] sm:h-[480px] lg:h-[530px] object-cover object-center group-hover:scale-105 transition-transform duration-500"
               />
-              {/* Bottom Dark Gradient Overlay for Text Readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none"></div>
+              {/* Subtle Bottom Gradient for High Clarity & Sharpness */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent pointer-events-none"></div>
 
               {/* Bottom-Left Overlay Text */}
-              <div className="absolute bottom-6 left-6 z-10 text-white max-w-[280px]">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-sky-400">
-                  <MapPin className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+              <div className="absolute bottom-6 left-6 right-6 z-10 text-white">
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-xs font-bold text-sky-300 mb-2 shadow-sm">
+                  <MapPin className="w-4 h-4 text-sky-400 shrink-0" />
                   <span>TRACE Expert City, Maradana</span>
                 </div>
-                <h4 className="text-base sm:text-lg font-extrabold text-white mt-1 leading-snug">
+                <h4 className="text-lg sm:text-xl font-extrabold text-white leading-snug drop-shadow-md">
                   Sri Lanka's Flagship Technology Precinct
                 </h4>
               </div>
             </div>
           </div>
 
-          {/* Right Column: About Details, Vision & Mission (6.5 cols) */}
-          <div className="lg:col-span-7 flex flex-col gap-6 lg:pl-4">
+          {/* Right Column: About Details, Vision & Mission (6 cols) */}
+          <div className="lg:col-span-6 flex flex-col gap-6 lg:pl-2">
             {/* Pill Tag Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e8f1fd] text-xs font-extrabold uppercase tracking-wider text-[#006398] w-fit shadow-2xs">
               ABOUT TRACE SRI LANKA

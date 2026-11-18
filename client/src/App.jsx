@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Public Pages
@@ -37,9 +38,10 @@ import AuthModal from './components/auth/AuthModal';
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AuthModal />
-        <Routes>
+      <ToastProvider>
+        <Router>
+          <AuthModal />
+          <Routes>
           {/* Public Website Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/programs" element={<ProgramsPage />} />
@@ -66,6 +68,7 @@ export default function App() {
             <Route path="profile" element={<ProfilePage />} />
             <Route path="programs" element={<MyPrograms />} />
             <Route path="workshops" element={<MyWorkshops />} />
+            <Route path="notifications" element={<NotificationsPage />} />
             <Route path="*" element={<Navigate to="profile" replace />} />
           </Route>
 
@@ -92,7 +95,8 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
-    </AuthProvider>
+    </ToastProvider>
+  </AuthProvider>
   );
 }
 

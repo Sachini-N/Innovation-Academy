@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { registrationService, programService } from '../../services/api';
+import { toast } from '../../context/ToastContext';
 import {
   Download,
   Search,
@@ -53,14 +54,13 @@ export default function AdminRegistrations() {
     try {
       const res = await registrationService.updateStatus(id, newStatus);
       if (res.success) {
-        setActionMsg(`Registration status changed to "${newStatus}"`);
+        toast.success(`Registration status changed to "${newStatus}"`);
         setRegistrations(
           registrations.map((r) => (r._id === id ? { ...r, status: newStatus } : r))
         );
-        setTimeout(() => setActionMsg(''), 3000);
       }
     } catch (err) {
-      alert('Failed to update registration status');
+      toast.error(err.response?.data?.message || 'Failed to update registration status');
     }
   };
 
@@ -68,17 +68,16 @@ export default function AdminRegistrations() {
     try {
       const res = await registrationService.deleteRegistration(id);
       if (res.success) {
-        setActionMsg('Registration record deleted successfully');
+        toast.success('Registration record deleted successfully');
         setRegistrations((prev) =>
           prev.filter((r) => r._id !== id && r.id !== id && r.referenceNumber !== id)
         );
         setDeleteConfirmId(null);
-        setTimeout(() => setActionMsg(''), 3000);
       } else {
-        alert(res.message || 'Failed to delete registration');
+        toast.error(res.message || 'Failed to delete registration');
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete registration');
+      toast.error(err.response?.data?.message || 'Failed to delete registration');
     }
   };
 
@@ -147,13 +146,6 @@ export default function AdminRegistrations() {
           <span>Export Roster (CSV)</span>
         </button>
       </div>
-
-      {actionMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span>{actionMsg}</span>
-        </div>
-      )}
 
       {/* Filter and Search Ribbon */}
       <div className="p-4 bg-white rounded-2xl border border-[#e2e8f0] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">

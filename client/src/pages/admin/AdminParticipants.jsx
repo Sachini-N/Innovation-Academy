@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { userService } from '../../services/api';
+import { toast } from '../../context/ToastContext';
 import { Users, Search, Mail, Phone, Building, CheckCircle2, Award, Trash2, X, AlertCircle } from 'lucide-react';
 
 export default function AdminParticipants() {
@@ -31,17 +32,16 @@ export default function AdminParticipants() {
     try {
       const res = await userService.deleteParticipant(id);
       if (res.success) {
-        setActionMsg('Participant removed successfully');
+        toast.success('Participant removed successfully');
         setParticipants((prev) =>
           prev.filter((p) => p._id !== id && p.id !== id && p.email !== id)
         );
         setDeleteConfirmId(null);
-        setTimeout(() => setActionMsg(''), 3000);
       } else {
-        alert(res.message || 'Failed to delete participant');
+        toast.error(res.message || 'Failed to delete participant');
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete participant');
+      toast.error(err.response?.data?.message || 'Failed to delete participant');
     }
   };
 
@@ -73,18 +73,6 @@ export default function AdminParticipants() {
           </p>
         </div>
       </div>
-
-      {actionMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span>{actionMsg}</span>
-          </div>
-          <button onClick={() => setActionMsg('')} className="text-emerald-700">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
 
       {/* Search */}
       <div className="p-4 bg-white rounded-2xl border border-[#e2e8f0] shadow-sm flex items-center justify-between">

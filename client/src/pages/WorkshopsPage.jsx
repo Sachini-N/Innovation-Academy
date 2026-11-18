@@ -91,16 +91,15 @@ export default function WorkshopsPage() {
       <main className="flex-1 py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="px-3.5 py-1 rounded-full bg-[#eaedff] text-xs font-black uppercase tracking-wider text-[#006398] mb-3 inline-block">
-              TRACE ACADEMIC & SPRINT CATALOG
+              TRACE WORKSHOPS
             </span>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0B192C] tracking-tight">
               Innovation Workshops & Masterclasses
             </h1>
-            <p className="text-sm sm:text-base text-[#44474c] mt-3 leading-relaxed">
-              Interactive hands-on sessions engineered to complement academic foundations with deep-tech prototyping,
-              human-centered design thinking, and high-growth venture validation at TRACE Expert City Bay 05.
+            <p className="text-sm sm:text-base text-[#44474c] mt-3">
+              Hands-on innovation masterclasses and workshops at TRACE Expert City.
             </p>
           </div>
 
@@ -274,25 +273,28 @@ export default function WorkshopsPage() {
                       )}
 
                       {/* Top Header: Parent Program Badge & Status Badge */}
-                      <div className="flex items-center justify-between gap-2 mb-3.5">
-                        <span className="px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-wider bg-[#dbeafe] text-[#00476e]">
+                      <div className="flex flex-wrap items-center justify-between gap-2 mb-3.5">
+                        <span
+                          className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-blue-100/70 text-[#00476e] border border-blue-200/60 max-w-[190px] truncate"
+                          title={pBadge}
+                        >
                           {pBadge}
                         </span>
 
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 shrink-0">
                           {w.isOnline ? (
-                            <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-200">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-200/70 whitespace-nowrap">
                               <Video className="w-3 h-3" />
                               Online
                             </span>
                           ) : (
-                            <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              <MapPin className="w-3 h-3" />
-                              Bay 05
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/70 whitespace-nowrap">
+                              <MapPin className="w-3 h-3 text-emerald-600 shrink-0" />
+                              {w.venue ? w.venue.split(',')[0].trim() : 'Bay 05'}
                             </span>
                           )}
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700">
-                            {w.badgeExtra || w.status}
+                          <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200/80 whitespace-nowrap">
+                            {w.badgeExtra || w.status || 'Upcoming'}
                           </span>
                         </div>
                       </div>
@@ -300,52 +302,66 @@ export default function WorkshopsPage() {
                       {/* Workshop Title */}
                       <Link
                         to={`/programs/${pSlug}/workshops/${w.slug || w._id}`}
-                        className="block"
+                        className="block group-hover:text-[#006398] transition-colors"
                       >
-                        <h3 className="text-lg font-bold text-[#0B192C] group-hover:text-[#006398] transition-colors leading-snug line-clamp-2">
+                        <h3 className="text-lg font-bold text-[#0B192C] leading-snug line-clamp-2">
                           {w.title}
                         </h3>
                       </Link>
 
-                      {/* Parent Program Context */}
-                      <p className="text-[11px] font-semibold text-[#006398] mt-1 mb-2.5">
-                        Track: {pBadge}
-                      </p>
-
                       {/* Description */}
-                      <p className="text-xs text-[#44474c] leading-relaxed line-clamp-3 mb-4 whitespace-pre-line">
+                      <p className="text-xs text-[#44474c] leading-relaxed line-clamp-3 my-3 whitespace-pre-line">
                         {w.description}
                       </p>
 
-                      {/* Logistics Info */}
-                      <div className="space-y-1.5 pt-3 border-t border-slate-100 text-xs text-slate-600">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-3.5 h-3.5 text-[#006398] shrink-0" />
-                          <span className="font-medium text-[#131b2e] truncate">{w.date}</span>
-                        </div>
-                        {w.startTime && (
-                          <div className="flex items-center gap-2">
-                            <Clock className="w-3.5 h-3.5 text-[#006398] shrink-0" />
-                            <span>
-                              {w.startTime} {w.endTime ? `- ${w.endTime}` : ''}
-                            </span>
+                      {/* Structured Details: Date, Time, Venue, Facilitator */}
+                      <div className="mt-4 pt-3.5 border-t border-slate-200/80 space-y-2 text-xs">
+                        {/* Date & Time Row */}
+                        <div className="flex items-center gap-2.5 text-slate-700">
+                          <div className="w-6 h-6 rounded-md bg-blue-50 text-[#006398] flex items-center justify-center shrink-0">
+                            <Calendar className="w-3.5 h-3.5" />
                           </div>
-                        )}
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-3.5 h-3.5 text-[#006398] shrink-0" />
-                          <span className="truncate">{w.venue || 'TRACE Expert City, Maradana'}</span>
+                          <div className="min-w-0 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <span className="font-bold text-slate-900">{w.date}</span>
+                            {(w.startTime || w.endTime) && (
+                              <span className="text-slate-500 text-[11px] font-medium flex items-center gap-1">
+                                <Clock className="w-3 h-3 text-[#006398] shrink-0" />
+                                <span>{w.startTime}{w.endTime ? ` – ${w.endTime}` : ''}</span>
+                              </span>
+                            )}
+                          </div>
                         </div>
+
+                        {/* Venue / Location Row */}
+                        <div className="flex items-center gap-2.5 text-slate-600">
+                          <div className="w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                            <MapPin className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="truncate font-medium text-slate-700">
+                            {w.venue || 'TRACE Expert City, Bay 05, Maradana'}
+                          </span>
+                        </div>
+
+                        {/* Facilitator / Speaker Row */}
                         {w.speakerName && (
-                          <div className="flex items-center gap-2">
-                            <User className="w-3.5 h-3.5 text-[#006398] shrink-0" />
-                            <span className="truncate font-semibold text-slate-700">{w.speakerName}</span>
+                          <div className="flex items-center gap-2.5 text-slate-600">
+                            <div className="w-6 h-6 rounded-md bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
+                              <User className="w-3.5 h-3.5" />
+                            </div>
+                            <span className="truncate">
+                              <span className="text-slate-400 text-[11px] mr-1">Facilitator:</span>
+                              <span className="font-semibold text-slate-800">{w.speakerName}</span>
+                              {w.speakerDescription && (
+                                <span className="text-slate-400 text-[11px] ml-1">({w.speakerDescription})</span>
+                              )}
+                            </span>
                           </div>
                         )}
                       </div>
 
                       {/* Topics pills */}
                       {w.topicsCovered && w.topicsCovered.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-4">
+                        <div className="flex flex-wrap gap-1 mt-3">
                           {w.topicsCovered.slice(0, 3).map((topic, tIdx) => (
                             <span
                               key={tIdx}
@@ -359,17 +375,26 @@ export default function WorkshopsPage() {
                     </div>
 
                     {/* Bottom Action Bar */}
-                    <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-                      <Link
-                        to={`/programs/${w.programSlug || (isProg1 ? 'program-01' : 'program-02')}`}
-                        className="text-[11px] font-bold text-slate-500 hover:text-[#0B192C] transition-colors"
-                      >
-                        Parent Program
-                      </Link>
+                    <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
+                      <div>
+                        {w.capacity ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                            Only {w.capacity} Seats Available
+                          </span>
+                        ) : (
+                          <Link
+                            to={`/programs/${w.programSlug || (isProg1 ? 'program-01' : 'program-02')}`}
+                            className="text-[11px] font-bold text-slate-500 hover:text-[#0B192C] transition-colors"
+                          >
+                            Parent Program
+                          </Link>
+                        )}
+                      </div>
 
                       <Link
                         to={`/programs/${w.programSlug || (isProg1 ? 'program-01' : 'program-02')}/workshops/${w.slug}`}
-                        className="px-3.5 py-1.5 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 group-hover:gap-2"
+                        className="px-4 py-2 rounded-xl bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 group-hover:gap-2 shrink-0"
                       >
                         <span>View Details</span>
                         <ArrowRight className="w-3.5 h-3.5" />

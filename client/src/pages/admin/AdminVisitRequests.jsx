@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { visitService } from '../../services/api';
+import { toast } from '../../context/ToastContext';
 import {
   Download,
   Building2,
@@ -56,13 +57,12 @@ export default function AdminVisitRequests() {
       });
 
       if (res.success) {
-        setSuccessMsg(`Visit request #${editingRequest.referenceNumber} updated to ${editingRequest.status}`);
+        toast.success(`Visit request #${editingRequest.referenceNumber} updated to ${editingRequest.status}`);
         setEditingRequest(null);
         fetchRequests();
-        setTimeout(() => setSuccessMsg(''), 3000);
       }
     } catch (err) {
-      alert('Failed to update visit request');
+      toast.error(err.response?.data?.message || 'Failed to update visit request');
     }
   };
 
@@ -145,13 +145,6 @@ export default function AdminVisitRequests() {
           <span>Export Visits (CSV)</span>
         </button>
       </div>
-
-      {successMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span>{successMsg}</span>
-        </div>
-      )}
 
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">

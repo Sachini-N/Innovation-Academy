@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 
 const contactMessageSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
     name: {
       type: String,
       required: [true, 'Please provide your name'],
@@ -35,6 +40,31 @@ const contactMessageSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    repliedAt: {
+      type: Date,
+      default: null,
+    },
+    conversation: [
+      {
+        sender: {
+          type: String,
+          enum: ['participant', 'admin'],
+          default: 'participant',
+        },
+        senderName: {
+          type: String,
+          default: '',
+        },
+        message: {
+          type: String,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

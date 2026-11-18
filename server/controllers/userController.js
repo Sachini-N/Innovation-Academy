@@ -201,7 +201,9 @@ export const getNotifications = async (req, res, next) => {
       return res.json({ success: true, count: notifications.length, data: notifications });
     }
 
-    const list = mockStore.notifications.filter((n) => n.userId === userId || n.userId === null);
+    const list = mockStore.notifications.filter(
+      (n) => n.userId === userId || n.userId === null || (n.userId && n.userId.toString() === userId.toString())
+    );
     res.json({ success: true, count: list.length, data: list });
   } catch (error) {
     next(error);

@@ -19,6 +19,8 @@ import uploadRoutes from './routes/uploadRoutes.js';
 // Models for auto-seeding check
 import User from './models/User.js';
 import Program from './models/Program.js';
+import Notification from './models/Notification.js';
+import ContactMessage from './models/ContactMessage.js';
 import { seedData } from './utils/seeder.js';
 
 dotenv.config();
@@ -102,12 +104,23 @@ const PORT = process.env.PORT || 5000;
 // Connect to Database in background and start Express server immediately
 const startServer = () => {
   try {
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`=======================================================`);
       console.log(`🚀 TRACE Sri Lanka API Server running on port ${PORT}`);
       console.log(`🌐 Base URL: http://localhost:${PORT}`);
       console.log(`🔒 Organization: Innovation | Project: InnovationA`);
       console.log(`=======================================================`);
+    });
+
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`\n⚠️  [Port Conflict] Port ${PORT} is already in use by another running server instance.`);
+        console.error(`👉 Your server is already active and running at http://localhost:${PORT}`);
+        console.error(`👉 If you wish to restart it, stop the running process or run:\n   npx kill-port ${PORT}\n`);
+        process.exit(0);
+      } else {
+        console.error('Server error:', err);
+      }
     });
 
     // Asynchronously connect to MongoDB Atlas / local MongoDB
@@ -121,6 +134,92 @@ const startServer = () => {
               '[TRACE System] Empty database detected. Auto-seeding initial TRACE programs and users...'
             );
             await seedData();
+          }
+
+          // Clean up legacy demo notifications so only real notifications remain
+          await Notification.deleteMany({
+            $or: [
+              {
+                title: {
+                  $in: [
+                    'Program Registration Confirmed',
+                    'Workshop Reminder: Design Thinking & Grand Challenges',
+                    'Bay 05 Lab Access Hours Extended',
+                  ],
+                },
+              },
+              {
+                title: {
+                  $regex: /Program Registration Confirmed|Workshop Reminder|Bay 05 Lab Access Hours Extended/i,
+                },
+              },
+            ],
+          });
+
+          // Consolidate duplicate ContactMessages by participant email into single unified threads
+          try {
+            const allContacts = await ContactMessage.find({}).sort({ createdAt: 1 });
+            const emailGroups = new Map();
+            for (const c of allContacts) {
+              const emailKey = (c.email || '').toLowerCase().trim();
+              if (!emailKey) continue;
+              if (!emailGroups.has(emailKey)) emailGroups.set(emailKey, []);
+              emailGroups.get(emailKey).push(c);
+            }
+            for (const [email, docs] of emailGroups.entries()) {
+              if (docs.length > 1) {
+                const primary = docs[0];
+                let combinedConv = Array.isArray(primary.conversation) ? [...primary.conversation] : [];
+                if (combinedConv.length === 0 && primary.message) {
+                  combinedConv.push({
+                    sender: 'participant',
+                    senderName: primary.name,
+                    message: primary.message.replace(/^\[Follow-up Reply\]:\s*/i, '').trim(),
+                    createdAt: primary.createdAt,
+                  });
+                  if (primary.replyNotes) {
+                    combinedConv.push({
+                      sender: 'admin',
+                      senderName: 'TRACE Secretariat',
+                      message: primary.replyNotes,
+                      createdAt: primary.repliedAt || primary.createdAt,
+                    });
+                  }
+                }
+                for (let i = 1; i < docs.length; i++) {
+                  const secondary = docs[i];
+                  if (Array.isArray(secondary.conversation) && secondary.conversation.length > 0) {
+                    combinedConv.push(...secondary.conversation);
+                  } else {
+                    if (secondary.message) {
+                      combinedConv.push({
+                        sender: 'participant',
+                        senderName: secondary.name,
+                        message: secondary.message.replace(/^\[Follow-up Reply\]:\s*/i, '').trim(),
+                        createdAt: secondary.createdAt,
+                      });
+                    }
+                    if (secondary.replyNotes) {
+                      combinedConv.push({
+                        sender: 'admin',
+                        senderName: 'TRACE Secretariat',
+                        message: secondary.replyNotes,
+                        createdAt: secondary.repliedAt || secondary.createdAt,
+                      });
+                    }
+                  }
+                  if (secondary.status === 'Unread') primary.status = 'Unread';
+                  if (secondary.programOfInterest) primary.programOfInterest = secondary.programOfInterest;
+                  await ContactMessage.findByIdAndDelete(secondary._id);
+                }
+                primary.conversation = combinedConv.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                const last = primary.conversation[primary.conversation.length - 1];
+                if (last) primary.message = last.message;
+                await primary.save();
+              }
+            }
+          } catch (mergeErr) {
+            console.warn('[Contact Merge Notice]', mergeErr.message);
           }
         }
       })

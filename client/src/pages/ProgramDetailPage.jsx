@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../context/AuthContext';
+import { toast } from '../context/ToastContext';
 import { programService, registrationService } from '../services/api';
 import { handleImageError } from '../utils/imageUrl';
 import {
@@ -147,11 +148,12 @@ export default function ProgramDetailPage() {
         setRegSuccess(res);
         setIsEnrolled(true);
         setExistingRef(res.referenceNumber);
+        toast.success(`Registration Confirmed! Reference: ${res.referenceNumber || ''}`);
       }
     } catch (err) {
-      setRegError(
-        err.response?.data?.message || 'Registration failed. You may already be registered.'
-      );
+      const msg = err.response?.data?.message || 'Registration failed. You may already be registered.';
+      setRegError(msg);
+      toast.error(msg);
     } finally {
       setSubmittingReg(false);
     }

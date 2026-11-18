@@ -38,18 +38,25 @@ export default function HomePage() {
     fetchData();
   }, []);
 
-  // Handle smooth scroll when navigating to an anchor hash (e.g. #workshops, #about, #contact)
+  // Handle smooth scroll when navigating to an anchor hash (e.g. #workshops, #about, #programs, #contact)
   useEffect(() => {
     if (location.hash) {
       const targetId = location.hash.replace('#', '');
-      const el = document.getElementById(targetId);
-      if (el) {
-        setTimeout(() => {
+      let attempts = 0;
+      const scrollInterval = setInterval(() => {
+        attempts++;
+        const el = document.getElementById(targetId);
+        if (el) {
           el.scrollIntoView({ behavior: 'smooth' });
-        }, 150);
-      }
+          clearInterval(scrollInterval);
+        } else if (attempts >= 25) {
+          clearInterval(scrollInterval);
+        }
+      }, 80);
+
+      return () => clearInterval(scrollInterval);
     }
-  }, [location.hash]);
+  }, [location.hash, loading]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#faf8ff]">

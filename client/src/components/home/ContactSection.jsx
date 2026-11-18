@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Globe, Phone, MapPin, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { contactService } from '../../services/api';
+import { toast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function ContactSection() {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    name: user?.name || '',
+    email: user?.email || '',
     programTrack: 'Innovation & Design Thinking Masterclass (1 Month)',
     message: '',
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: prev.name || user.name || '',
+        email: prev.email || user.email || '',
+      }));
+    }
+  }, [user]);
 
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
@@ -21,11 +34,10 @@ export default function ContactSection() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setSuccessMsg('');
-    setErrorMsg('');
 
     try {
       const res = await contactService.submitContact({
+        userId: user?._id || user?.id || null,
         name: formData.name,
         email: formData.email,
         subject: formData.programTrack,
@@ -34,18 +46,18 @@ export default function ContactSection() {
       });
 
       if (res.success) {
-        setSuccessMsg(
+        toast.success(
           'Thank you for reaching out! Your inquiry has been sent to TRACE innovation secretariat. We will get in touch with you shortly.'
         );
         setFormData({
-          name: '',
-          email: '',
+          name: user?.name || '',
+          email: user?.email || '',
           programTrack: 'Innovation & Design Thinking Masterclass (1 Month)',
           message: '',
         });
       }
     } catch (err) {
-      setErrorMsg(
+      toast.error(
         err.response?.data?.message || 'Failed to send message. Please try again or email us directly at projects@trace.lk'
       );
     } finally {
@@ -107,7 +119,7 @@ export default function ContactSection() {
                       EMAIL
                     </span>
                     <span className="text-sm font-bold text-[#0B192C] truncate mt-0.5 group-hover:text-[#006398] transition-colors">
-                      projects@trace.lk
+                      connect@trace.lk
                     </span>
                   </div>
                 </a>
@@ -145,7 +157,7 @@ export default function ContactSection() {
                       CONTACT NUMBER
                     </span>
                     <span className="text-sm font-bold text-[#0B192C] truncate mt-0.5 group-hover:text-[#006398] transition-colors">
-                      070 151 0494
+                      070 670 6791
                     </span>
                   </div>
                 </a>
@@ -182,15 +194,7 @@ export default function ContactSection() {
                 >
                   in
                 </a>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-9 h-9 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center text-xs font-bold text-slate-700 hover:text-[#006398] hover:border-[#006398] transition-all"
-                  aria-label="X Twitter"
-                >
-                  𝕏
-                </a>
+
                 <a
                   href="https://facebook.com"
                   target="_blank"
@@ -216,20 +220,6 @@ export default function ContactSection() {
           {/* Right Column: Clean White Form Card (7 Cols) */}
           <div className="lg:col-span-7">
             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl p-8 sm:p-10">
-              {successMsg && (
-                <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>{successMsg}</span>
-                </div>
-              )}
-
-              {errorMsg && (
-                <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                  <span>{errorMsg}</span>
-                </div>
-              )}
-
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Row 1: Full Name & Email Address */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

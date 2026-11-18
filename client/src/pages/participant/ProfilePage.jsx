@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/api';
+import { toast } from '../../context/ToastContext';
 import { User, Mail, Phone, Building, Save, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -38,17 +39,15 @@ export default function ProfilePage() {
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     setProfileLoading(true);
-    setProfileSuccess('');
-    setProfileError('');
 
     try {
       const res = await authService.updateProfile(formData);
       if (res.success) {
-        setProfileSuccess('Profile updated successfully!');
+        toast.success('Profile updated successfully!');
         await refreshUser();
       }
     } catch (err) {
-      setProfileError(err.response?.data?.message || 'Failed to update profile');
+      toast.error(err.response?.data?.message || 'Failed to update profile');
     } finally {
       setProfileLoading(false);
     }
@@ -57,17 +56,15 @@ export default function ProfilePage() {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (passwordData.newPassword !== passwordData.confirmNewPassword) {
-      setPwError('New passwords do not match');
+      toast.error('New passwords do not match');
       return;
     }
     if (passwordData.newPassword.length < 6) {
-      setPwError('New password must be at least 6 characters');
+      toast.error('New password must be at least 6 characters');
       return;
     }
 
     setPwLoading(true);
-    setPwSuccess('');
-    setPwError('');
 
     try {
       const res = await authService.changePassword({
@@ -75,7 +72,7 @@ export default function ProfilePage() {
         newPassword: passwordData.newPassword,
       });
       if (res.success) {
-        setPwSuccess('Password changed successfully!');
+        toast.success('Password changed successfully!');
         setPasswordData({
           currentPassword: '',
           newPassword: '',
@@ -83,7 +80,7 @@ export default function ProfilePage() {
         });
       }
     } catch (err) {
-      setPwError(err.response?.data?.message || 'Failed to update password');
+      toast.error(err.response?.data?.message || 'Failed to update password');
     } finally {
       setPwLoading(false);
     }
@@ -103,20 +100,6 @@ export default function ProfilePage() {
         <div className="md:col-span-7 space-y-6">
           <div className="bg-white rounded-2xl border border-[#e2e8f0] p-7 shadow-sm">
             <h3 className="text-base font-bold text-[#0B192C] mb-4">Personal Details</h3>
-
-            {profileSuccess && (
-              <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>{profileSuccess}</span>
-              </div>
-            )}
-
-            {profileError && (
-              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-                <span>{profileError}</span>
-              </div>
-            )}
 
             <form onSubmit={handleProfileSubmit} className="space-y-4">
               <div>
@@ -218,20 +201,6 @@ export default function ProfilePage() {
               <Lock className="w-4 h-4 text-[#006398]" />
               <span>Change Password</span>
             </h3>
-
-            {pwSuccess && (
-              <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>{pwSuccess}</span>
-              </div>
-            )}
-
-            {pwError && (
-              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-                <span>{pwError}</span>
-              </div>
-            )}
 
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <div>

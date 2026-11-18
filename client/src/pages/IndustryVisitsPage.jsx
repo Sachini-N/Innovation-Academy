@@ -3,6 +3,7 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../context/AuthContext';
 import { visitService } from '../services/api';
+import { toast } from '../context/ToastContext';
 import {
   Building2,
   Calendar,
@@ -82,6 +83,7 @@ export default function IndustryVisitsPage() {
       const res = await visitService.createVisitRequest(formData);
       if (res.success) {
         setSuccessData(res);
+        toast.success(`Visit application successfully submitted! Ref: ${res.referenceNumber || ''}`);
         setFormData({
           organizationName: '',
           organizationType: 'University / Faculty',
@@ -103,10 +105,11 @@ export default function IndustryVisitsPage() {
         });
       }
     } catch (err) {
-      setErrorMsg(
+      const msg =
         err.response?.data?.message ||
-          'Failed to submit visit request. Please ensure all required fields are filled.'
-      );
+        'Failed to submit visit request. Please ensure all required fields are filled.';
+      setErrorMsg(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

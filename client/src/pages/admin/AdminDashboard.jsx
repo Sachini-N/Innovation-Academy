@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { userService, registrationService } from '../../services/api';
+import { toast } from '../../context/ToastContext';
 import {
   Download,
   PersonStanding,
@@ -82,10 +83,11 @@ export default function AdminDashboard() {
       }
     }
     setEvalSuccess(`Candidate ${selectedCandidate.name} successfully approved for TRACE Bay 05!`);
+    toast.success(`Candidate ${selectedCandidate.name} successfully approved for TRACE Bay 05!`);
     setTimeout(() => {
       setModalOpen(false);
       setEvalSuccess('');
-    }, 1500);
+    }, 1200);
   };
 
   const handleExportCSV = () => {

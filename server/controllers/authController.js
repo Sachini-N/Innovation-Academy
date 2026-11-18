@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import { mockStore } from '../config/mockStore.js';
+import { sendPasswordResetEmail } from '../utils/emailService.js';
 
 const isDbConnected = () => mongoose.connection.readyState === 1;
 
@@ -310,6 +311,216 @@ export const changePassword = async (req, res, next) => {
 
     user.password = bcrypt.hashSync(newPassword, 10);
     res.json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Forgot Password - Request 6-digit Reset Code
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide your registered email address.',
+      });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    let user;
+
+    if (isDbConnected()) {
+      user = await User.findOne({ email: cleanEmail });
+    } else {
+      user = mockStore.users.find((u) => u.email.toLowerCase() === cleanEmail);
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with this email address.',
+      });
+    }
+
+    // Generate secure 6-digit numeric OTP code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiryTime = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    if (isDbConnected()) {
+      user.resetPasswordCode = resetCode;
+      user.resetPasswordExpires = expiryTime;
+      await user.save();
+    } else {
+      user.resetPasswordCode = resetCode;
+      user.resetPasswordExpires = expiryTime;
+    }
+
+    // Send email via emailService
+    const emailResult = await sendPasswordResetEmail({
+      to: user.email,
+      name: user.name,
+      code: resetCode,
+    });
+
+    if (!emailResult.sent) {
+      return res.status(500).json({
+        success: false,
+        message:
+          emailResult.error ||
+          'Failed to dispatch email. Please check your SMTP settings in server/.env.',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `A 6-digit verification code has been sent to ${user.email}. Please check your inbox or spam folder.`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Verify 6-digit Reset Code
+export const verifyResetCode = async (req, res, next) => {
+  try {
+    const { email, code } = req.body;
+
+    if (!email || !code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide both email and verification code.',
+      });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const cleanCode = code.toString().trim();
+    let user;
+
+    if (isDbConnected()) {
+      user = await User.findOne({ email: cleanEmail });
+    } else {
+      user = mockStore.users.find((u) => u.email.toLowerCase() === cleanEmail);
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with this email address.',
+      });
+    }
+
+    if (!user.resetPasswordCode || user.resetPasswordCode !== cleanCode) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid verification code. Please check the code and try again.',
+      });
+    }
+
+    if (!user.resetPasswordExpires || new Date(user.resetPasswordExpires) < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Verification code has expired. Please request a new one.',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Verification code confirmed. You may now enter your new password.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Reset Password with verified 6-digit code
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { email, code, newPassword } = req.body;
+
+    if (!email || !code || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide email, verification code, and new password.',
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long.',
+      });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const cleanCode = code.toString().trim();
+    let user;
+
+    if (isDbConnected()) {
+      user = await User.findOne({ email: cleanEmail });
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'No account found with this email address.',
+        });
+      }
+
+      if (!user.resetPasswordCode || user.resetPasswordCode !== cleanCode) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid verification code.',
+        });
+      }
+
+      if (!user.resetPasswordExpires || new Date(user.resetPasswordExpires) < new Date()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Verification code has expired. Please request a new code.',
+        });
+      }
+
+      user.password = newPassword;
+      user.resetPasswordCode = null;
+      user.resetPasswordExpires = null;
+      await user.save();
+
+      return res.json({
+        success: true,
+        message: 'Password reset successful! You can now log in with your new password.',
+      });
+    }
+
+    // In-memory fallback
+    user = mockStore.users.find((u) => u.email.toLowerCase() === cleanEmail);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with this email address.',
+      });
+    }
+
+    if (!user.resetPasswordCode || user.resetPasswordCode !== cleanCode) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid verification code.',
+      });
+    }
+
+    if (!user.resetPasswordExpires || new Date(user.resetPasswordExpires) < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Verification code has expired. Please request a new code.',
+      });
+    }
+
+    user.password = bcrypt.hashSync(newPassword, 10);
+    user.resetPasswordCode = null;
+    user.resetPasswordExpires = null;
+
+    res.json({
+      success: true,
+      message: 'Password reset successful! You can now log in with your new password.',
+    });
   } catch (error) {
     next(error);
   }

@@ -5,6 +5,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
@@ -68,4 +69,32 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
+/* Toast Pop-up Animations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes shrinkWidth {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+/* Prevent duplicate native browser password reveal eye icon (Edge / IE) */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
 

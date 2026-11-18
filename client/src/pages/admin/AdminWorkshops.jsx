@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { workshopService, programService, uploadService } from '../../services/api';
 import { handleImageError } from '../../utils/imageUrl';
+import { toast } from '../../context/ToastContext';
 import {
   Plus,
   Edit,
@@ -181,25 +182,25 @@ export default function AdminWorkshops() {
       if (isEditing) {
         const res = await workshopService.updateWorkshop(formData.id, formData);
         if (res.success) {
-          setSuccessMsg(`Workshop "${formData.title}" updated successfully!`);
+          toast.success(`Workshop "${formData.title}" updated successfully!`);
           setModalOpen(false);
           await fetchData();
         } else {
-          setErrorMsg(res.message || 'Failed to update workshop');
+          toast.error(res.message || 'Failed to update workshop');
         }
       } else {
         const res = await workshopService.createWorkshop(formData);
         if (res.success) {
-          setSuccessMsg(`Workshop "${formData.title}" created successfully!`);
+          toast.success(`Workshop "${formData.title}" created successfully!`);
           setModalOpen(false);
           await fetchData();
         } else {
-          setErrorMsg(res.message || 'Failed to create workshop');
+          toast.error(res.message || 'Failed to create workshop');
         }
       }
     } catch (err) {
       console.error('Failed to save workshop:', err);
-      setErrorMsg(err.response?.data?.message || err.message || 'Failed to save workshop');
+      toast.error(err.response?.data?.message || err.message || 'Failed to save workshop');
     } finally {
       setIsSaving(false);
     }
@@ -209,14 +210,14 @@ export default function AdminWorkshops() {
     try {
       const res = await workshopService.deleteWorkshop(id);
       if (res.success) {
-        setSuccessMsg('Workshop deleted successfully');
+        toast.success('Workshop deleted successfully');
         setDeleteConfirmId(null);
         fetchData();
       } else {
-        setErrorMsg(res.message || 'Failed to delete workshop');
+        toast.error(res.message || 'Failed to delete workshop');
       }
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Failed to delete workshop');
+      toast.error(err.response?.data?.message || 'Failed to delete workshop');
     }
   };
 
@@ -257,30 +258,6 @@ export default function AdminWorkshops() {
           <span>Create Workshop</span>
         </button>
       </div>
-
-      {successMsg && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span>{successMsg}</span>
-          </div>
-          <button onClick={() => setSuccessMsg('')} className="text-emerald-700">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
-      {errorMsg && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-          <button onClick={() => setErrorMsg('')} className="text-red-700 p-1 hover:bg-red-100 rounded">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
 
       {/* Grouped by Parent Program */}
       <div className="space-y-10">

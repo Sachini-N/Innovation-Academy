@@ -548,34 +548,7 @@ export const seedData = async () => {
       },
     ]);
 
-    // 7. Create Notifications
-    await Notification.create([
-      {
-        userId: participantUser._id,
-        title: 'Program Registration Confirmed',
-        message:
-          'Welcome to TRACE Innovation Academy! You are officially enrolled in the Innovation & Design Thinking Masterclass. All program workshops are now unlocked on your dashboard.',
-        type: 'success',
-        link: '/participant/workshops',
-      },
-      {
-        userId: null,
-        title: 'Bay 05 Lab Access Hours Extended',
-        message:
-          'TRACE Maker Space and Sensor Labs in Bay 05 are now open until 09:00 PM on weekdays for all registered cohort members.',
-        type: 'info',
-        link: '/participant/workshops',
-      },
-      {
-        userId: participantUser._id,
-        title: 'Workshop Reminder: Design Thinking & Grand Challenges',
-        message:
-          'Your first in-person workshop starts this Saturday, May 24 at 09:30 AM in TRACE Auditorium A, Bay 05 Maradana.',
-        type: 'workshop',
-        link: '/programs/program-01/workshops/design-thinking-and-grand-challenges',
-      },
-    ]);
-
+    // 7. Notifications (No demo notifications - real notifications only)
     console.log('[Seeder] Notifications and Contact Messages seeded successfully!');
     return true;
   } catch (error) {

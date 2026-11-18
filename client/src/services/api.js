@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -53,6 +53,18 @@ export const authService = {
   },
   changePassword: async (passwordData) => {
     const res = await api.put('/auth/password', passwordData);
+    return res.data;
+  },
+  forgotPassword: async (email) => {
+    const res = await api.post('/auth/forgot-password', { email });
+    return res.data;
+  },
+  verifyResetCode: async (email, code) => {
+    const res = await api.post('/auth/verify-reset-code', { email, code });
+    return res.data;
+  },
+  resetPassword: async ({ email, code, newPassword }) => {
+    const res = await api.post('/auth/reset-password', { email, code, newPassword });
     return res.data;
   },
 };
@@ -153,6 +165,34 @@ export const contactService = {
   submitContact: async (data) => {
     const res = await api.post('/contact', data);
     return res.data;
+  },
+  getMyMessages: async () => {
+    const res = await api.get('/contact/my-messages');
+    return res.data;
+  },
+  replyMessage: async (id, replyMessage, extra = {}) => {
+    try {
+      const res = await api.post(`/contact/${id}/reply`, { replyMessage, ...extra });
+      return res.data;
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        // Fallback for servers running process before route hot-reload
+        const fallbackRes = await api.post('/contact', {
+          name: extra.name || 'TRACE Participant',
+          email: extra.email || 'participant@trace.lk',
+          userId: extra.userId || null,
+          subject: extra.subject || 'Follow-up Reply to TRACE Secretariat',
+          programOfInterest: extra.programOfInterest || '',
+          message: `[Follow-up Reply]: ${replyMessage}`,
+        });
+        return {
+          success: true,
+          data: fallbackRes.data?.data,
+          message: 'Your reply has been sent to TRACE Secretariat!',
+        };
+      }
+      throw err;
+    }
   },
   getAllMessages: async (params = {}) => {
     const res = await api.get('/contact', { params });

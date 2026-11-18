@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Database, ShieldCheck, Building, Key, Server, CheckCircle2, Save } from 'lucide-react';
+import { toast } from '../../context/ToastContext';
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
@@ -18,8 +19,7 @@ export default function AdminSettings() {
 
   const handleSave = (e) => {
     e.preventDefault();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    toast.success('Settings saved successfully!');
   };
 
   return (
@@ -30,13 +30,6 @@ export default function AdminSettings() {
           Cluster configuration, organization metadata, and MongoDB integration status.
         </p>
       </div>
-
-      {saved && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span>Settings saved successfully!</span>
-        </div>
-      )}
 
       <div className="space-y-6">
         {/* Project & Organization Plaque */}

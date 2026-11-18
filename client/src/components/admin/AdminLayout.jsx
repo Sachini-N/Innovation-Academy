@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from '../../context/ToastContext';
 import {
   LayoutDashboard,
   School,
@@ -26,8 +27,9 @@ export default function AdminLayout() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    navigate('/', { replace: true });
     logout();
-    navigate('/login');
+    toast.success('Logged out successfully');
   };
 
   const navItems = [
@@ -163,22 +165,6 @@ export default function AdminLayout() {
                 placeholder="Search programs, candidates, workshops, or partner visits..."
                 className="w-full h-10 pl-9 pr-4 rounded-lg bg-[#f2f3ff] text-xs placeholder:text-[#94a3b8] focus:bg-white focus:ring-1 focus:ring-[#006398] outline-none transition-all"
               />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="text-right hidden md:block">
-                <span className="text-xs font-bold text-[#0B192C] block leading-tight">
-                  {user?.name || 'Dilshan Perera'}
-                </span>
-                <span className="text-[10px] text-[#75777d] block leading-tight">
-                  Head of Programs &amp; Incubation
-                </span>
-              </div>
-              <div className="w-9 h-9 rounded-full bg-[#0B192C] text-white flex items-center justify-center font-bold text-xs shadow-sm">
-                {user?.name?.charAt(0) || 'A'}
-              </div>
             </div>
           </div>
         </header>
