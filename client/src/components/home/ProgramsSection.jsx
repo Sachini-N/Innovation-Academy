@@ -26,12 +26,13 @@ export default function ProgramsSection({ programs = [] }) {
     description:
       'Design thinking for innovation, 12 steps from ideation to launching real world challenges.',
     highlights: [
-      'Design Thinking for Innovation',
-      '12 Steps from Ideation to Launching Real World Challenges',
-      'Design Sprints and Rapid Prototyping',
-      'Idea Pitching and Presentation',
+      'Innovation Mindset & Vision Building',
+      'Design Thinking',
+      'Rapid Prototyping',
+      'Idea Pitching & Feedback',
     ],
-    duration: '1 Month Intensive',
+    duration: '1 Month',
+    fee: 'LKR 15,000 per month',
   };
 
   const defaultProg2 = {
@@ -41,16 +42,14 @@ export default function ProgramsSection({ programs = [] }) {
     description:
       'Comprehensive venture formation, seed validation, unit economics, and investment readiness.',
     highlights: [
-      'Venture Formation Basics & Pre-Incubation Lifecycle',
-      'Innovation Mindset & Founder Journey',
+      'Ideation & Problem Discovery',
       'Design Thinking & Business Model Canvas',
-      'Proof of Concept (PoC) & Rapid Prototyping',
-      'Go-To-Market (GTM) Strategy & Unit Economics',
-      'Storytelling, Pitch Deck Architecture & Investment Readiness',
-      'Final Showcase & Pitch Fest',
-      'Pre-Incubation Endorsement & TRACE Affiliation Ceremony',
+      'Proof of Concept & Rapid Prototyping',
+      'Go-To-Market Strategy',
+      'Pitch Deck Development & Investment Readiness',
     ],
-    duration: '3 Months Cohort Track',
+    duration: '3 Months',
+    fee: 'LKR 5,000 Registration Fee + LKR 15,000 per month',
   };
 
   const displayPrograms =
@@ -124,24 +123,23 @@ export default function ProgramsSection({ programs = [] }) {
               ? 'VC Investor Demo Day Included'
               : 'TRACE Certificate Awarded';
 
-            const defaultHighlights =
-              idx === 0
-                ? [
-                    'Design Thinking for Innovation',
-                    '12 Steps from Ideation to Launching Real World Challenges',
-                    'Design Sprints and Rapid Prototyping',
-                    'Idea Pitching and Presentation',
-                  ]
-                : [
-                    'Venture Formation Basics & Pre-Incubation Lifecycle',
-                    'Innovation Mindset & Founder Journey',
-                    'Design Thinking & Business Model Canvas',
-                    'Proof of Concept (PoC) & Rapid Prototyping',
-                    'Go-To-Market (GTM) Strategy & Unit Economics',
-                    'Storytelling, Pitch Deck Architecture & Investment Readiness',
-                    'Final Showcase & Pitch Fest',
-                    'Pre-Incubation Endorsement & TRACE Affiliation Ceremony',
-                  ];
+            const isProg1 = prog.slug === 'program-01' || idx === 0;
+            const programDuration = isProg1 ? '1 Month' : '3 Months';
+
+            const defaultHighlights = isProg1
+              ? [
+                  'Innovation Mindset & Vision Building',
+                  'Design Thinking',
+                  'Rapid Prototyping',
+                  'Idea Pitching & Feedback',
+                ]
+              : [
+                  'Ideation & Problem Discovery',
+                  'Design Thinking & Business Model Canvas',
+                  'Proof of Concept & Rapid Prototyping',
+                  'Go-To-Market Strategy',
+                  'Pitch Deck Development & Investment Readiness',
+                ];
 
             const programHighlights =
               Array.isArray(prog.highlights) && prog.highlights.length > 0
@@ -153,15 +151,28 @@ export default function ProgramsSection({ programs = [] }) {
                 key={prog._id || prog.slug || idx}
                 className="rounded-2xl bg-white border border-[#e2e8f0] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group"
               >
-                {/* Top Navy/Blue Gradient Header with Glowing Icon */}
-                <div className="relative bg-gradient-to-br from-[#006398] via-[#004e78] to-[#003857] p-8 text-white overflow-hidden text-center flex flex-col items-center">
+                {/* Top Navy/Blue Gradient Header with Glowing Icon & Cover Image */}
+                <div
+                  className="relative p-8 text-white overflow-hidden text-center flex flex-col items-center bg-cover bg-center"
+                  style={
+                    prog.coverImage
+                      ? {
+                          backgroundImage: `linear-gradient(to bottom, rgba(0, 30, 60, 0.65), rgba(0, 20, 45, 0.88)), url(${prog.coverImage})`,
+                        }
+                      : {
+                          background: 'linear-gradient(to bottom right, #006398, #004e78, #003857)',
+                        }
+                  }
+                >
                   <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-44 h-44 bg-white/10 rounded-full blur-2xl"></div>
 
                   <div className="w-full flex items-center justify-between text-xs mb-4">
                     <span className="px-2.5 py-0.5 rounded bg-white/20 text-[10px] font-black uppercase tracking-widest text-[#cce5ff]">
                       {prog.badge || `PROGRAM 0${idx + 1}`}
                     </span>
-                    <span className="text-[11px] text-[#cce5ff] font-medium">{prog.duration}</span>
+                    <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs text-[#cce5ff] font-bold">
+                      {programDuration}
+                    </span>
                   </div>
 
                   {/* Glowing Icon in Center */}
@@ -176,20 +187,51 @@ export default function ProgramsSection({ programs = [] }) {
 
                 {/* Content Body */}
                 <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between gap-6">
-                  <div>
-                    <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398] block mb-4">
-                      CURRICULUM HIGHLIGHTS
-                    </span>
-                    <ul className="space-y-3 text-xs sm:text-sm text-[#1e293b]">
-                      {programHighlights.map((item, hIdx) => (
-                        <li key={hIdx} className="flex items-start gap-3">
-                          <div className="w-4 h-4 rounded-full bg-[#e8f1fd] flex items-center justify-center text-[#006398] shrink-0 mt-0.5">
-                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                  <div className="space-y-6">
+                    <div>
+                      <span className="text-xs uppercase font-extrabold tracking-wider text-[#006398] block mb-4">
+                        CURRICULUM HIGHLIGHTS
+                      </span>
+                      <ul className="space-y-3 text-xs sm:text-sm text-[#1e293b]">
+                        {programHighlights.map((item, hIdx) => (
+                          <li key={hIdx} className="flex items-start gap-3">
+                            <div className="w-4 h-4 rounded-full bg-[#e8f1fd] flex items-center justify-center text-[#006398] shrink-0 mt-0.5">
+                              <Check className="w-2.5 h-2.5 stroke-[3]" />
+                            </div>
+                            <span className="leading-snug">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Programme Fee Highlight Box */}
+                    <div className="p-4 rounded-xl bg-[#f0f6ff] border border-[#bfdbfe] space-y-1.5 shadow-xs">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-[#004e78]">
+                          PROGRAMME FEE
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#dbeafe] text-[#00476e]">
+                          {programDuration}
+                        </span>
+                      </div>
+                      <div className="text-sm sm:text-base font-extrabold text-[#0B192C]">
+                        {isProg1 ? (
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-lg font-black text-[#006398]">LKR 15,000</span>
+                            <span className="text-xs font-semibold text-slate-600">per month</span>
                           </div>
-                          <span className="leading-snug">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
+                        ) : (
+                          <div className="space-y-0.5">
+                            <div className="text-xs sm:text-sm font-bold text-[#0B192C]">
+                              <span className="font-extrabold text-[#006398]">LKR 5,000</span> Registration Fee
+                            </div>
+                            <div className="text-xs sm:text-sm font-bold text-[#0B192C]">
+                              + <span className="font-extrabold text-[#006398]">LKR 15,000</span> <span className="text-xs font-semibold text-slate-600">per month</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Bottom Footer Bar */}

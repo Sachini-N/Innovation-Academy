@@ -59,18 +59,12 @@ export default function AdminLayout() {
         <div className="flex flex-col overflow-y-auto">
           {/* Header */}
           <div className="h-16 px-6 flex items-center justify-between border-b border-white/10 shrink-0">
-            <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#006398] flex items-center justify-center text-white font-bold text-base tracking-wider shadow-sm">
-                T
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-base text-white leading-tight tracking-tight">
-                  TRACE
-                </span>
-                <span className="text-[10px] uppercase font-bold text-[#93ccff] tracking-wider">
-                  Expert City Sri Lanka
-                </span>
-              </div>
+            <Link to="/" className="flex items-center">
+              <img
+                src="/trace-logo-white.png"
+                alt="TRACE Innovation Academy"
+                className="h-8 w-auto object-contain"
+              />
             </Link>
 
             <button

@@ -6,8 +6,8 @@ export default function AboutSection() {
     <section id="about" className="py-20 lg:py-28 bg-white border-b border-[#e2e8f0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
-          {/* Left Column: Visual Campus Photo with Est. 2014 Card (5.5 cols) */}
-          <div className="lg:col-span-5 relative pr-0 sm:pr-4 pb-6 sm:pb-8">
+          {/* Left Column: Visual Campus Photo (5 cols) */}
+          <div className="lg:col-span-5 relative">
             {/* Main Rounded Image Container */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-100 group">
               <img
@@ -28,16 +28,6 @@ export default function AboutSection() {
                   Sri Lanka's Flagship Technology Precinct
                 </h4>
               </div>
-            </div>
-
-            {/* Overlapping Floating "Est. 2014" Dark Navy Card (Bottom-Right) */}
-            <div className="absolute bottom-0 right-0 sm:-bottom-2 sm:-right-2 z-20 bg-[#0e1c2f] text-white p-5 sm:p-6 rounded-2xl shadow-2xl border border-white/10 max-w-[220px]">
-              <span className="text-2xl sm:text-3xl font-black text-[#5bb8fe] block tracking-tight">
-                Est. 2014
-              </span>
-              <p className="text-[11px] text-slate-300 leading-relaxed mt-1.5 font-medium">
-                Chartered to stimulate cross-sector industrial &amp; digital excellence.
-              </p>
             </div>
           </div>
 

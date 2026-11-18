@@ -5,12 +5,12 @@ export default function HeroSection() {
   return (
     <div className="relative bg-white overflow-hidden">
       {/* Hero Visual Container */}
-      <section className="relative min-h-[560px] lg:min-h-[640px] flex items-center bg-white">
+      <section className="relative min-h-[560px] lg:min-h-[640px] flex items-center bg-white border-b border-slate-100">
         {/* Right Side: Clean AI-Generated High-Tech Lab Photo */}
         <div className="absolute top-0 right-0 w-full lg:w-[68%] h-full overflow-hidden z-0">
           <img
-            src="/trace-hero-bg.jpg"
-            alt="TRACE Sri Lanka Engineering & Robotics Hub"
+            src="/hero-innovation.jpg"
+            alt="TRACE Sri Lanka Innovation Academy"
             className="w-full h-full object-cover object-center select-none"
           />
           {/* Subtle bottom gradient on the image */}
@@ -31,20 +31,6 @@ export default function HeroSection() {
               fill="#ffffff"
             />
           </svg>
-        </div>
-
-        {/* Floating TRACE Partner Card (Bottom-Right of Image) */}
-        <div className="absolute bottom-6 right-6 lg:bottom-10 lg:right-12 z-20 bg-white/95 backdrop-blur-md px-5 py-3.5 rounded-xl shadow-2xl border border-slate-100 flex flex-col items-center text-center">
-          <div className="bg-[#0B192C] text-white px-3.5 py-1 rounded-md text-[11px] font-black tracking-wider flex items-center gap-1.5 shadow-xs">
-            <span>TRACE</span>
-            <span className="text-[10px] text-sky-400 font-bold">PARTNER</span>
-          </div>
-          <span className="text-[9px] uppercase font-bold tracking-wider text-slate-500 mt-2">
-            PREMIER TECH HUB FROM
-          </span>
-          <span className="text-xs font-black tracking-widest text-[#e11d48]">
-            SRI LANKA
-          </span>
         </div>
 
         {/* Mobile Overlay so text remains crisp and readable */}
@@ -84,53 +70,6 @@ export default function HeroSection() {
               >
                 EXPLORE INNOVATION
               </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4 Impact Statistics Ribbon Cards (Directly matching Stitch Design) */}
-      <section className="bg-white py-8 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {/* Stat Card 1 */}
-            <div className="bg-[#faf8ff] rounded-xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col items-center justify-center text-center hover:border-[#006398]/30 transition-all">
-              <span className="text-3xl sm:text-4xl font-extrabold text-[#006398] tracking-tight">
-                120+
-              </span>
-              <span className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mt-1.5">
-                TECH VENTURES INCUBATED
-              </span>
-            </div>
-
-            {/* Stat Card 2 */}
-            <div className="bg-[#faf8ff] rounded-xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col items-center justify-center text-center hover:border-[#006398]/30 transition-all">
-              <span className="text-3xl sm:text-4xl font-extrabold text-[#006398] tracking-tight">
-                15,000+
-              </span>
-              <span className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mt-1.5">
-                MINDS EMPOWERED
-              </span>
-            </div>
-
-            {/* Stat Card 3 */}
-            <div className="bg-[#faf8ff] rounded-xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col items-center justify-center text-center hover:border-[#006398]/30 transition-all">
-              <span className="text-3xl sm:text-4xl font-extrabold text-[#006398] tracking-tight">
-                50+
-              </span>
-              <span className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mt-1.5">
-                GLOBAL INDUSTRY MENTORS
-              </span>
-            </div>
-
-            {/* Stat Card 4 */}
-            <div className="bg-[#faf8ff] rounded-xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col items-center justify-center text-center hover:border-[#006398]/30 transition-all">
-              <span className="text-3xl sm:text-4xl font-extrabold text-[#006398] tracking-tight">
-                100%
-              </span>
-              <span className="text-[11px] uppercase tracking-wider font-bold text-slate-500 mt-1.5">
-                HANDS-ON PROTOTYPING
-              </span>
             </div>
           </div>
         </div>

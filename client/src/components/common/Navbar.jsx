@@ -62,21 +62,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo Lockup */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-lg bg-[#006398] flex items-center justify-center text-white font-bold text-xl shadow-sm group-hover:bg-[#0284c7] transition-colors">
-              T
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-2xl tracking-tight text-[#0B192C]">TRACE</span>
-                <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-[#e2e7ff] text-[#006398]">
-                  Sri Lanka
-                </span>
-              </div>
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-[#44474c]">
-                INNOVATION ACADEMY | POWERED BY TRACE
-              </span>
-            </div>
+          <Link to="/" className="flex items-center group py-2">
+            <img
+              src="/trace-logo.png"
+              alt="TRACE Innovation Academy - Powered by T2T"
+              className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+            />
           </Link>
 
           {/* Desktop Navigation Links */}

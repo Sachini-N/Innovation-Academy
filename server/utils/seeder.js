@@ -84,7 +84,8 @@ export const seedData = async () => {
         'Corporate R&D and product team members',
         'Ambitious researchers seeking commercial translation',
       ],
-      duration: '1 Month (4 Intensive Sprint Modules)',
+      duration: '1 Month',
+      fee: 'LKR 15,000 per month',
       benefits: [
         'Official TRACE Sri Lanka Certificate of Excellence',
         'Direct access to TRACE Bay 05 Maker Space & Prototyping Labs',
@@ -103,10 +104,10 @@ export const seedData = async () => {
         'Confident articulation of value propositions to enterprise stakeholders',
       ],
       highlights: [
-        'Design Thinking for Innovation',
-        '12 Steps from Ideation to Launching Real World Challenges',
-        'Design Sprints and Rapid Prototyping',
-        'Idea Pitching and Presentation',
+        'Innovation Mindset & Vision Building',
+        'Design Thinking',
+        'Rapid Prototyping',
+        'Idea Pitching & Feedback',
       ],
       coordinator: {
         name: 'Dilshan Perera',
@@ -144,7 +145,8 @@ export const seedData = async () => {
         'University spin-off research teams seeking commercialization',
         'Post-hackathon winning squads ready for company formation',
       ],
-      duration: '3 Months (Cohort Track & Incubation Sprint)',
+      duration: '3 Months',
+      fee: 'LKR 5,000 Registration Fee + LKR 15,000 per month',
       benefits: [
         'Complimentary dedicated co-working space at TRACE Expert City Bay 05',
         'Direct fast-track pitching to TRACE Angel Network & seed funds',
@@ -162,14 +164,11 @@ export const seedData = async () => {
         'Present confidently before institutional technology investors',
       ],
       highlights: [
-        'Venture Formation Basics & Pre-Incubation Lifecycle',
-        'Innovation Mindset & Founder Journey',
+        'Ideation & Problem Discovery',
         'Design Thinking & Business Model Canvas',
-        'Proof of Concept (PoC) & Rapid Prototyping',
-        'Go-To-Market (GTM) Strategy & Unit Economics',
-        'Storytelling, Pitch Deck Architecture & Investment Readiness',
-        'Final Showcase & Pitch Fest',
-        'Pre-Incubation Endorsement & TRACE Affiliation Ceremony',
+        'Proof of Concept & Rapid Prototyping',
+        'Go-To-Market Strategy',
+        'Pitch Deck Development & Investment Readiness',
       ],
       coordinator: {
         name: 'Dilshan Perera',

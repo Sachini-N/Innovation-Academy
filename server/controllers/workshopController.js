@@ -279,17 +279,20 @@ export const createWorkshop = async (req, res, next) => {
 export const updateWorkshop = async (req, res, next) => {
   try {
     const id = req.params.id || req.params.slug;
+    const updateData = { ...req.body };
+    delete updateData._id;
+    delete updateData.id;
 
     if (isDbConnected()) {
       let updated = null;
       if (mongoose.Types.ObjectId.isValid(id)) {
-        updated = await Workshop.findByIdAndUpdate(id, req.body, {
+        updated = await Workshop.findByIdAndUpdate(id, updateData, {
           new: true,
           runValidators: true,
         });
       }
       if (!updated) {
-        updated = await Workshop.findOneAndUpdate({ slug: id }, req.body, {
+        updated = await Workshop.findOneAndUpdate({ slug: id }, updateData, {
           new: true,
           runValidators: true,
         });

@@ -116,6 +116,8 @@ export const getProgramBySlug = async (req, res, next) => {
 // Helper to normalize program payload
 const prepareProgramData = (body) => {
   const data = { ...body };
+  delete data._id;
+  delete data.id;
 
   if (data.title && !data.slug) {
     data.slug = data.title
@@ -188,14 +190,24 @@ export const createProgram = async (req, res, next) => {
 // @desc    Update program (admin)
 export const updateProgram = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id || req.params.slug;
     const updateData = prepareProgramData(req.body);
 
     if (isDbConnected()) {
-      const program = await Program.findByIdAndUpdate(id, updateData, {
-        new: true,
-        runValidators: true,
-      });
+      let program = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        program = await Program.findByIdAndUpdate(id, updateData, {
+          new: true,
+          runValidators: true,
+        });
+      }
+      if (!program) {
+        program = await Program.findOneAndUpdate(
+          { $or: [{ slug: id }, { programId: id }] },
+          updateData,
+          { new: true, runValidators: true }
+        );
+      }
       if (!program) {
         return res.status(404).json({ success: false, message: 'Program not found' });
       }
@@ -222,20 +234,30 @@ export const updateProgram = async (req, res, next) => {
 // @desc    Delete program (admin)
 export const deleteProgram = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id || req.params.slug;
 
     if (isDbConnected()) {
-      const program = await Program.findById(id);
+      let program = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        program = await Program.findById(id);
+      }
+      if (!program) {
+        program = await Program.findOne({ $or: [{ slug: id }, { programId: id }] });
+      }
       if (!program) {
         return res.status(404).json({ success: false, message: 'Program not found' });
       }
-      await Workshop.deleteMany({ programId: program._id });
-      await ProgramRegistration.deleteMany({ programId: program._id });
+      await Workshop.deleteMany({
+        $or: [{ programId: program._id }, { programSlug: program.slug }],
+      });
+      await ProgramRegistration.deleteMany({
+        $or: [{ programId: program._id }, { programSlug: program.slug }],
+      });
       await program.deleteOne();
       return res.json({ success: true, message: 'Program deleted successfully' });
     }
 
-    mockStore.programs = mockStore.programs.filter((p) => p._id !== id && p.id !== id);
+    mockStore.programs = mockStore.programs.filter((p) => p._id !== id && p.id !== id && p.slug !== id);
     res.json({ success: true, message: 'Program deleted successfully' });
   } catch (error) {
     next(error);

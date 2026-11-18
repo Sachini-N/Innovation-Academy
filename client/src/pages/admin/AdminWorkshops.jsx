@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { workshopService, programService, uploadService } from '../../services/api';
+import { handleImageError } from '../../utils/imageUrl';
 import {
   Plus,
   Edit,
@@ -26,6 +27,7 @@ export default function AdminWorkshops() {
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadError, setUploadError] = useState('');
@@ -173,6 +175,7 @@ export default function AdminWorkshops() {
   const handleSaveWorkshop = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+    setIsSaving(true);
 
     try {
       if (isEditing) {
@@ -180,18 +183,25 @@ export default function AdminWorkshops() {
         if (res.success) {
           setSuccessMsg(`Workshop "${formData.title}" updated successfully!`);
           setModalOpen(false);
-          fetchData();
+          await fetchData();
+        } else {
+          setErrorMsg(res.message || 'Failed to update workshop');
         }
       } else {
         const res = await workshopService.createWorkshop(formData);
         if (res.success) {
           setSuccessMsg(`Workshop "${formData.title}" created successfully!`);
           setModalOpen(false);
-          fetchData();
+          await fetchData();
+        } else {
+          setErrorMsg(res.message || 'Failed to create workshop');
         }
       }
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Failed to save workshop');
+      console.error('Failed to save workshop:', err);
+      setErrorMsg(err.response?.data?.message || err.message || 'Failed to save workshop');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -293,10 +303,21 @@ export default function AdminWorkshops() {
                 {items.map((w) => (
                   <div
                     key={w._id}
-                    className="bg-white rounded-2xl border border-[#e2e8f0] p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow group"
+                    className="bg-white rounded-2xl border border-[#e2e8f0] p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow group overflow-hidden"
                   >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
+                    <div>
+                      {w.coverImage && (
+                        <div className="w-full -mt-1 mb-3 rounded-xl overflow-hidden bg-white border border-slate-100 flex items-center justify-center p-1">
+                          <img
+                            src={w.coverImage}
+                            alt={w.title}
+                            className="w-full h-auto max-h-80 object-contain rounded-lg"
+                            onError={handleImageError}
+                          />
+                        </div>
+                      )}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                             w.status === 'Ongoing'
@@ -333,6 +354,7 @@ export default function AdminWorkshops() {
                           <span className="truncate">{w.speakerName}</span>
                         </div>
                       </div>
+                    </div>
                     </div>
 
                     <div className="mt-5 pt-3 border-t border-[#e2e8f0] flex items-center justify-between gap-2">
@@ -449,17 +471,20 @@ export default function AdminWorkshops() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#131b2e] mb-1">
-                  Workshop Description <span className="text-red-500">*</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-bold text-[#131b2e]">
+                    Workshop Description <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[11px] text-slate-500">Supports emojis &amp; multiline formatted text</span>
+                </div>
                 <textarea
                   name="description"
                   required
-                  rows={3}
+                  rows={8}
                   value={formData.description}
                   onChange={handleFormChange}
-                  placeholder="Outline the workshop agenda, framework and exercises..."
-                  className="w-full p-2.5 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] outline-none"
+                  placeholder="Outline the workshop agenda, framework, exercises, learning objectives..."
+                  className="w-full min-h-[180px] p-3.5 rounded-xl border border-[#cbd5e1] text-sm focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none leading-relaxed font-sans"
                 ></textarea>
               </div>
 
@@ -612,19 +637,16 @@ export default function AdminWorkshops() {
                   <span className="text-[11px] text-slate-500">Upload file or enter URL</span>
                 </div>
 
-                {/* Image Preview if available */}
+                {/* Image Preview if available - Full Flyer Preview */}
                 {formData.coverImage && (
-                  <div className="relative w-full h-40 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 group shadow-inner">
+                  <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 bg-white group shadow-inner flex items-center justify-center p-2 min-h-[200px]">
                     <img
                       src={formData.coverImage}
                       alt="Workshop Cover Preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
+                      className="w-full h-auto max-h-96 object-contain rounded-lg"
+                      onError={handleImageError}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none"></div>
-                    <span className="absolute bottom-2.5 left-3 text-[11px] font-bold text-white bg-black/50 px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-[80%]">
+                    <span className="absolute bottom-2.5 left-3 text-[11px] font-bold text-white bg-black/60 px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-[80%]">
                       {formData.coverImage}
                     </span>
                     <button
@@ -687,21 +709,41 @@ export default function AdminWorkshops() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-4 mt-6 border-t border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
-                >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>{isEditing ? 'Update Workshop' : 'Create Workshop'}</span>
-                </button>
+              <div className="flex items-center justify-between gap-3 pt-4 mt-6 border-t border-slate-200">
+                {errorMsg ? (
+                  <div className="text-red-600 text-xs font-semibold flex items-center gap-1.5 truncate max-w-xs sm:max-w-md">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{errorMsg}</span>
+                  </div>
+                ) : (
+                  <div />
+                )}
+                <div className="flex items-center gap-2.5 shrink-0 ml-auto">
+                  <button
+                    type="button"
+                    onClick={() => setModalOpen(false)}
+                    className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSaving || uploadingCover}
+                    className="px-5 py-2 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm transition-all hover:shadow cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-3.5 h-3.5" />
+                        <span>{isEditing ? 'Update Workshop' : 'Create Workshop'}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </form>
           </div>

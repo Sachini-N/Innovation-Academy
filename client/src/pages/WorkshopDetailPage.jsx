@@ -4,6 +4,7 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../context/AuthContext';
 import { workshopService } from '../services/api';
+import { handleImageError } from '../utils/imageUrl';
 import {
   Calendar,
   Clock,
@@ -112,6 +113,18 @@ export default function WorkshopDetailPage() {
             <span className="font-semibold text-[#131b2e] truncate">{workshop.title}</span>
           </div>
 
+          {/* Workshop Full Flyer Banner (if uploaded) */}
+          {workshop.coverImage && (
+            <div className="w-full rounded-2xl overflow-hidden mb-8 border border-[#e2e8f0] shadow-md bg-white flex items-center justify-center p-2 sm:p-4">
+              <img
+                src={workshop.coverImage}
+                alt={workshop.title}
+                className="w-full max-w-2xl h-auto max-h-[850px] object-contain rounded-xl shadow-sm"
+                onError={handleImageError}
+              />
+            </div>
+          )}
+
           {/* Top Banner Card */}
           <div className="rounded-2xl bg-white border border-[#e2e8f0] p-6 sm:p-8 shadow-sm mb-8">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -135,9 +148,9 @@ export default function WorkshopDetailPage() {
             <h1 className="text-2xl sm:text-4xl font-extrabold text-[#0B192C] leading-tight">
               {workshop.title}
             </h1>
-            <p className="text-sm sm:text-base text-[#44474c] mt-3 leading-relaxed">
+            <div className="text-sm sm:text-base text-[#44474c] mt-4 leading-relaxed whitespace-pre-line font-normal">
               {workshop.description}
-            </p>
+            </div>
 
             {/* Quick Metadata Bar */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-6 border-t border-[#e2e8f0] text-xs sm:text-sm text-[#131b2e]">

@@ -54,9 +54,11 @@ export default function LoginPage() {
           {/* Card */}
           <div className="bg-white rounded-2xl border border-[#cbd5e1] p-8 shadow-xl">
             <div className="text-center mb-8">
-              <div className="w-12 h-12 rounded-xl bg-[#006398] text-white flex items-center justify-center font-bold text-2xl mx-auto mb-3 shadow-md">
-                T
-              </div>
+              <img
+                src="/trace-logo.png"
+                alt="TRACE Innovation Academy"
+                className="h-11 w-auto object-contain mx-auto mb-3"
+              />
               <h1 className="text-2xl font-extrabold text-[#0B192C]">Welcome Back</h1>
               <p className="text-xs text-[#44474c] mt-1">
                 Access your TRACE Sri Lanka participant or administrator portal

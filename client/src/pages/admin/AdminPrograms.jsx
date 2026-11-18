@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { programService, uploadService } from '../../services/api';
+import { handleImageError } from '../../utils/imageUrl';
 import {
   School,
   Edit,
@@ -28,6 +29,7 @@ const initialFormData = {
   shortDescription: '',
   description: '',
   duration: '1 Month',
+  fee: 'LKR 15,000 per month',
   cohort: 'Cohort 01 (2025/Q3)',
   totalSeats: 50,
   status: 'Active',
@@ -50,6 +52,7 @@ export default function AdminPrograms() {
   const [formData, setFormData] = useState(initialFormData);
   const [saveSuccess, setSaveSuccess] = useState('');
   const [saveError, setSaveError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadError, setUploadError] = useState('');
@@ -127,6 +130,7 @@ export default function AdminPrograms() {
       shortDescription: prog.shortDescription || '',
       description: prog.description || '',
       duration: prog.duration || '1 Month',
+      fee: prog.fee || (prog.slug === 'program-01' ? 'LKR 15,000 per month' : prog.slug === 'program-02' ? 'LKR 5,000 Registration Fee + LKR 15,000 per month' : ''),
       cohort: prog.cohort || '',
       totalSeats: prog.totalSeats || 50,
       status: prog.status || 'Active',
@@ -177,28 +181,37 @@ export default function AdminPrograms() {
   };
 
   const handleSaveProgram = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setSaveSuccess('');
     setSaveError('');
+    setIsSaving(true);
 
     try {
       if (isEditing) {
-        const res = await programService.updateProgram(formData.id, formData);
+        const targetId = formData.id || formData._id || formData.slug;
+        const res = await programService.updateProgram(targetId, formData);
         if (res.success) {
           setSaveSuccess(`Program "${formData.title}" updated successfully!`);
           setModalOpen(false);
-          fetchPrograms();
+          await fetchPrograms();
+        } else {
+          setSaveError(res.message || 'Failed to update program');
         }
       } else {
         const res = await programService.createProgram(formData);
         if (res.success) {
           setSaveSuccess(`Program "${formData.title}" created successfully!`);
           setModalOpen(false);
-          fetchPrograms();
+          await fetchPrograms();
+        } else {
+          setSaveError(res.message || 'Failed to create program');
         }
       }
     } catch (err) {
-      setSaveError(err.response?.data?.message || 'Failed to save program changes');
+      console.error('Failed to save program:', err);
+      setSaveError(err.response?.data?.message || err.message || 'Failed to save program changes');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -278,9 +291,21 @@ export default function AdminPrograms() {
         {programs.map((prog, idx) => (
           <div
             key={prog._id || idx}
-            className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow"
+            className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow overflow-hidden"
           >
             <div>
+              {/* Program Cover Image Preview */}
+              {prog.coverImage && (
+                <div className="w-full h-44 -mt-6 -mx-6 mb-4 overflow-hidden bg-slate-100 border-b border-slate-100">
+                  <img
+                    src={prog.coverImage}
+                    alt={prog.title}
+                    className="w-full h-full object-cover"
+                    onError={handleImageError}
+                  />
+                </div>
+              )}
+
               <div className="flex items-center justify-between mb-3">
                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#eaedff] text-[#006398]">
                   {prog.badge || `PROGRAM 0${idx + 1}`}
@@ -307,6 +332,12 @@ export default function AdminPrograms() {
                 <div>
                   <span className="text-[#75777d] block text-[11px]">Duration:</span>
                   <span className="font-bold text-[#131b2e]">{prog.duration}</span>
+                </div>
+                <div>
+                  <span className="text-[#75777d] block text-[11px]">Programme Fee:</span>
+                  <span className="font-bold text-[#006398] truncate block" title={prog.fee}>
+                    {prog.fee || (prog.slug === 'program-01' ? 'LKR 15,000 / mo' : 'LKR 5k + 15k / mo')}
+                  </span>
                 </div>
                 <div>
                   <span className="text-[#75777d] block text-[11px]">Active Cohort:</span>
@@ -421,7 +452,10 @@ export default function AdminPrograms() {
       {/* Create / Edit Program Modal (Sticky Header Layout) */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm p-4 pt-8 sm:pt-12 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col max-h-[88vh] overflow-hidden border border-slate-200 relative my-auto sm:my-0">
+          <form
+            onSubmit={handleSaveProgram}
+            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full flex flex-col max-h-[88vh] overflow-hidden border border-slate-200 relative my-auto sm:my-0"
+          >
             {/* Modal Header (Fixed at top, never cut off) */}
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 bg-white shrink-0 z-10">
               <div className="flex items-center gap-2.5">
@@ -443,15 +477,13 @@ export default function AdminPrograms() {
             </div>
 
             {/* Scrollable Form Body */}
-            <div className="p-6 overflow-y-auto flex-1">
+            <div className="p-6 overflow-y-auto flex-1 space-y-4">
               {saveError && (
-                <div className="p-3 mb-4 rounded-xl bg-red-50 text-red-800 text-xs font-semibold flex items-center gap-2">
+                <div className="p-3 mb-2 rounded-xl bg-red-50 text-red-800 text-xs font-semibold flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
                   <span>{saveError}</span>
                 </div>
               )}
-
-              <form id="program-form" onSubmit={handleSaveProgram} className="space-y-4">
                 {/* Title & Slug */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -506,7 +538,19 @@ export default function AdminPrograms() {
                       name="duration"
                       value={formData.duration}
                       onChange={handleFormChange}
-                      placeholder="e.g. 1 Month Intensive"
+                      placeholder="e.g. 1 Month or 3 Months"
+                      className="w-full h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#131b2e] mb-1">Programme Fee</label>
+                    <input
+                      type="text"
+                      name="fee"
+                      value={formData.fee}
+                      onChange={handleFormChange}
+                      placeholder="e.g. LKR 15,000 per month"
                       className="w-full h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] outline-none"
                     />
                   </div>
@@ -556,17 +600,20 @@ export default function AdminPrograms() {
 
                 {/* Full Description */}
                 <div>
-                  <label className="block text-xs font-bold text-[#131b2e] mb-1">
-                    Full Curriculum Description <span className="text-red-500">*</span>
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-[#131b2e]">
+                      Full Curriculum Description <span className="text-red-500">*</span>
+                    </label>
+                    <span className="text-[11px] text-slate-500">Supports emojis &amp; multiline formatted text</span>
+                  </div>
                   <textarea
                     name="description"
                     required
-                    rows={4}
+                    rows={8}
                     value={formData.description}
                     onChange={handleFormChange}
                     placeholder="Comprehensive description of the program track, academic structure, and value proposition..."
-                    className="w-full p-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] outline-none"
+                    className="w-full min-h-[180px] p-3.5 rounded-xl border border-[#cbd5e1] text-sm focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none leading-relaxed font-sans"
                   ></textarea>
                 </div>
 
@@ -676,9 +723,7 @@ export default function AdminPrograms() {
                         src={formData.coverImage}
                         alt="Program Cover Preview"
                         className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                        }}
+                        onError={handleImageError}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none"></div>
                       <span className="absolute bottom-2.5 left-3 text-[11px] font-bold text-white bg-black/50 px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-[80%]">
@@ -743,28 +788,46 @@ export default function AdminPrograms() {
                     )}
                   </div>
                 </div>
-              </form>
             </div>
 
             {/* Modal Sticky Footer */}
-            <div className="px-6 py-4 border-t border-[#e2e8f0] bg-slate-50 flex items-center justify-end gap-3 shrink-0">
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="px-4 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-700 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                form="program-form"
-                className="px-5 py-2 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm transition-all hover:shadow"
-              >
-                <Save className="w-3.5 h-3.5" />
-                <span>{isEditing ? 'Save Changes' : 'Create Program'}</span>
-              </button>
+            <div className="px-6 py-4 border-t border-[#e2e8f0] bg-slate-50 flex items-center justify-between gap-3 shrink-0">
+              {saveError ? (
+                <div className="text-red-600 text-xs font-semibold flex items-center gap-1.5 truncate max-w-xs sm:max-w-md">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span className="truncate">{saveError}</span>
+                </div>
+              ) : (
+                <div />
+              )}
+              <div className="flex items-center gap-3 shrink-0 ml-auto">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="px-4 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving || uploadingCover}
+                  className="px-5 py-2 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm transition-all hover:shadow cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-3.5 h-3.5" />
+                      <span>{isEditing ? 'Save Changes' : 'Create Program'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       )}
     </div>

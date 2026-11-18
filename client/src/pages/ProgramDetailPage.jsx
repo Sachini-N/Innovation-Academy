@@ -4,6 +4,7 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../context/AuthContext';
 import { programService, registrationService } from '../services/api';
+import { handleImageError } from '../utils/imageUrl';
 import {
   Brain,
   Rocket,
@@ -204,8 +205,19 @@ export default function ProgramDetailPage() {
       <main className="flex-1">
         {/* Hero Banner */}
         <section
+          style={
+            program.coverImage
+              ? {
+                  backgroundImage: `linear-gradient(to right, rgba(11, 25, 44, 0.72), rgba(0, 23, 75, 0.85)), url(${program.coverImage})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }
+              : {}
+          }
           className={`py-16 text-white ${
-            isProg1
+            program.coverImage
+              ? 'bg-cover bg-center'
+              : isProg1
               ? 'bg-gradient-to-r from-[#006398] via-[#00476e] to-[#0B192C]'
               : 'bg-gradient-to-r from-[#0B192C] via-[#0e1c2f] to-[#00174b]'
           } relative overflow-hidden`}
@@ -221,78 +233,41 @@ export default function ProgramDetailPage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-8 flex flex-col gap-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold tracking-widest text-[#5bb8fe] w-fit">
-                  {program.cohort || 'ACTIVE COHORT'}
+            <div className="max-w-4xl flex flex-col gap-4">
+              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                {program.title}
+              </h1>
+              <p className="text-base sm:text-lg text-[#cce5ff] max-w-2xl leading-relaxed">
+                {program.shortDescription || program.description}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-6 pt-2 text-xs sm:text-sm text-[#bac7e1]">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-[#5bb8fe]" />
+                  <span>Duration: <strong className="text-white">{program.slug === 'program-01' ? '1 Month' : program.slug === 'program-02' ? '3 Months' : (program.duration || '1 Month')}</strong></span>
                 </div>
-                <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-                  {program.title}
-                </h1>
-                <p className="text-base sm:text-lg text-[#cce5ff] max-w-2xl leading-relaxed">
-                  {program.shortDescription || program.description}
-                </p>
-
-                <div className="flex flex-wrap items-center gap-6 pt-2 text-xs sm:text-sm text-[#bac7e1]">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-[#5bb8fe]" />
-                    <span>Duration: <strong className="text-white">{program.duration}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#5bb8fe]" />
-                    <span>Location: <strong className="text-white">TRACE Expert City, Bay 05</strong></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Award className="w-4 h-4 text-[#5bb8fe]" />
-                    <span>Certification: <strong className="text-white">TRACE Sri Lanka</strong></span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#5bb8fe]" />
+                  <span>Programme Fee: <strong className="text-white">{program.fee || (program.slug === 'program-01' ? 'LKR 15,000 / month' : 'LKR 5,000 Reg + LKR 15,000 / month')}</strong></span>
                 </div>
-              </div>
-
-              {/* Quick Action Ribbon */}
-              <div className="lg:col-span-4 flex flex-col gap-3">
-                <div className="p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white">
-                  <span className="text-xs uppercase font-extrabold tracking-wider text-[#5bb8fe] block mb-1">
-                    Admissions Status
-                  </span>
-                  <div className="text-xl font-bold">Seats Open • Rolling Review</div>
-                  <p className="text-xs text-[#cce5ff] mt-1 mb-4">
-                    Registering for this program unlocks automatic access to all associated workshops!
-                  </p>
-
-                  {isEnrolled ? (
-                    <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-400 text-xs font-semibold text-emerald-200 flex flex-col gap-1">
-                      <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                        <span>Enrolled in this program!</span>
-                      </div>
-                      <span className="text-[11px] text-white/80">Ref: {existingRef}</span>
-                      <Link
-                        to="/participant/workshops"
-                        className="mt-2 text-center py-2 bg-white text-[#0B192C] font-bold rounded-lg hover:bg-[#f2f3ff] transition-colors"
-                      >
-                        Access My Workshops
-                      </Link>
-                    </div>
-                  ) : (
-                    <a
-                      href="#register"
-                      className="w-full py-3 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider text-center block shadow-lg transition-all"
-                    >
-                      Register for Program
-                    </a>
-                  )}
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-[#5bb8fe]" />
+                  <span>Location: <strong className="text-white">TRACE Expert City, Bay 05</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-[#5bb8fe]" />
+                  <span>Certification: <strong className="text-white">TRACE Sri Lanka</strong></span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 6 Required Detail Sections */}
+        {/* Program Detail Sections */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Left Content (8 cols) */}
-            <div className="lg:col-span-8 space-y-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+            {/* Left Content (7 cols) */}
+            <div className="lg:col-span-7 space-y-12">
               {/* 1. Program Overview */}
               <section className="bg-white p-7 sm:p-9 rounded-2xl border border-[#e2e8f0] shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
@@ -332,34 +307,11 @@ export default function ProgramDetailPage() {
                 )}
               </section>
 
-              {/* 2. Program Objectives */}
+              {/* 2. Program Activities */}
               <section className="bg-white p-7 sm:p-9 rounded-2xl border border-[#e2e8f0] shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="w-3 h-3 rounded-full bg-[#006398]"></span>
-                  <h2 className="text-2xl font-bold text-[#0B192C]">2. Program Objectives</h2>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {program.objectives?.map((obj, i) => (
-                    <div
-                      key={i}
-                      className="p-4 rounded-xl bg-[#faf8ff] border border-[#e2e8f0] flex items-start gap-3"
-                    >
-                      <div className="w-5 h-5 rounded-full bg-[#eaedff] text-[#006398] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                        {i + 1}
-                      </div>
-                      <span className="text-xs sm:text-sm text-[#131b2e] font-medium leading-snug">
-                        {obj}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* 3. Program Activities */}
-              <section className="bg-white p-7 sm:p-9 rounded-2xl border border-[#e2e8f0] shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="w-3 h-3 rounded-full bg-[#006398]"></span>
-                  <h2 className="text-2xl font-bold text-[#0B192C]">3. Program Activities &amp; Sprints</h2>
+                  <h2 className="text-2xl font-bold text-[#0B192C]">2. Program Activities &amp; Sprints</h2>
                 </div>
                 <div className="space-y-3">
                   {program.activities?.map((act, i) => (
@@ -379,11 +331,11 @@ export default function ProgramDetailPage() {
                 </div>
               </section>
 
-              {/* 4. Program Information (Audience, Benefits, Outcomes) */}
+              {/* 3. Program Information (Audience, Benefits, Outcomes) */}
               <section className="bg-white p-7 sm:p-9 rounded-2xl border border-[#e2e8f0] shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
                   <span className="w-3 h-3 rounded-full bg-[#006398]"></span>
-                  <h2 className="text-2xl font-bold text-[#0B192C]">4. Target Audience &amp; Benefits</h2>
+                  <h2 className="text-2xl font-bold text-[#0B192C]">3. Target Audience &amp; Benefits</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -417,14 +369,14 @@ export default function ProgramDetailPage() {
                 </div>
               </section>
 
-              {/* 5. Workshops belonging to THIS program */}
+              {/* 4. Workshops belonging to THIS program */}
               <section className="bg-white p-7 sm:p-9 rounded-2xl border border-[#e2e8f0] shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="w-3 h-3 rounded-full bg-[#006398]"></span>
                       <h2 className="text-2xl font-bold text-[#0B192C]">
-                        5. Workshops Under {program.title}
+                        4. Workshops Under {program.title}
                       </h2>
                     </div>
                     <p className="text-xs text-[#44474c] mt-1">
@@ -443,6 +395,16 @@ export default function ProgramDetailPage() {
                         key={w._id || idx}
                         className="p-5 rounded-xl bg-[#faf8ff] border border-[#e2e8f0] hover:border-[#006398] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                       >
+                        {w.coverImage && (
+                          <div className="w-full sm:w-28 h-20 rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+                            <img
+                              src={w.coverImage}
+                              alt={w.title}
+                              className="w-full h-full object-cover"
+                              onError={handleImageError}
+                            />
+                          </div>
+                        )}
                         <div className="space-y-1.5 flex-1">
                           <div className="flex items-center gap-2">
                             <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#eaedff] text-[#006398]">
@@ -484,40 +446,56 @@ export default function ProgramDetailPage() {
               </section>
             </div>
 
-            {/* Right Column: 6. Program Registration Form / System (4 cols) */}
-            <div className="lg:col-span-4" id="register">
-              <div className="sticky top-28 rounded-2xl bg-white border border-[#cbd5e1] p-7 shadow-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-lg bg-[#006398] text-white flex items-center justify-center font-bold">
-                    <Send className="w-4 h-4" />
+            {/* Right Column: Program Registration Form (5 cols) */}
+            <div className="lg:col-span-5" id="register">
+              <div className="sticky top-28 rounded-3xl bg-white border border-[#cbd5e1] p-7 sm:p-9 shadow-xl">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-11 h-11 rounded-xl bg-[#006398] text-white flex items-center justify-center font-bold shadow-md shadow-[#006398]/20 shrink-0">
+                    <Send className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-[#0B192C]">Join Program</h3>
-                    <span className="text-[11px] uppercase tracking-wider font-semibold text-[#006398]">
+                    <h3 className="text-2xl font-black text-[#0B192C] tracking-tight">Join Program</h3>
+                    <span className="text-xs uppercase tracking-wider font-extrabold text-[#006398]">
                       {program.badge || 'PROGRAM REGISTRATION'}
                     </span>
                   </div>
                 </div>
 
-                <p className="text-xs text-[#44474c] mb-5 leading-relaxed">
+                <p className="text-sm text-slate-600 mb-5 leading-relaxed">
                   Register once for <strong>{program.title}</strong>. You will automatically receive
                   access to all its workshops, mentorship, and Bay 05 facilities.
                 </p>
 
+                {/* Fee & Duration Pill */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#f0f6ff] to-[#e6f1fe] border border-[#bfdbfe] mb-6 space-y-2 shadow-xs">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-[#004e78] flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#006398]" />
+                      Programme Fee
+                    </span>
+                    <span className="px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#006398] text-white shadow-xs">
+                      {program.slug === 'program-01' ? '1 Month' : program.slug === 'program-02' ? '3 Months' : (program.duration || '1 Month')}
+                    </span>
+                  </div>
+                  <div className="text-lg sm:text-2xl font-black text-[#006398] tracking-tight">
+                    {program.fee || (program.slug === 'program-01' ? 'LKR 15,000 per month' : 'LKR 5,000 Registration Fee + LKR 15,000 per month')}
+                  </div>
+                </div>
+
                 {/* Already Enrolled Banner */}
                 {isEnrolled && (
-                  <div className="mb-5 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
+                  <div className="mb-5 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm">
                     <div className="flex items-center gap-2 font-bold mb-1">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                       <span>Already Registered!</span>
                     </div>
-                    <p className="text-[11px] leading-relaxed">
+                    <p className="text-xs leading-relaxed">
                       You are already enrolled in this program. Your reference number is{' '}
                       <strong>{existingRef}</strong>.
                     </p>
                     <Link
                       to="/participant/workshops"
-                      className="mt-3 block w-full py-2 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs"
+                      className="mt-3 block w-full py-2.5 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs uppercase tracking-wider"
                     >
                       Go to My Workshops
                     </Link>
@@ -526,18 +504,18 @@ export default function ProgramDetailPage() {
 
                 {/* Success Registration Notice */}
                 {regSuccess && (
-                  <div className="mb-5 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs">
+                  <div className="mb-5 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm">
                     <div className="flex items-center gap-2 font-bold mb-1">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                       <span>Registration Confirmed!</span>
                     </div>
-                    <p className="text-[11px] leading-relaxed">
+                    <p className="text-xs leading-relaxed">
                       Your Reference: <strong>{regSuccess.referenceNumber}</strong>. You now have
                       automatic access to all workshops in this program.
                     </p>
                     <Link
                       to="/participant"
-                      className="mt-3 block w-full py-2 text-center bg-[#006398] hover:bg-[#0284c7] text-white font-bold rounded-lg text-xs"
+                      className="mt-3 block w-full py-2.5 text-center bg-[#006398] hover:bg-[#0284c7] text-white font-bold rounded-lg text-xs uppercase tracking-wider"
                     >
                       Open Participant Dashboard
                     </Link>
@@ -545,31 +523,33 @@ export default function ProgramDetailPage() {
                 )}
 
                 {regError && (
-                  <div className="mb-5 p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-start gap-2">
+                  <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
                     <span>{regError}</span>
                   </div>
                 )}
 
                 {!isAuthenticated && (
-                  <div className="mb-5 p-3.5 rounded-xl bg-[#f2f3ff] border border-[#dae2fd] text-xs text-[#00476e]">
-                    <div className="flex items-center gap-1.5 font-bold mb-1">
-                      <Lock className="w-3.5 h-3.5" />
+                  <div className="mb-6 p-4 rounded-xl bg-[#f2f3ff] border border-[#dae2fd] text-xs sm:text-sm text-[#00476e]">
+                    <div className="flex items-center gap-2 font-extrabold mb-1.5 text-sm text-[#0B192C]">
+                      <Lock className="w-4 h-4 text-[#006398]" />
                       <span>Account Required</span>
                     </div>
-                    <span>Please log in or register your account to enroll in this program.</span>
-                    <div className="grid grid-cols-2 gap-2 mt-2.5">
+                    <span className="text-xs text-slate-600 leading-relaxed block mb-3">
+                      Please log in or register your account to enroll in this program.
+                    </span>
+                    <div className="grid grid-cols-2 gap-3">
                       <button
                         type="button"
                         onClick={openLoginModal}
-                        className="py-1.5 text-center bg-[#0B192C] hover:bg-[#1e293b] text-white font-bold rounded text-xs transition-colors cursor-pointer"
+                        className="py-2.5 text-center bg-[#0B192C] hover:bg-[#1e293b] text-white font-bold rounded-lg text-xs transition-colors cursor-pointer shadow-xs"
                       >
                         Login
                       </button>
                       <button
                         type="button"
                         onClick={openRegisterModal}
-                        className="py-1.5 text-center bg-[#ba1a1a] hover:bg-[#93000a] text-white font-bold rounded text-xs transition-colors cursor-pointer"
+                        className="py-2.5 text-center bg-[#006398] hover:bg-[#0284c7] text-white font-bold rounded-lg text-xs transition-colors cursor-pointer shadow-xs"
                       >
                         Register
                       </button>
@@ -577,9 +557,9 @@ export default function ProgramDetailPage() {
                   </div>
                 )}
 
-                <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
+                <form onSubmit={handleRegisterSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#131b2e] mb-1">
+                    <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131b2e] mb-1.5">
                       Full Name *
                     </label>
                     <input
@@ -589,12 +569,12 @@ export default function ProgramDetailPage() {
                       placeholder="e.g. Kavindu Senanayake"
                       value={regForm.fullName}
                       onChange={handleRegChange}
-                      className="w-full h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none"
+                      className="w-full h-11 sm:h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#131b2e] mb-1">
+                    <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131b2e] mb-1.5">
                       Email Address *
                     </label>
                     <input
@@ -604,12 +584,12 @@ export default function ProgramDetailPage() {
                       placeholder="kavindu@domain.lk"
                       value={regForm.email}
                       onChange={handleRegChange}
-                      className="w-full h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none"
+                      className="w-full h-11 sm:h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#131b2e] mb-1">
+                    <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131b2e] mb-1.5">
                       Phone Number *
                     </label>
                     <input
@@ -619,12 +599,12 @@ export default function ProgramDetailPage() {
                       placeholder="+94 77 123 4567"
                       value={regForm.phoneNumber}
                       onChange={handleRegChange}
-                      className="w-full h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none"
+                      className="w-full h-11 sm:h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#131b2e] mb-1">
+                    <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131b2e] mb-1.5">
                       Organization / University
                     </label>
                     <input
@@ -633,12 +613,12 @@ export default function ProgramDetailPage() {
                       placeholder="e.g. University of Moratuwa"
                       value={regForm.organization}
                       onChange={handleRegChange}
-                      className="w-full h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none"
+                      className="w-full h-11 sm:h-12 px-4 rounded-xl border border-slate-300 text-sm focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#131b2e] mb-1">
+                    <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131b2e] mb-1.5">
                       Additional Information / Aspirations
                     </label>
                     <textarea
@@ -647,14 +627,14 @@ export default function ProgramDetailPage() {
                       placeholder="Share your prototype ideas or motivation..."
                       value={regForm.additionalInformation}
                       onChange={handleRegChange}
-                      className="w-full p-2.5 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] focus:ring-1 focus:ring-[#006398] outline-none"
+                      className="w-full p-3.5 rounded-xl border border-slate-300 text-sm focus:border-[#006398] focus:ring-2 focus:ring-[#006398]/20 outline-none transition-all"
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
                     disabled={submittingReg || isEnrolled}
-                    className="w-full h-11 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-sm"
+                    className="w-full h-12 sm:h-13 rounded-xl bg-[#006398] hover:bg-[#0284c7] text-white font-extrabold text-sm uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-md hover:shadow-lg cursor-pointer mt-2"
                   >
                     {submittingReg ? (
                       <span>Processing Application...</span>
@@ -662,7 +642,7 @@ export default function ProgramDetailPage() {
                       <span>Enrolled Already</span>
                     ) : (
                       <>
-                        <Send className="w-3.5 h-3.5" />
+                        <Send className="w-4 h-4" />
                         <span>Confirm Program Registration</span>
                       </>
                     )}

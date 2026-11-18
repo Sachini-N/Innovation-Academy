@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, ArrowRight, Video, MapPin } from 'lucide-react';
+import { handleImageError } from '../../utils/imageUrl';
 
 export default function WorkshopsSection({ workshops = [] }) {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -115,9 +116,24 @@ export default function WorkshopsSection({ workshops = [] }) {
             return (
               <div
                 key={w._id || idx}
-                className="rounded-2xl bg-[#faf8ff] border border-slate-200/80 p-6 flex flex-col justify-between hover:shadow-lg hover:border-[#cbd5e1] transition-all duration-200 group"
+                className="rounded-2xl bg-[#faf8ff] border border-slate-200/80 p-6 flex flex-col justify-between hover:shadow-lg hover:border-[#cbd5e1] transition-all duration-200 group overflow-hidden"
               >
                 <div>
+                  {/* Cover Image if uploaded - Flush edge-to-edge complete flyer */}
+                  {w.coverImage && (
+                    <Link
+                      to={`/programs/${pSlug}/workshops/${w.slug || w._id}`}
+                      className="block -mt-6 -mx-6 mb-4 overflow-hidden rounded-t-2xl border-b border-slate-100 bg-white"
+                    >
+                      <img
+                        src={w.coverImage}
+                        alt={w.title}
+                        className="w-full h-auto block object-contain group-hover:scale-[1.01] transition-transform duration-300"
+                        onError={handleImageError}
+                      />
+                    </Link>
+                  )}
+
                   {/* Header: Parent Program Badge & Status */}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <span className="px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#dbeafe] text-[#00476e]">
@@ -153,7 +169,7 @@ export default function WorkshopsSection({ workshops = [] }) {
                   </Link>
 
                   {/* Description */}
-                  <p className="text-xs text-slate-500 leading-relaxed mt-2.5 line-clamp-3">
+                  <p className="text-xs text-slate-500 leading-relaxed mt-2.5 line-clamp-3 whitespace-pre-line">
                     {w.description}
                   </p>
                 </div>

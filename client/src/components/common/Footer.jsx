@@ -9,19 +9,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
           {/* Brand Info (5 cols) */}
           <div className="lg:col-span-5 flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0B192C] to-[#00476e] flex items-center justify-center text-sky-400 shadow-sm border border-white/10">
-                <Lightbulb className="w-5 h-5 text-sky-300" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-extrabold text-2xl tracking-tight text-white leading-tight">
-                  TRACE
-                </span>
-                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400">
-                  INNOVATION ACADEMY <span className="text-slate-500">| POWERED BY T2T</span>
-                </span>
-              </div>
-            </div>
+            <Link to="/" className="inline-block py-1 group">
+              <img
+                src="/trace-logo-white.png"
+                alt="TRACE Innovation Academy - Powered by T2T"
+                className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+              />
+            </Link>
 
             <p className="text-xs sm:text-sm text-[#bac7e1] leading-relaxed max-w-md mt-1">
               Inspiring innovation across Sri Lanka. Empowering next-generation innovators to build

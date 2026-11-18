@@ -52,6 +52,10 @@ const programSchema = new mongoose.Schema(
       type: String,
       default: '1 Month',
     },
+    fee: {
+      type: String,
+      default: '',
+    },
     benefits: {
       type: [String],
       default: [],
