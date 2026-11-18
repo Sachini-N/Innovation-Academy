@@ -221,6 +221,10 @@ export const userService = {
     const res = await api.delete(`/users/participants/${id}`);
     return res.data;
   },
+  updateParticipantRole: async (id, role) => {
+    const res = await api.put(`/users/participants/${id}/role`, { role });
+    return res.data;
+  },
   getParticipantOverview: async () => {
     const res = await api.get('/users/participant-overview');
     return res.data;

@@ -228,16 +228,16 @@ export const markNotificationRead = async (req, res, next) => {
   }
 };
 
-// @desc    Get all participants (admin)
+// @desc    Get all participants & user accounts (admin)
 export const getAllParticipants = async (req, res, next) => {
   try {
     if (isDbConnected()) {
-      const participants = await User.find({ role: 'participant' })
+      const users = await User.find()
         .select('-password')
-        .sort({ createdAt: -1 });
+        .sort({ role: 1, createdAt: -1 });
 
       const enriched = await Promise.all(
-        participants.map(async (p) => {
+        users.map(async (p) => {
           const regs = await ProgramRegistration.find({ userId: p._id }).populate(
             'programId',
             'title slug badge'
@@ -252,8 +252,8 @@ export const getAllParticipants = async (req, res, next) => {
       return res.json({ success: true, count: enriched.length, data: enriched });
     }
 
-    const participants = mockStore.users.filter((u) => u.role === 'participant');
-    const enriched = participants.map((p) => {
+    const users = mockStore.users;
+    const enriched = users.map((p) => {
       const regs = mockStore.programRegistrations.filter(
         (r) => r.userId === p._id || r.userId === p.id || r.email === p.email
       );
@@ -266,6 +266,92 @@ export const getAllParticipants = async (req, res, next) => {
     });
 
     res.json({ success: true, count: enriched.length, data: enriched });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Update user role (Grant/Revoke Admin Access)
+export const updateParticipantRole = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!role || !['admin', 'participant'].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid role. Role must be either "admin" or "participant".',
+      });
+    }
+
+    if (isDbConnected()) {
+      let user = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        user = await User.findById(id);
+      }
+      if (!user) {
+        user = await User.findOne({ email: id });
+      }
+
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      // Prevent demoting primary super-admin admin@trace.lk
+      if (user.email === 'admin@trace.lk' && role !== 'admin') {
+        return res.status(400).json({
+          success: false,
+          message: 'The primary system administrator role cannot be revoked.',
+        });
+      }
+
+      user.role = role;
+      await user.save();
+
+      return res.json({
+        success: true,
+        message:
+          role === 'admin'
+            ? `Admin privileges granted to ${user.name} (${user.email}) successfully.`
+            : `Admin privileges revoked for ${user.name}. Account role set to participant.`,
+        user: {
+          id: user._id,
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
+    }
+
+    // In-memory fallback
+    const user = mockStore.users.find((u) => u._id === id || u.id === id || u.email === id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (user.email === 'admin@trace.lk' && role !== 'admin') {
+      return res.status(400).json({
+        success: false,
+        message: 'The primary system administrator role cannot be revoked.',
+      });
+    }
+
+    user.role = role;
+    res.json({
+      success: true,
+      message:
+        role === 'admin'
+          ? `Admin privileges granted to ${user.name} successfully.`
+          : `Admin privileges revoked for ${user.name}.`,
+      user: {
+        id: user.id,
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     next(error);
   }
