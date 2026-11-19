@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
@@ -30,7 +31,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: '*',
+    origin: (origin, callback) => callback(null, true),
     credentials: true,
   })
 );
@@ -83,6 +84,18 @@ app.get('/api/health', (req, res) => {
     service: 'TRACE Sri Lanka Innovation Academy Backend',
     timestamp: new Date().toISOString(),
   });
+});
+
+// Serverless MongoDB auto-connect middleware
+app.use(async (req, res, next) => {
+  if (mongoose.connection.readyState === 0) {
+    try {
+      await connectDB();
+    } catch (e) {
+      console.warn('[Serverless DB connect warning]', e.message);
+    }
+  }
+  next();
 });
 
 // API Routes
@@ -231,5 +244,13 @@ const startServer = () => {
   }
 };
 
-startServer();
+// Only call app.listen in local / non-serverless environments
+if (!process.env.VERCEL) {
+  startServer();
+} else {
+  // Pre-initialize MongoDB connection in serverless container
+  connectDB().catch((err) => console.warn('[MongoDB Serverless Notice]', err.message));
+}
+
+export default app;
 
