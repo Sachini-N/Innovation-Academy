@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { programService } from '../services/api';
-import { Brain, Rocket, ArrowRight, CheckCircle2, Calendar, Award } from 'lucide-react';
+import { Brain, Rocket, ArrowRight, CheckCircle2, Calendar, Award, Clock } from 'lucide-react';
 
 export default function ProgramsPage() {
   const [programs, setPrograms] = useState(() => {
@@ -157,32 +157,39 @@ export default function ProgramsPage() {
                         </ul>
                       </div>
 
-                      {/* Programme Fee Highlight Box */}
-                      <div className="p-3.5 rounded-xl bg-[#f0f6ff] border border-[#bfdbfe] space-y-1 shadow-xs">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-[10px] font-black uppercase tracking-wider text-[#004e78]">
-                            PROGRAMME FEE
+                      {/* Programme Investment & Duration (Clean, Modern Minimalist Design) */}
+                      <div className="pt-4 border-t border-slate-100 flex items-end justify-between gap-3">
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                            Programme Fee
                           </span>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#dbeafe] text-[#00476e]">
-                            {programDuration}
-                          </span>
-                        </div>
-                        <div className="text-sm font-extrabold text-[#0B192C]">
                           {isProg1 ? (
                             <div className="flex items-baseline gap-1.5">
-                              <span className="text-base font-black text-[#006398]">LKR 15,000</span>
-                              <span className="text-xs font-semibold text-slate-600">per month</span>
+                              <span className="text-2xl font-black text-[#0B192C] tracking-tight">
+                                LKR 15,000
+                              </span>
+                              <span className="text-xs font-semibold text-slate-500">/ month</span>
                             </div>
                           ) : (
-                            <div className="space-y-0.5">
-                              <div className="text-xs font-bold text-[#0B192C]">
-                                <span className="font-extrabold text-[#006398]">LKR 5,000</span> Registration Fee
+                            <div>
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="text-2xl font-black text-[#0B192C] tracking-tight">
+                                  LKR 15,000
+                                </span>
+                                <span className="text-xs font-semibold text-slate-500">/ month</span>
                               </div>
-                              <div className="text-xs font-bold text-[#0B192C]">
-                                + <span className="font-extrabold text-[#006398]">LKR 15,000</span> <span className="text-xs font-semibold text-slate-600">per month</span>
-                              </div>
+                              <span className="text-[11px] font-medium text-slate-500 block mt-0.5">
+                                + LKR 5,000 one-time registration
+                              </span>
                             </div>
                           )}
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200/60">
+                            <Clock className="w-3.5 h-3.5 text-[#006398]" />
+                            <span>{programDuration}</span>
+                          </span>
                         </div>
                       </div>
                     </div>

@@ -68,7 +68,7 @@ export default function HeroSection() {
                 href="#programs"
                 className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 text-center"
               >
-                EXPLORE INNOVATION
+                EXPLORE INNOVATION PROGRAMS
               </a>
             </div>
           </div>
