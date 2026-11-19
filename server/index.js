@@ -29,6 +29,19 @@ dotenv.config();
 const app = express();
 
 // Middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin || '*';
+  res.header('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
+
 app.use(
   cors({
     origin: (origin, callback) => callback(null, true),
@@ -90,7 +103,9 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serverless MongoDB auto-connect middleware
+let isSeeded = false;
+
+// Serverless MongoDB auto-connect & auto-seeding middleware
 app.use(async (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     try {
@@ -99,6 +114,23 @@ app.use(async (req, res, next) => {
       console.warn('[Serverless DB connect warning]', e.message);
     }
   }
+
+  // Auto-seed if database is empty on Vercel
+  if (!isSeeded && mongoose.connection.readyState === 1) {
+    try {
+      const userCount = await User.countDocuments();
+      const programCount = await Program.countDocuments();
+      if (userCount === 0 || programCount === 0) {
+        console.log('[TRACE System] Empty Atlas database detected. Auto-seeding initial TRACE programs, workshops and admin user...');
+        await seedData();
+        console.log('[TRACE System] Seeding completed successfully!');
+      }
+      isSeeded = true;
+    } catch (seedErr) {
+      console.warn('[TRACE Seeder Notice]', seedErr.message);
+    }
+  }
+
   next();
 });
 
