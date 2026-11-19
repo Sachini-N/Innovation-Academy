@@ -16,7 +16,7 @@ const generateToken = (user) => {
       email: user.email,
       role: user.role,
     },
-    process.env.JWT_SECRET || 'trace_jwt_super_secret_key_2025',
+    process.env.JWT_SECRET || 'trace_expert_city_jwt_secret_2025_innovation_a',
     { expiresIn: '30d' }
   );
 };
@@ -138,7 +138,36 @@ export const login = async (req, res, next) => {
     }
 
     if (isDbConnected()) {
-      const user = await User.findOne({ email: cleanEmail });
+      let user = await User.findOne({ email: cleanEmail });
+
+      // Guarantee default admin credentials always succeed in Atlas
+      if (cleanEmail === 'admin@trace.lk' && password === 'admin123') {
+        if (!user) {
+          user = await User.create({
+            name: 'Dilshan Perera',
+            email: 'admin@trace.lk',
+            password: 'admin123',
+            role: 'admin',
+            phone: '+94 70 151 0444',
+            organization: 'TRACE Expert City Secretariat',
+            bio: 'Head of Programs & Incubation at TRACE Sri Lanka, Bay 05 Maradana.',
+          });
+        } else {
+          const matches = await user.matchPassword('admin123');
+          if (!matches || user.role !== 'admin') {
+            user.password = 'admin123';
+            user.role = 'admin';
+            await user.save();
+          }
+        }
+      }
+
+      // Ensure sachininisansala320@gmail.com has admin privileges if logging in
+      if (cleanEmail === 'sachininisansala320@gmail.com' && user && user.role !== 'admin') {
+        user.role = 'admin';
+        await user.save();
+      }
+
       if (!user) {
         return res.status(401).json({
           success: false,
@@ -216,6 +245,10 @@ export const login = async (req, res, next) => {
 export const getMe = async (req, res, next) => {
   try {
     const userId = req.user.id || req.user._id;
+
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
 
     if (isDbConnected()) {
       const user = await User.findById(userId).select('-password');

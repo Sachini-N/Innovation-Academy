@@ -21,7 +21,7 @@ export const protect = async (req, res, next) => {
   try {
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || 'trace_jwt_super_secret_key_2025'
+      process.env.JWT_SECRET || 'trace_expert_city_jwt_secret_2025_innovation_a'
     );
     
     // Attempt to find user in MongoDB
@@ -79,7 +79,7 @@ export const optionalAuth = async (req, res, next) => {
   try {
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || 'trace_jwt_super_secret_key_2025'
+      process.env.JWT_SECRET || 'trace_expert_city_jwt_secret_2025_innovation_a'
     );
     try {
       const user = await User.findById(decoded.id).select('-password');
