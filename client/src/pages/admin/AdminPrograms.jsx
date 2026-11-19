@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { programService, uploadService } from '../../services/api';
-import { handleImageError } from '../../utils/imageUrl';
+import { formatImageUrl, handleImageError } from '../../utils/imageUrl';
 import { toast } from '../../context/ToastContext';
 import {
   School,
@@ -269,8 +269,10 @@ export default function AdminPrograms() {
               {prog.coverImage && (
                 <div className="w-full h-44 -mt-6 -mx-6 mb-4 overflow-hidden bg-slate-100 border-b border-slate-100">
                   <img
-                    src={prog.coverImage}
+                    src={formatImageUrl(prog.coverImage)}
                     alt={prog.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                     onError={handleImageError}
                   />

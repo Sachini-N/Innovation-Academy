@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { workshopService, programService, uploadService } from '../../services/api';
-import { handleImageError } from '../../utils/imageUrl';
+import { formatImageUrl, handleImageError } from '../../utils/imageUrl';
 import { toast } from '../../context/ToastContext';
 import {
   Plus,
@@ -286,8 +286,10 @@ export default function AdminWorkshops() {
                       {w.coverImage && (
                         <div className="w-full -mt-1 mb-3 rounded-xl overflow-hidden bg-white border border-slate-100 flex items-center justify-center p-1">
                           <img
-                            src={w.coverImage}
+                            src={formatImageUrl(w.coverImage)}
                             alt={w.title}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-auto max-h-80 object-contain rounded-lg"
                             onError={handleImageError}
                           />

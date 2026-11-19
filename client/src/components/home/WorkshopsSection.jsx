@@ -41,7 +41,7 @@ export default function WorkshopsSection({ workshops = [] }) {
   });
 
   return (
-    <section id="workshops" className="py-20 bg-white border-b border-[#e2e8f0]">
+    <section id="workshops" className="py-14 sm:py-20 bg-white border-b border-[#e2e8f0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -49,7 +49,7 @@ export default function WorkshopsSection({ workshops = [] }) {
             <span className="inline-block px-3.5 py-1 rounded-full bg-[#e8f1fd] text-xs font-extrabold uppercase tracking-wider text-[#006398] mb-3">
               WEEKLY ACTIVITY HUB
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight">
               Upcoming Innovation Workshops
             </h2>
           </div>
@@ -65,11 +65,11 @@ export default function WorkshopsSection({ workshops = [] }) {
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-2 mb-8">
+        {/* Filter Tabs - Swipeable on mobile */}
+        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 scrollbar-none sm:flex-wrap">
           <button
             onClick={() => setSelectedFilter('all')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
               selectedFilter === 'all'
                 ? 'bg-[#006398] text-white shadow-sm'
                 : 'bg-[#faf8ff] text-slate-600 border border-slate-200 hover:border-[#006398]'
@@ -88,7 +88,7 @@ export default function WorkshopsSection({ workshops = [] }) {
               <button
                 key={tab.slug}
                 onClick={() => setSelectedFilter(tab.slug)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
                   selectedFilter === tab.slug
                     ? 'bg-[#006398] text-white shadow-sm'
                     : 'bg-[#faf8ff] text-slate-600 border border-slate-200 hover:border-[#006398]'
@@ -113,14 +113,14 @@ export default function WorkshopsSection({ workshops = [] }) {
             return (
               <div
                 key={w._id || idx}
-                className="rounded-2xl bg-[#faf8ff] border border-slate-200/80 p-6 flex flex-col justify-between hover:shadow-lg hover:border-[#cbd5e1] transition-all duration-200 group overflow-hidden"
+                className="rounded-2xl bg-[#faf8ff] border border-slate-200/80 p-5 sm:p-6 flex flex-col justify-between hover:shadow-lg hover:border-[#cbd5e1] transition-all duration-200 group overflow-hidden"
               >
                 <div>
                   {/* Cover Image if uploaded - Flush edge-to-edge complete flyer */}
                   {w.coverImage && (
                     <Link
                       to={`/programs/${pSlug}/workshops/${w.slug || w._id}`}
-                      className="block -mt-6 -mx-6 mb-4 overflow-hidden rounded-t-2xl border-b border-slate-100 bg-white"
+                      className="block -mt-5 -mx-5 sm:-mt-6 sm:-mx-6 mb-4 overflow-hidden rounded-t-2xl border-b border-slate-100 bg-white"
                     >
                       <img
                         src={formatImageUrl(w.coverImage)}

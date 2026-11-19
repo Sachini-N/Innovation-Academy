@@ -620,11 +620,31 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex lg:hidden items-center">
+          {/* Mobile Right: Notification Bell (if logged in) + Mobile Menu Button */}
+          <div className="flex lg:hidden items-center gap-2">
+            {isAuthenticated && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  navigate('/participant/notifications');
+                }}
+                className="relative p-2 rounded-full border border-slate-200 hover:border-[#006398] bg-white text-slate-600 transition-colors cursor-pointer"
+                aria-label="View notifications"
+                title="Notifications"
+              >
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-black flex items-center justify-center animate-pulse shadow-sm">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+            )}
+
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-[#131b2e] hover:bg-[#eaedff] transition-colors"
+              className="p-2.5 rounded-xl text-[#131b2e] hover:bg-[#eaedff] transition-colors cursor-pointer"
               aria-label="Toggle Navigation"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

@@ -66,7 +66,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-[#f4f8fc] relative overflow-hidden">
+    <section id="contact" className="py-14 sm:py-20 bg-[#f4f8fc] relative overflow-hidden">
       {/* Subtle Dot Grid Background Patterns */}
       <div
         className="absolute top-0 left-0 w-64 h-64 opacity-30 pointer-events-none"
@@ -84,7 +84,7 @@ export default function ContactSection() {
       ></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           {/* Left Column: Let's Connect & 4 Info Cards (5 Cols) */}
           <div className="lg:col-span-5 flex flex-col justify-between">
             <div>
@@ -94,7 +94,7 @@ export default function ContactSection() {
               </span>
 
               {/* Title */}
-              <h2 className="text-4xl sm:text-5xl font-extrabold text-[#0B192C] tracking-tight mb-3.5">
+              <h2 className="text-3xl sm:text-5xl font-extrabold text-[#0B192C] tracking-tight mb-3.5">
                 Let's Connect
               </h2>
 
@@ -219,7 +219,7 @@ export default function ContactSection() {
 
           {/* Right Column: Clean White Form Card (7 Cols) */}
           <div className="lg:col-span-7">
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl p-8 sm:p-10">
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl p-6 sm:p-10">
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Row 1: Full Name & Email Address */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

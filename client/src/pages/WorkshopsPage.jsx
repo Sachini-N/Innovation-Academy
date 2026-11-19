@@ -155,11 +155,11 @@ export default function WorkshopsPage() {
                 )}
               </div>
 
-              {/* Program Track Tabs */}
-              <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#f1f5f9] rounded-xl">
+              {/* Program Track Tabs - Swipeable on mobile */}
+              <div className="flex items-center gap-1.5 p-1 bg-[#f1f5f9] rounded-xl overflow-x-auto max-w-full pb-1 scrollbar-none sm:flex-wrap">
                 <button
                   onClick={() => setSelectedProgram('all')}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 ${
                     selectedProgram === 'all'
                       ? 'bg-white text-[#006398] shadow-sm'
                       : 'text-slate-600 hover:text-[#0B192C]'
@@ -185,7 +185,7 @@ export default function WorkshopsPage() {
                       <button
                         key={p._id || p.slug}
                         onClick={() => setSelectedProgram(p.slug)}
-                        className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 ${
                           selectedProgram === p.slug
                             ? 'bg-white text-[#006398] shadow-sm'
                             : 'text-slate-600 hover:text-[#0B192C]'

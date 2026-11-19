@@ -160,11 +160,11 @@ export default function AdminRegistrations() {
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <select
             value={selectedProgram}
             onChange={(e) => setSelectedProgram(e.target.value)}
-            className="h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] outline-none bg-white font-semibold text-[#131b2e]"
+            className="w-full sm:w-auto h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] outline-none bg-white font-semibold text-[#131b2e]"
           >
             <option value="all">All Programs</option>
             <option value="program-01">Program 01: Innovation Masterclass</option>
@@ -174,7 +174,7 @@ export default function AdminRegistrations() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] outline-none bg-white font-semibold text-[#131b2e]"
+            className="w-full sm:w-auto h-10 px-3 rounded-lg border border-[#cbd5e1] text-xs focus:border-[#006398] outline-none bg-white font-semibold text-[#131b2e]"
           >
             <option value="all">All Statuses</option>
             <option value="Approved">Approved</option>

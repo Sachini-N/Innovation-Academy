@@ -5,7 +5,7 @@ import Footer from '../components/common/Footer';
 import { useAuth } from '../context/AuthContext';
 import { toast } from '../context/ToastContext';
 import { programService, registrationService } from '../services/api';
-import { handleImageError } from '../utils/imageUrl';
+import { formatImageUrl, handleImageError } from '../utils/imageUrl';
 import {
   Brain,
   Rocket,
@@ -400,8 +400,10 @@ export default function ProgramDetailPage() {
                         {w.coverImage && (
                           <div className="w-full sm:w-28 h-20 rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
                             <img
-                              src={w.coverImage}
+                              src={formatImageUrl(w.coverImage)}
                               alt={w.title}
+                              loading="lazy"
+                              decoding="async"
                               className="w-full h-full object-cover"
                               onError={handleImageError}
                             />

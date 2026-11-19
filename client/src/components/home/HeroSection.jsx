@@ -37,36 +37,36 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-white/92 lg:hidden z-10 pointer-events-none"></div>
 
         {/* Main Content Area (Left Side) */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-20 py-12 lg:py-20">
-          <div className="max-w-xl flex flex-col items-start gap-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-20 py-10 sm:py-14 lg:py-20">
+          <div className="max-w-xl flex flex-col items-start gap-4 sm:gap-5">
             {/* Pill Tag Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#e8f1fd] border border-[#d0e2fc] text-[11px] font-extrabold uppercase tracking-wider text-[#006398] shadow-2xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#006398]" />
-              <span>TRACE INNOVATION ACADEMY • POWERED BY T2T</span>
+            <div className="inline-flex max-w-full items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#e8f1fd] border border-[#d0e2fc] text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#006398] shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#006398] shrink-0" />
+              <span className="truncate">TRACE INNOVATION ACADEMY • POWERED BY T2T</span>
             </div>
 
             {/* Main Headline */}
-            <div className="space-y-1.5">
-              <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-extrabold text-[#0B192C] leading-[1.12] tracking-tight">
+            <div className="space-y-1 sm:space-y-1.5">
+              <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-extrabold text-[#0B192C] leading-[1.15] tracking-tight">
                 Inspiring Innovation <br />
                 <span className="text-[#006398]">Across Sri Lanka</span>
               </h1>
-              <p className="text-base sm:text-lg font-bold text-[#006398] pt-1">
+              <p className="text-sm sm:text-lg font-bold text-[#006398] pt-1">
                 All Certified in Deep-Tech &amp; Startup Innovation
               </p>
             </div>
 
             {/* Paragraph Description */}
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+            <p className="text-xs sm:text-base text-slate-600 leading-relaxed">
               Empowering Creative Minds to Transform Innovative Ideas into Sustainable Business Models
               through hands-on prototyping, human-centered design, and high-growth incubation.
             </p>
 
             {/* CTA Button */}
-            <div className="pt-3">
+            <div className="pt-2 sm:pt-3 w-full sm:w-auto">
               <a
                 href="#programs"
-                className="inline-block px-7 py-3 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 rounded-lg bg-[#006398] hover:bg-[#0284c7] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 text-center"
               >
                 EXPLORE INNOVATION
               </a>

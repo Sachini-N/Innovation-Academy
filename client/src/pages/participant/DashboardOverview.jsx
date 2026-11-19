@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { userService } from '../../services/api';
-import { handleImageError } from '../../utils/imageUrl';
+import { formatImageUrl, handleImageError } from '../../utils/imageUrl';
 import {
   School,
   FlaskConical,
@@ -234,8 +234,10 @@ export default function DashboardOverview() {
                       {w.coverImage && (
                         <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden bg-white border border-slate-200 shrink-0">
                           <img
-                            src={w.coverImage}
+                            src={formatImageUrl(w.coverImage)}
                             alt={w.title}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-contain"
                             onError={handleImageError}
                           />

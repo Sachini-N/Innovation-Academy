@@ -90,17 +90,17 @@ export default function ProgramsSection({ programs = [] }) {
   };
 
   return (
-    <section id="programs" className="py-20 bg-[#faf8ff] border-b border-[#e2e8f0]">
+    <section id="programs" className="py-14 sm:py-20 bg-[#faf8ff] border-b border-[#e2e8f0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <span className="inline-block px-3.5 py-1 rounded-full bg-[#e8f1fd] text-xs font-extrabold uppercase tracking-wider text-[#006398] mb-3">
             STRUCTURED LEARNING PATHS
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight">
             Flagship Innovation Programs
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 mt-2">
+          <p className="text-xs sm:text-base text-slate-600 mt-2">
             Directly aligned with Sri Lanka's growing deep-tech and startup ecosystems.
           </p>
         </div>
@@ -266,8 +266,8 @@ export default function ProgramsSection({ programs = [] }) {
 
       {/* Program Registration Modal */}
       {modalOpen && selectedProgram && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto">
             <button
               onClick={() => setModalOpen(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1 rounded-lg"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { userService } from '../../services/api';
-import { handleImageError } from '../../utils/imageUrl';
+import { formatImageUrl, handleImageError } from '../../utils/imageUrl';
 import {
   Calendar,
   Clock,
@@ -109,18 +109,20 @@ export default function MyWorkshops() {
             return (
               <div
                 key={w._id}
-                className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm hover:shadow-lg hover:border-[#cbd5e1] transition-all duration-200 flex flex-col justify-between group overflow-hidden"
+                className="bg-white rounded-2xl border border-[#e2e8f0] p-5 sm:p-6 shadow-sm hover:shadow-lg hover:border-[#cbd5e1] transition-all duration-200 flex flex-col justify-between group overflow-hidden"
               >
                 <div>
                   {/* Cover Image / Flyer if uploaded - Flush edge-to-edge */}
                   {w.coverImage && (
                     <Link
                       to={`/programs/${w.programSlug}/workshops/${w.slug}`}
-                      className="block -mt-6 -mx-6 mb-4 overflow-hidden rounded-t-2xl border-b border-slate-100 bg-white"
+                      className="block -mt-5 -mx-5 sm:-mt-6 sm:-mx-6 mb-4 overflow-hidden rounded-t-2xl border-b border-slate-100 bg-white"
                     >
                       <img
-                        src={w.coverImage}
+                        src={formatImageUrl(w.coverImage)}
                         alt={w.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-auto block object-contain group-hover:scale-[1.01] transition-transform duration-300"
                         onError={handleImageError}
                       />
