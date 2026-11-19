@@ -3,6 +3,7 @@ import Workshop from '../models/Workshop.js';
 import Program from '../models/Program.js';
 import ProgramRegistration from '../models/ProgramRegistration.js';
 import { mockStore } from '../config/mockStore.js';
+import { connectDB } from '../config/db.js';
 
 const isDbConnected = () => mongoose.connection.readyState === 1;
 
@@ -10,6 +11,10 @@ const isDbConnected = () => mongoose.connection.readyState === 1;
 export const getWorkshops = async (req, res, next) => {
   try {
     const { programSlug, programId, status } = req.query;
+
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
 
     if (isDbConnected()) {
       const filter = {};

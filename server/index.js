@@ -92,7 +92,7 @@ app.get('/api/health', (req, res) => {
 
 // Serverless MongoDB auto-connect middleware
 app.use(async (req, res, next) => {
-  if (mongoose.connection.readyState === 0) {
+  if (mongoose.connection.readyState !== 1) {
     try {
       await connectDB();
     } catch (e) {

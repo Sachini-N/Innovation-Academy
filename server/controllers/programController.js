@@ -3,12 +3,17 @@ import Program from '../models/Program.js';
 import Workshop from '../models/Workshop.js';
 import ProgramRegistration from '../models/ProgramRegistration.js';
 import { mockStore } from '../config/mockStore.js';
+import { connectDB } from '../config/db.js';
 
 const isDbConnected = () => mongoose.connection.readyState === 1;
 
 // @desc    Get all programs
 export const getPrograms = async (req, res, next) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
+
     if (isDbConnected()) {
       const programs = await Program.find().sort({ createdAt: 1 });
       const enriched = await Promise.all(
@@ -52,6 +57,10 @@ export const getPrograms = async (req, res, next) => {
 export const getProgramBySlug = async (req, res, next) => {
   try {
     const { slug } = req.params;
+
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
 
     if (isDbConnected()) {
       let program = await Program.findOne({ slug });

@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import { mockStore } from '../config/mockStore.js';
 import { sendPasswordResetEmail } from '../utils/emailService.js';
+import { connectDB } from '../config/db.js';
 
 const isDbConnected = () => mongoose.connection.readyState === 1;
 
@@ -33,6 +34,10 @@ export const register = async (req, res, next) => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
+
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
 
     if (isDbConnected()) {
       const existingUser = await User.findOne({ email: cleanEmail });
@@ -127,6 +132,10 @@ export const login = async (req, res, next) => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
+
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
 
     if (isDbConnected()) {
       const user = await User.findOne({ email: cleanEmail });
