@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { workshopService, programService } from '../services/api';
-import { handleImageError } from '../utils/imageUrl';
+import { formatImageUrl, handleImageError } from '../utils/imageUrl';
 import {
   Calendar,
   Clock,
@@ -20,9 +20,32 @@ import {
 } from 'lucide-react';
 
 export default function WorkshopsPage() {
-  const [workshops, setWorkshops] = useState([]);
-  const [programs, setPrograms] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [workshops, setWorkshops] = useState(() => {
+    try {
+      const cached = localStorage.getItem('trace_cached_workshops');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [programs, setPrograms] = useState(() => {
+    try {
+      const cached = localStorage.getItem('trace_cached_programs');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [loading, setLoading] = useState(() => {
+    try {
+      return !localStorage.getItem('trace_cached_workshops');
+    } catch {
+      return true;
+    }
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProgram, setSelectedProgram] = useState('all');
   const [selectedFormat, setSelectedFormat] = useState('all');
@@ -37,12 +60,18 @@ export default function WorkshopsPage() {
 
         if (wRes.status === 'fulfilled' && wRes.value?.data && Array.isArray(wRes.value.data)) {
           setWorkshops(wRes.value.data);
+          try {
+            localStorage.setItem('trace_cached_workshops', JSON.stringify(wRes.value.data));
+          } catch {}
         } else {
           setWorkshops([]);
         }
 
         if (pRes.status === 'fulfilled' && pRes.value?.data && Array.isArray(pRes.value.data)) {
           setPrograms(pRes.value.data);
+          try {
+            localStorage.setItem('trace_cached_programs', JSON.stringify(pRes.value.data));
+          } catch {}
         }
       } catch (err) {
         console.warn('Failed to load workshops:', err.message);
@@ -264,8 +293,10 @@ export default function WorkshopsPage() {
                           className="block -mt-6 -mx-6 mb-5 overflow-hidden rounded-t-2xl border-b border-slate-100 bg-white"
                         >
                           <img
-                            src={w.coverImage}
+                            src={formatImageUrl(w.coverImage)}
                             alt={w.title}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-auto block object-contain group-hover:scale-[1.01] transition-transform duration-300"
                             onError={handleImageError}
                           />

@@ -6,13 +6,13 @@ import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Helper to check Cloudinary configuration
+// Cloudinary Configuration with safe persistent defaults
+const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || 'ogymjek8';
+const CLOUD_API_KEY = process.env.CLOUDINARY_API_KEY || '952847967259635';
+const CLOUD_API_SECRET = process.env.CLOUDINARY_API_SECRET || 'TOHOi8JQqnB5kwK5H-Q7Swh4Vdc';
+
 const isCloudinaryConfigured = () =>
-  Boolean(
-    process.env.CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET
-  );
+  Boolean(CLOUD_NAME && CLOUD_API_KEY && CLOUD_API_SECRET);
 
 router.post('/', protect, upload.single('image'), async (req, res) => {
   if (!req.file) {
@@ -26,9 +26,9 @@ router.post('/', protect, upload.single('image'), async (req, res) => {
   if (isCloudinaryConfigured()) {
     try {
       cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
+        cloud_name: CLOUD_NAME,
+        api_key: CLOUD_API_KEY,
+        api_secret: CLOUD_API_SECRET,
       });
 
       const result = await cloudinary.uploader.upload(req.file.path, {

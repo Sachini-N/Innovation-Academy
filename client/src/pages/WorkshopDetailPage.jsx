@@ -4,7 +4,7 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../context/AuthContext';
 import { workshopService } from '../services/api';
-import { handleImageError } from '../utils/imageUrl';
+import { formatImageUrl, handleImageError } from '../utils/imageUrl';
 import {
   Calendar,
   Clock,
@@ -123,8 +123,10 @@ export default function WorkshopDetailPage() {
                 {workshop.coverImage ? (
                   <div className="rounded-xl overflow-hidden bg-white border border-slate-100 flex items-center justify-center">
                     <img
-                      src={workshop.coverImage}
+                      src={formatImageUrl(workshop.coverImage)}
                       alt={workshop.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-auto block object-contain rounded-lg"
                       onError={handleImageError}
                     />

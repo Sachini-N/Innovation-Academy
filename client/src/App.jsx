@@ -1,39 +1,44 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
-
-// Public Pages
-import HomePage from './pages/HomePage';
-import ProgramsPage from './pages/ProgramsPage';
-import ProgramDetailPage from './pages/ProgramDetailPage';
-import WorkshopsPage from './pages/WorkshopsPage';
-import WorkshopDetailPage from './pages/WorkshopDetailPage';
-import IndustryVisitsPage from './pages/IndustryVisitsPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-
-// Participant Pages & Layout
-import ParticipantLayout from './components/participant/ParticipantLayout';
-import DashboardOverview from './pages/participant/DashboardOverview';
-import MyPrograms from './pages/participant/MyPrograms';
-import MyWorkshops from './pages/participant/MyWorkshops';
-import MyVisitRequests from './pages/participant/MyVisitRequests';
-import NotificationsPage from './pages/participant/NotificationsPage';
-import ProfilePage from './pages/participant/ProfilePage';
-
-// Admin Pages & Layout
-import AdminLayout from './components/admin/AdminLayout';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminPrograms from './pages/admin/AdminPrograms';
-import AdminWorkshops from './pages/admin/AdminWorkshops';
-import AdminRegistrations from './pages/admin/AdminRegistrations';
-import AdminParticipants from './pages/admin/AdminParticipants';
-import AdminVisitRequests from './pages/admin/AdminVisitRequests';
-import AdminContactMessages from './pages/admin/AdminContactMessages';
-import AdminSettings from './pages/admin/AdminSettings';
 import AuthModal from './components/auth/AuthModal';
+
+// Direct import for instant initial landing render
+import HomePage from './pages/HomePage';
+
+// Code-split other public pages
+const ProgramsPage = lazy(() => import('./pages/ProgramsPage'));
+const ProgramDetailPage = lazy(() => import('./pages/ProgramDetailPage'));
+const WorkshopsPage = lazy(() => import('./pages/WorkshopsPage'));
+const WorkshopDetailPage = lazy(() => import('./pages/WorkshopDetailPage'));
+const IndustryVisitsPage = lazy(() => import('./pages/IndustryVisitsPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+
+// Code-split participant portal
+const ParticipantLayout = lazy(() => import('./components/participant/ParticipantLayout'));
+const MyPrograms = lazy(() => import('./pages/participant/MyPrograms'));
+const MyWorkshops = lazy(() => import('./pages/participant/MyWorkshops'));
+const NotificationsPage = lazy(() => import('./pages/participant/NotificationsPage'));
+const ProfilePage = lazy(() => import('./pages/participant/ProfilePage'));
+
+// Code-split admin intelligence portal
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminPrograms = lazy(() => import('./pages/admin/AdminPrograms'));
+const AdminWorkshops = lazy(() => import('./pages/admin/AdminWorkshops'));
+const AdminRegistrations = lazy(() => import('./pages/admin/AdminRegistrations'));
+const AdminParticipants = lazy(() => import('./pages/admin/AdminParticipants'));
+const AdminContactMessages = lazy(() => import('./pages/admin/AdminContactMessages'));
+const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
+
+const PageFallback = () => (
+  <div className="min-h-[50vh] flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+);
 
 export default function App() {
   return (
@@ -41,62 +46,64 @@ export default function App() {
       <ToastProvider>
         <Router>
           <AuthModal />
-          <Routes>
-          {/* Public Website Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/programs" element={<ProgramsPage />} />
-          <Route path="/programs/:slug" element={<ProgramDetailPage />} />
-          <Route path="/workshops" element={<WorkshopsPage />} />
-          <Route
-            path="/programs/:programSlug/workshops/:workshopSlug"
-            element={<WorkshopDetailPage />}
-          />
-          <Route path="/industry-visits" element={<IndustryVisitsPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Suspense fallback={<PageFallback />}>
+            <Routes>
+              {/* Public Website Routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/programs" element={<ProgramsPage />} />
+              <Route path="/programs/:slug" element={<ProgramDetailPage />} />
+              <Route path="/workshops" element={<WorkshopsPage />} />
+              <Route
+                path="/programs/:programSlug/workshops/:workshopSlug"
+                element={<WorkshopDetailPage />}
+              />
+              <Route path="/industry-visits" element={<IndustryVisitsPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
-          {/* Participant Portal (Protected) */}
-          <Route
-            path="/participant"
-            element={
-              <ProtectedRoute>
-                <ParticipantLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="profile" replace />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="programs" element={<MyPrograms />} />
-            <Route path="workshops" element={<MyWorkshops />} />
-            <Route path="notifications" element={<NotificationsPage />} />
-            <Route path="*" element={<Navigate to="profile" replace />} />
-          </Route>
+              {/* Participant Portal (Protected) */}
+              <Route
+                path="/participant"
+                element={
+                  <ProtectedRoute>
+                    <ParticipantLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Navigate to="profile" replace />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="programs" element={<MyPrograms />} />
+                <Route path="workshops" element={<MyWorkshops />} />
+                <Route path="notifications" element={<NotificationsPage />} />
+                <Route path="*" element={<Navigate to="profile" replace />} />
+              </Route>
 
-          {/* Admin Operations Intelligence Portal (Protected, Admin Only) */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<AdminDashboard />} />
-            <Route path="programs" element={<AdminPrograms />} />
-            <Route path="workshops" element={<AdminWorkshops />} />
-            <Route path="registrations" element={<AdminRegistrations />} />
-            <Route path="participants" element={<AdminParticipants />} />
-            <Route path="visits" element={<Navigate to="/admin" replace />} />
-            <Route path="contact-messages" element={<AdminContactMessages />} />
-            <Route path="settings" element={<AdminSettings />} />
-          </Route>
+              {/* Admin Operations Intelligence Portal (Protected, Admin Only) */}
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute adminOnly={true}>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<AdminDashboard />} />
+                <Route path="programs" element={<AdminPrograms />} />
+                <Route path="workshops" element={<AdminWorkshops />} />
+                <Route path="registrations" element={<AdminRegistrations />} />
+                <Route path="participants" element={<AdminParticipants />} />
+                <Route path="visits" element={<Navigate to="/admin" replace />} />
+                <Route path="contact-messages" element={<AdminContactMessages />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-    </ToastProvider>
-  </AuthProvider>
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </Router>
+      </ToastProvider>
+    </AuthProvider>
   );
 }
 

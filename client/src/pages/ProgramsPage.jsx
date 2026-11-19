@@ -6,14 +6,33 @@ import { programService } from '../services/api';
 import { Brain, Rocket, ArrowRight, CheckCircle2, Calendar, Award } from 'lucide-react';
 
 export default function ProgramsPage() {
-  const [programs, setPrograms] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [programs, setPrograms] = useState(() => {
+    try {
+      const cached = localStorage.getItem('trace_cached_programs');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [loading, setLoading] = useState(() => {
+    try {
+      return !localStorage.getItem('trace_cached_programs');
+    } catch {
+      return true;
+    }
+  });
 
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
         const res = await programService.getPrograms();
-        if (res.success) setPrograms(res.data);
+        if (res.success && res.data) {
+          setPrograms(res.data);
+          try {
+            localStorage.setItem('trace_cached_programs', JSON.stringify(res.data));
+          } catch {}
+        }
       } catch (err) {
         console.warn('Failed to fetch programs:', err.message);
       } finally {

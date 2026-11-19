@@ -15,20 +15,23 @@ export const getPrograms = async (req, res, next) => {
     }
 
     if (isDbConnected()) {
-      const programs = await Program.find().sort({ createdAt: 1 });
-      const enriched = await Promise.all(
-        programs.map(async (prog) => {
-          const workshopCount = await Workshop.countDocuments({ programId: prog._id });
-          const registrationCount = await ProgramRegistration.countDocuments({
-            programId: prog._id,
-          });
-          return {
-            ...prog.toObject(),
-            workshopCount,
-            registrationCount,
-          };
-        })
-      );
+      const [programs, workshopCounts, registrationCounts] = await Promise.all([
+        Program.find().sort({ createdAt: 1 }).lean(),
+        Workshop.aggregate([{ $group: { _id: '$programId', count: { $sum: 1 } } }]),
+        ProgramRegistration.aggregate([{ $group: { _id: '$programId', count: { $sum: 1 } } }]),
+      ]);
+
+      const wMap = new Map(workshopCounts.map((w) => [String(w._id), w.count]));
+      const rMap = new Map(registrationCounts.map((r) => [String(r._id), r.count]));
+
+      const enriched = programs.map((prog) => ({
+        ...prog,
+        workshopCount: wMap.get(String(prog._id)) || 0,
+        registrationCount: rMap.get(String(prog._id)) || 0,
+      }));
+
+      // High-performance Vercel Edge caching
+      res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
       return res.json({ success: true, count: enriched.length, data: enriched });
     }
 

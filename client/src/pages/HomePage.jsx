@@ -10,9 +10,34 @@ import ContactSection from '../components/home/ContactSection';
 import { programService, workshopService } from '../services/api';
 
 export default function HomePage() {
-  const [programs, setPrograms] = useState([]);
-  const [workshops, setWorkshops] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [programs, setPrograms] = useState(() => {
+    try {
+      const cached = localStorage.getItem('trace_cached_programs');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [workshops, setWorkshops] = useState(() => {
+    try {
+      const cached = localStorage.getItem('trace_cached_workshops');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [loading, setLoading] = useState(() => {
+    try {
+      const hasPrograms = Boolean(localStorage.getItem('trace_cached_programs'));
+      const hasWorkshops = Boolean(localStorage.getItem('trace_cached_workshops'));
+      return !(hasPrograms && hasWorkshops);
+    } catch {
+      return true;
+    }
+  });
+
   const location = useLocation();
 
   useEffect(() => {
@@ -23,10 +48,18 @@ export default function HomePage() {
           workshopService.getWorkshops().catch(() => ({ data: [] })),
         ]);
         if (progRes.data) {
-          setPrograms(Array.isArray(progRes.data) ? progRes.data : progRes.data.data || []);
+          const pList = Array.isArray(progRes.data) ? progRes.data : progRes.data.data || [];
+          setPrograms(pList);
+          try {
+            localStorage.setItem('trace_cached_programs', JSON.stringify(pList));
+          } catch {}
         }
         if (workRes.data) {
-          setWorkshops(Array.isArray(workRes.data) ? workRes.data : workRes.data.data || []);
+          const wList = Array.isArray(workRes.data) ? workRes.data : workRes.data.data || [];
+          setWorkshops(wList);
+          try {
+            localStorage.setItem('trace_cached_workshops', JSON.stringify(wList));
+          } catch {}
         }
       } catch (err) {
         console.warn('Could not fetch homepage data:', err.message);

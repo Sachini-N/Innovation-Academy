@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, ArrowRight, Video, MapPin, Clock, User } from 'lucide-react';
-import { handleImageError } from '../../utils/imageUrl';
+import { formatImageUrl, handleImageError } from '../../utils/imageUrl';
 
 export default function WorkshopsSection({ workshops = [] }) {
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -123,8 +123,10 @@ export default function WorkshopsSection({ workshops = [] }) {
                       className="block -mt-6 -mx-6 mb-4 overflow-hidden rounded-t-2xl border-b border-slate-100 bg-white"
                     >
                       <img
-                        src={w.coverImage}
+                        src={formatImageUrl(w.coverImage)}
                         alt={w.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-auto block object-contain group-hover:scale-[1.01] transition-transform duration-300"
                         onError={handleImageError}
                       />

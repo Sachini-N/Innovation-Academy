@@ -24,8 +24,11 @@ export const getWorkshops = async (req, res, next) => {
 
       const workshops = await Workshop.find(filter)
         .populate('programId', 'title slug badge')
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .lean();
 
+      // High-performance Vercel Edge caching
+      res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
       return res.json({ success: true, count: workshops.length, data: workshops });
     }
 
