@@ -107,13 +107,12 @@ export default function ProgramsSection({ programs = [] }) {
 
         {/* Dynamic Program Cards */}
         <div
-          className={`grid grid-cols-1 ${
-            displayPrograms.length === 1
+          className={`grid grid-cols-1 ${displayPrograms.length === 1
               ? 'max-w-xl mx-auto'
               : displayPrograms.length === 2
-              ? 'lg:grid-cols-2 max-w-6xl mx-auto'
-              : 'md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto'
-          } gap-8 items-stretch`}
+                ? 'lg:grid-cols-2 max-w-6xl mx-auto'
+                : 'md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto'
+            } gap-8 items-stretch`}
         >
           {displayPrograms.map((prog, idx) => {
             const isSecond = idx === 1;
@@ -128,18 +127,18 @@ export default function ProgramsSection({ programs = [] }) {
 
             const defaultHighlights = isProg1
               ? [
-                  'Innovation Mindset & Vision Building',
-                  'Design Thinking',
-                  'Rapid Prototyping',
-                  'Idea Pitching & Feedback',
-                ]
+                'Innovation Mindset & Vision Building',
+                'Design Thinking',
+                'Rapid Prototyping',
+                'Idea Pitching & Feedback',
+              ]
               : [
-                  'Ideation & Problem Discovery',
-                  'Design Thinking & Business Model Canvas',
-                  'Proof of Concept & Rapid Prototyping',
-                  'Go-To-Market Strategy',
-                  'Pitch Deck Development & Investment Readiness',
-                ];
+                'Ideation & Problem Discovery',
+                'Design Thinking & Business Model Canvas',
+                'Proof of Concept & Rapid Prototyping',
+                'Go-To-Market Strategy',
+                'Pitch Deck Development & Investment Readiness',
+              ];
 
             const programHighlights =
               Array.isArray(prog.highlights) && prog.highlights.length > 0
@@ -157,11 +156,11 @@ export default function ProgramsSection({ programs = [] }) {
                   style={
                     prog.coverImage
                       ? {
-                          backgroundImage: `linear-gradient(to bottom, rgba(0, 30, 60, 0.65), rgba(0, 20, 45, 0.88)), url(${prog.coverImage})`,
-                        }
+                        backgroundImage: `linear-gradient(to bottom, rgba(0, 30, 60, 0.65), rgba(0, 20, 45, 0.88)), url(${prog.coverImage})`,
+                      }
                       : {
-                          background: 'linear-gradient(to bottom right, #006398, #004e78, #003857)',
-                        }
+                        background: 'linear-gradient(to bottom right, #006398, #004e78, #003857)',
+                      }
                   }
                 >
                   <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-44 h-44 bg-white/10 rounded-full blur-2xl"></div>
