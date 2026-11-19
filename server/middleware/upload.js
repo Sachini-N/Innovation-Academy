@@ -2,10 +2,14 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-// Ensure uploads folder exists
-const uploadDir = path.resolve('uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Ensure uploads folder exists (Safe for Vercel Serverless read-only filesystem)
+const uploadDir = process.env.VERCEL ? path.join('/tmp', 'uploads') : path.resolve('uploads');
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (fsErr) {
+  console.warn('[FS Notice] Uploads directory skipped:', fsErr.message);
 }
 
 const storage = multer.diskStorage({

@@ -38,10 +38,14 @@ app.use(
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
-// Static uploads folder
-const uploadsDir = path.resolve('uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// Static uploads folder (Safe for Vercel Serverless read-only filesystem)
+const uploadsDir = process.env.VERCEL ? path.join('/tmp', 'uploads') : path.resolve('uploads');
+try {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+} catch (fsErr) {
+  console.warn('[FS Notice] Uploads directory skipped in read-only environment:', fsErr.message);
 }
 app.use('/uploads', express.static(uploadsDir));
 
