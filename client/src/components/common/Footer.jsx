@@ -84,26 +84,13 @@ export default function Footer() {
                   Pre-Incubation Program on Startup Innovation
                 </Link>
               </li>
-              <li>
-                <Link to="/programs/program-01" className="hover:text-white transition-colors">
-                  Rapid Prototyping &amp; Maker Space
-                </Link>
-              </li>
-              <li>
-                <Link to="/programs/program-02" className="hover:text-white transition-colors">
-                  Pitch Readiness &amp; Seed Access
-                </Link>
-              </li>
+
               <li>
                 <Link to="/workshops" className="hover:text-white transition-colors">
                   Workshops &amp; Masterclasses
                 </Link>
               </li>
-              <li>
-                <Link to="/programs" className="hover:text-white transition-colors">
-                  Industry Mentorship
-                </Link>
-              </li>
+
             </ul>
           </div>
 
