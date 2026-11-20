@@ -27,7 +27,7 @@ export default function AboutSection() {
                   <span>TRACE Expert City, Maradana</span>
                 </div>
                 <h4 className="text-lg sm:text-xl font-extrabold text-white leading-snug drop-shadow-md">
-                  Sri Lanka's Flagship Technology Precinct
+                  Sri Lanka's Technology Precinct
                 </h4>
               </div>
             </div>
