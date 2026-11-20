@@ -1,18 +1,25 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+const BACKEND_TARGET =
+  process.env.VITE_LOCAL_BACKEND === 'true'
+    ? 'http://localhost:5001'
+    : process.env.VITE_BACKEND_URL || 'https://innovation-academy-eight.vercel.app';
+
 export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5001',
+        target: BACKEND_TARGET,
         changeOrigin: true,
+        secure: false,
       },
       '/uploads': {
-        target: 'http://localhost:5001',
+        target: BACKEND_TARGET,
         changeOrigin: true,
+        secure: false,
       },
     },
   },
