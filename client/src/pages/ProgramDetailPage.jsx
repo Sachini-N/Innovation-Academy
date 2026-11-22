@@ -230,8 +230,8 @@ export default function ProgramDetailPage() {
                 Programs
               </Link>
               <span className="text-xs text-[#cce5ff]">/</span>
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                {program.badge || program.slug}
+              <span className="text-xs font-bold text-white uppercase tracking-wider truncate max-w-[200px] sm:max-w-none">
+                {program.title || 'Overview'}
               </span>
             </div>
 

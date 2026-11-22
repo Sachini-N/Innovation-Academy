@@ -31,7 +31,7 @@ export default function ProgramsPage() {
           setPrograms(res.data);
           try {
             localStorage.setItem('trace_cached_programs', JSON.stringify(res.data));
-          } catch {}
+          } catch { }
         }
       } catch (err) {
         console.warn('Failed to fetch programs:', err.message);
@@ -54,7 +54,7 @@ export default function ProgramsPage() {
               TRACE ACADEMIC CATALOG
             </span>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-[#0B192C] tracking-tight">
-              Our Flagship Programs
+              Our Programs
             </h1>
             <p className="text-base text-[#44474c] mt-3">
               Explore our structured learning tracks engineered in partnership with top industry leaders,
@@ -64,31 +64,30 @@ export default function ProgramsPage() {
 
           {/* Programs Grid */}
           <div
-            className={`grid grid-cols-1 ${
-              programs.length === 1
-                ? 'max-w-xl mx-auto'
-                : programs.length === 2
+            className={`grid grid-cols-1 ${programs.length === 1
+              ? 'max-w-xl mx-auto'
+              : programs.length === 2
                 ? 'lg:grid-cols-2 max-w-6xl mx-auto'
                 : 'md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto'
-            } gap-10`}
+              } gap-10`}
           >
             {programs.map((prog, idx) => {
               const isProg1 = prog.slug === 'program-01' || idx === 0;
               const programDuration = isProg1 ? '1 Month' : '3 Months';
               const defaultHighlights = isProg1
                 ? [
-                    'Innovation Mindset & Vision Building',
-                    'Design Thinking',
-                    'Rapid Prototyping',
-                    'Idea Pitching & Feedback',
-                  ]
+                  'Innovation Mindset & Vision Building',
+                  'Design Thinking',
+                  'Rapid Prototyping',
+                  'Idea Pitching & Feedback',
+                ]
                 : [
-                    'Ideation & Problem Discovery',
-                    'Design Thinking & Business Model Canvas',
-                    'Proof of Concept & Rapid Prototyping',
-                    'Go-To-Market Strategy',
-                    'Pitch Deck Development & Investment Readiness',
-                  ];
+                  'Ideation & Problem Discovery',
+                  'Design Thinking & Business Model Canvas',
+                  'Proof of Concept & Rapid Prototyping',
+                  'Go-To-Market Strategy',
+                  'Pitch Deck Development & Investment Readiness',
+                ];
               const programHighlights =
                 Array.isArray(prog.highlights) && prog.highlights.length > 0
                   ? prog.highlights
@@ -104,17 +103,14 @@ export default function ProgramsPage() {
                     style={
                       prog.coverImage
                         ? {
-                            backgroundImage: `linear-gradient(to right, rgba(0, 30, 60, 0.75), rgba(0, 15, 40, 0.88)), url(${prog.coverImage})`,
-                          }
+                          backgroundImage: `linear-gradient(to right, rgba(0, 30, 60, 0.75), rgba(0, 15, 40, 0.88)), url(${prog.coverImage})`,
+                        }
                         : isProg1
-                        ? { background: 'linear-gradient(to right, #006398, #00476e)' }
-                        : { background: 'linear-gradient(to right, #0B192C, #0e1c2f)' }
+                          ? { background: 'linear-gradient(to right, #006398, #00476e)' }
+                          : { background: 'linear-gradient(to right, #0B192C, #0e1c2f)' }
                     }
                   >
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="px-2.5 py-1 rounded bg-white/20 text-xs font-extrabold uppercase tracking-widest text-[#cce5ff]">
-                        {prog.badge || `PROGRAM 0${idx + 1}`}
-                      </span>
+                    <div className="flex items-center justify-end mb-4">
                       <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs text-[#cce5ff] font-bold">
                         {programDuration}
                       </span>
@@ -131,7 +127,7 @@ export default function ProgramsPage() {
                       <div>
                         <h2 className="text-2xl font-bold text-white">{prog.title}</h2>
                         <span className="text-xs text-[#cce5ff] block mt-1">
-                          TRACE Expert City • Bay 05
+                          TRACE Expert City • Bay 07
                         </span>
                       </div>
                     </div>

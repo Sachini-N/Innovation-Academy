@@ -98,7 +98,7 @@ export default function ProgramsSection({ programs = [] }) {
             STRUCTURED LEARNING PATHS
           </span>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight">
-            Flagship Innovation Programs
+           Innovation Programs
           </h2>
           <p className="text-xs sm:text-base text-slate-600 mt-2">
             Directly aligned with Sri Lanka's growing deep-tech and startup ecosystems.
@@ -165,10 +165,7 @@ export default function ProgramsSection({ programs = [] }) {
                 >
                   <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-44 h-44 bg-white/10 rounded-full blur-2xl"></div>
 
-                  <div className="w-full flex items-center justify-between text-xs mb-4">
-                    <span className="px-2.5 py-0.5 rounded bg-white/20 text-[10px] font-black uppercase tracking-widest text-[#cce5ff]">
-                      {prog.badge || `PROGRAM 0${idx + 1}`}
-                    </span>
+                  <div className="w-full flex items-center justify-end text-xs mb-4">
                     <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-xs text-[#cce5ff] font-bold">
                       {programDuration}
                     </span>
@@ -283,7 +280,7 @@ export default function ProgramsSection({ programs = [] }) {
 
             <div className="mb-6">
               <span className="text-[10px] uppercase font-bold tracking-wider text-[#006398] bg-[#e8f1fd] px-2.5 py-0.5 rounded-full">
-                {selectedProgram.badge || 'TRACE PROGRAM'}
+                PROGRAM ENROLLMENT
               </span>
               <h3 className="text-xl font-bold text-[#0B192C] mt-2">
                 Join {selectedProgram.title}
