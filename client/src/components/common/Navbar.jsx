@@ -165,7 +165,7 @@ export default function Navbar() {
           {/* Logo Lockup */}
           <Link to="/" className="flex items-center group py-2">
             <img
-              src="/trace-logo.png"
+              src="/logo.png"
               alt="TRACE Innovation Academy - Powered by T2T"
               className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-[1.02]"
             />

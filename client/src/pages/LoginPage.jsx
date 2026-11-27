@@ -207,7 +207,7 @@ export default function LoginPage() {
               <div>
                 <div className="text-center mb-8">
                   <img
-                    src="/trace-logo.png"
+                    src="/logo.png"
                     alt="TRACE Innovation Academy"
                     className="h-11 w-auto object-contain mx-auto mb-3"
                   />
