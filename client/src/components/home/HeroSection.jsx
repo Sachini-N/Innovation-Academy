@@ -31,15 +31,10 @@ export default function HeroSection() {
           </div>
 
           {/* Main Headline */}
-          <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-              Inspiring Innovation <br />
-              <span className="text-[#38bdf8] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">Across Sri Lanka</span>
-            </h1>
-            <p className="text-sm sm:text-base font-extrabold text-[#7dd3fc] drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)] pt-0.5">
-              All Certified in Deep-Tech &amp; Startup Innovation
-            </p>
-          </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+            Inspiring Innovation <br />
+            <span className="text-[#38bdf8] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">Across Sri Lanka</span>
+          </h1>
 
           {/* Paragraph Description */}
           <p className="text-xs sm:text-sm text-white font-medium leading-relaxed drop-shadow-[0_1px_5px_rgba(0,0,0,0.95)]">
@@ -105,15 +100,10 @@ export default function HeroSection() {
               <span>TRACE INNOVATION ACADEMY • POWERED BY T2T</span>
             </div>
 
-            <div className="space-y-1.5">
-              <h1 className="text-4xl lg:text-[54px] font-extrabold text-[#0B192C] leading-[1.12] tracking-tight">
-                Inspiring Innovation <br />
-                <span className="text-[#006398]">Across Sri Lanka</span>
-              </h1>
-              <p className="text-lg font-bold text-[#006398] pt-1">
-                All Certified in Deep-Tech &amp; Startup Innovation
-              </p>
-            </div>
+            <h1 className="text-4xl lg:text-[54px] font-extrabold text-[#0B192C] leading-[1.12] tracking-tight">
+              Inspiring Innovation <br />
+              <span className="text-[#006398]">Across Sri Lanka</span>
+            </h1>
 
             <p className="text-base text-slate-600 leading-relaxed">
               Empowering Creative Minds to Transform Innovative Ideas into Sustainable Business Models
