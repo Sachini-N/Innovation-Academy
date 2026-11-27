@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import HeroSection from '../components/home/HeroSection';
-import AboutSection from '../components/home/AboutSection';
 import ProgramsSection from '../components/home/ProgramsSection';
 import WorkshopsSection from '../components/home/WorkshopsSection';
 import ContactSection from '../components/home/ContactSection';
@@ -71,7 +70,7 @@ export default function HomePage() {
     fetchData();
   }, []);
 
-  // Handle smooth scroll when navigating to an anchor hash (e.g. #workshops, #about, #programs, #contact)
+  // Handle smooth scroll when navigating to an anchor hash (e.g. #workshops, #programs, #contact)
   useEffect(() => {
     if (location.hash) {
       const targetId = location.hash.replace('#', '');
@@ -100,20 +99,17 @@ export default function HomePage() {
         {/* 2. Hero Section */}
         <HeroSection />
 
-        {/* 3. About Us */}
-        <AboutSection />
-
-        {/* 4. Our Programs (Exactly TWO program cards) */}
+        {/* 3. Our Programs (Exactly TWO program cards) */}
         <ProgramsSection programs={programs} />
 
-        {/* 5. Workshops & Activities (Selected upcoming workshops from both programs) */}
+        {/* 4. Workshops & Activities (Selected upcoming workshops from both programs) */}
         <WorkshopsSection workshops={workshops} />
 
-        {/* 6. Contact Us (Contact form saved to database) */}
+        {/* 5. Contact Us (Contact form saved to database) */}
         <ContactSection />
       </main>
 
-      {/* 7. Footer */}
+      {/* 6. Footer */}
       <Footer />
     </div>
   );
