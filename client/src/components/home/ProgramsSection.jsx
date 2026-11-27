@@ -98,20 +98,20 @@ export default function ProgramsSection({ programs = [] }) {
             STRUCTURED LEARNING PATHS
           </span>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B192C] tracking-tight">
-           Innovation Programs
+            Innovation Programs
           </h2>
           <p className="text-xs sm:text-base text-slate-600 mt-2">
-            Directly aligned with Sri Lanka's growing deep-tech and startup ecosystems.
+            Directly aligned with Sri Lanka's growing startup ecosystems.
           </p>
         </div>
 
         {/* Dynamic Program Cards */}
         <div
           className={`grid grid-cols-1 ${displayPrograms.length === 1
-              ? 'max-w-xl mx-auto'
-              : displayPrograms.length === 2
-                ? 'lg:grid-cols-2 max-w-6xl mx-auto'
-                : 'md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto'
+            ? 'max-w-xl mx-auto'
+            : displayPrograms.length === 2
+              ? 'lg:grid-cols-2 max-w-6xl mx-auto'
+              : 'md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto'
             } gap-8 items-stretch`}
         >
           {displayPrograms.map((prog, idx) => {

@@ -309,7 +309,7 @@ export default function AuthModal() {
           <div>
             <div className="text-center mb-6">
               <img
-                src="/trace-logo.png"
+                src="/logo.png"
                 alt="TRACE Innovation Academy"
                 className="h-10 w-auto object-contain mx-auto mb-3"
               />
@@ -684,7 +684,7 @@ export default function AuthModal() {
           <div>
             <div className="text-center mb-6">
               <img
-                src="/trace-logo.png"
+                src="/logo.png"
                 alt="TRACE Innovation Academy"
                 className="h-10 w-auto object-contain mx-auto mb-3"
               />

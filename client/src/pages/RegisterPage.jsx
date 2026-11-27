@@ -74,7 +74,7 @@ export default function RegisterPage() {
           <div className="bg-white rounded-2xl border border-[#cbd5e1] p-8 shadow-xl">
             <div className="text-center mb-8">
               <img
-                src="/trace-logo.png"
+                src="/logo.png"
                 alt="TRACE Innovation Academy"
                 className="h-11 w-auto object-contain mx-auto mb-3"
               />
